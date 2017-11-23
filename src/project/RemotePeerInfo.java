@@ -12,6 +12,7 @@ public class RemotePeerInfo {
 	public String peerId;
 	public String peerAddress;
 	public String peerPort;
+	public byte[] peerBitFieldInfo;
 	
 	public RemotePeerInfo(String pId, String pAddress, String pPort) {
 		peerId = pId;

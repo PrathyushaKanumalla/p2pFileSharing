@@ -16,7 +16,7 @@ public class LogFormatter extends Formatter {
 	}
 
 	private String calcDate(long millisecs) {
-		SimpleDateFormat date_format = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");
+		SimpleDateFormat date_format = new SimpleDateFormat(Constants.LOGTIMEFORMAT);
 		Date resultdate = new Date(millisecs);
 		return date_format.format(resultdate);
 	}
