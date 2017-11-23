@@ -1,6 +1,14 @@
 package project;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 public class peerProcess {
+	
+	private final static String peerInfoFile = "PeerInfo.cfg";
+	private final static String commonFile = "Common.cfg";
 	
 	
 	public static void main(String[] args) {
@@ -13,6 +21,21 @@ public class peerProcess {
 				Log.setUpSingleTonLog(currPeerId);
 				Log.addLog("Success!!");
 				// Step 2: Set up Config Information
+				FileInputStream fis;
+				File file=new File(commonFile);
+				fis = new FileInputStream(new File(commonFile));
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			 
+				String configLine = null;
+				
+				while ((configLine = br.readLine()) != null) {
+					
+					String[] split = configLine.split(" ");
+					
+					
+					//insert variable as key and store its value....
+					//commonInf.put(split[0], split[1]);
 				
 				// Step 3: Set up Peer Information
 				// Step 4: initiate download-connections 

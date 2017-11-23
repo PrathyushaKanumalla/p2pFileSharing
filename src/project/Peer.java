@@ -1,5 +1,7 @@
 package project;
 
+import java.util.Map;
+
 public class Peer {
 	
 	private Peer() {}
@@ -18,8 +20,8 @@ public class Peer {
 	public int optimisticUnchokingInterval;
 	public String fileName;
 	public int pieceSize;
-	
-	
+	public static Map<Integer,String> peerInf=null;
+	public static Map<String,String> commonInf=null;
 	
 	
 	
