@@ -1,5 +1,7 @@
 package project;
 
+import java.util.HashMap;
+
 public class Peer {
 	
 	private Peer() {}
@@ -13,14 +15,6 @@ public class Peer {
 	}
 	
 	public int peerID;
-	public int numOfPrefferredNeighbors;
-	public int unchokingInterval;
-	public int optimisticUnchokingInterval;
-	public String fileName;
-	public int pieceSize;
-	
-	
-	
 	
 	
 }

@@ -15,7 +15,7 @@ public class peerProcess {
 				// Step 2: Set up Config Information
 				
 				// Step 3: Set up Peer Information
-				
+				setPeerNeighbors(currPeerId);
 				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
@@ -31,6 +31,10 @@ public class peerProcess {
 			System.err.println("Please provide peer ID attribute to start");
 			System.exit(1);
 		}
+	}
+
+	private static void setPeerNeighbors(int currPeerId) {
+		
 	}
 
 }

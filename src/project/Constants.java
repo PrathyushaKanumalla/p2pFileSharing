@@ -6,8 +6,8 @@ public class Constants {
 	public static final String LOGFILESUFFIX = ".log";
 	public static final String LOGTIMEFORMAT = "MMM dd,yyyy HH:mm:ss";
 	
-	public static final String commonConfigFile = "Common.cfg";
-	public static final String peerInfoFile = "PeerInfo.cfg";
+	public static final String COMMONCFG = "Common.cfg";
+	public static final String PEERINFO = "PeerInfo.cfg";
 	
 
 }
