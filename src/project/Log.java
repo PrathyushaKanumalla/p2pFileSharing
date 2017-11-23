@@ -44,7 +44,7 @@ public class Log {
 	        logger.setLevel(Level.INFO);
 	        
 	        // get current path and generate a log file
-	     	String fileName = "log_peer_"+peerID+".log";
+	     	String fileName = Constants.LOGFILEPREFIX + peerID + Constants.LOGFILESUFFIX;
 	        fileHandler = new FileHandler(fileName);
 	        // create a TXT formatter
 	        logFormatter = new LogFormatter();

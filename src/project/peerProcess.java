@@ -15,7 +15,8 @@ public class peerProcess {
 				// Step 2: Set up Config Information
 				
 				// Step 3: Set up Peer Information
-				// Step 4: initiate download-connections 
+				
+				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
 				//syso the same.
