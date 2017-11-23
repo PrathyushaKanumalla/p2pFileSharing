@@ -1,6 +1,8 @@
 package project;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Peer {
 	
@@ -15,6 +17,7 @@ public class Peer {
 	}
 	
 	public int peerID;
-	
+	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
+	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
 	
 }

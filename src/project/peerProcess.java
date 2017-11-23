@@ -1,5 +1,9 @@
 package project;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.Map.Entry;
+
 public class peerProcess {
 	
 	
@@ -34,7 +38,20 @@ public class peerProcess {
 	}
 
 	private static void setPeerNeighbors(int currPeerId) {
-		
+		String row = null;
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));
+			while((row = in.readLine()) != null) {
+				 String[] tokens = row.split("\\s+");
+			     Peer.getInstance().neighbors.put(new Integer(tokens[0]), 
+			    		 new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
+			}
+			Peer.getInstance().neighbors.remove(currPeerId);
+			in.close();
+		}
+		catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 }
