@@ -1,16 +1,13 @@
 package project;
 
 import java.io.BufferedReader;
-<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-=======
-import java.io.FileReader;
-import java.util.Map.Entry;
->>>>>>> 6fdf4281beed81a1d407eb8ca3ca954fc2d854e4
+
 
 public class peerProcess {
 	
@@ -30,7 +27,7 @@ public class peerProcess {
 		while ((configLine = br.readLine()) != null) {
 			
 			String[] split = configLine.split(" ");
-			Peer.getCommonInf().put(split[0], split[1]);
+			Peer.getInstance().configProps.put(split[0], split[1]);
 		}
 		br.close();
 	
