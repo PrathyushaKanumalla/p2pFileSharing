@@ -1,11 +1,16 @@
 package project;
 
 import java.io.BufferedReader;
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+=======
+import java.io.FileReader;
+import java.util.Map.Entry;
+>>>>>>> 6fdf4281beed81a1d407eb8ca3ca954fc2d854e4
 
 public class peerProcess {
 	
@@ -72,7 +77,20 @@ public class peerProcess {
 	}
 
 	private static void setPeerNeighbors(int currPeerId) {
-		
+		String row = null;
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));
+			while((row = in.readLine()) != null) {
+				 String[] tokens = row.split("\\s+");
+			     Peer.getInstance().neighbors.put(new Integer(tokens[0]), 
+			    		 new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
+			}
+			Peer.getInstance().neighbors.remove(currPeerId);
+			in.close();
+		}
+		catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
 }

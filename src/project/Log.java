@@ -1,5 +1,6 @@
 package project;
 
+import java.io.File;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -44,7 +45,8 @@ public class Log {
 	        logger.setLevel(Level.INFO);
 	        
 	        // get current path and generate a log file
-	     	String fileName = Constants.LOGFILEPREFIX + peerID + Constants.LOGFILESUFFIX;
+	     	String fileName = System.getProperty("user.dir") + File.separator + 
+	     			Constants.LOGFILEPREFIX + peerID + Constants.LOGFILESUFFIX;
 	        fileHandler = new FileHandler(fileName);
 	        // create a TXT formatter
 	        logFormatter = new LogFormatter();

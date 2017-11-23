@@ -1,5 +1,6 @@
 package project;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,23 +16,9 @@ public class Peer {
 		return PeerSingletonHelper.peer;
 	}
 	
-	public static Map<Integer,String> getPeerInf() {
-		return peerInf;
-	}
-	public static void setPeerInf(Map<Integer,String> peerInf) {
-		Peer.peerInf = peerInf;
-	}
-
-	public static Map<String,String> getCommonInf() {
-		return commonInf;
-	}
-
-	public static void setCommonInf(Map<String,String> commonInf) {
-		Peer.commonInf = commonInf;
-	}
 
 	public int peerID;
-	private static Map<Integer,String> peerInf=null;
-	private static Map<String,String> commonInf=null;
+	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
+	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
 	
 }
