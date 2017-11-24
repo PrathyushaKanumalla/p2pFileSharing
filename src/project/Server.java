@@ -1,3 +1,4 @@
+
 package project;
 
 import java.io.IOException;
@@ -67,10 +68,14 @@ public class Server extends Thread{
 						//show the message to the user
 						System.out.printf("SERVER:- Received message: <%s> from client %s\n" ,message, clientNum);
 						//send MESSAGE back to the client
+<<<<<<< HEAD
 						sendMessage("Prathyusha Server Received");
 						for (Entry<Integer, RemotePeerInfo> peer : Peer.getInstance().neighbors.entrySet()) {
 							peer.getValue().flag = true;
 						}
+=======
+						sendMessage("sridhar's server");
+>>>>>>> ad1a63b3ce1ff53821b9ffe9cd63cad0e30f5149
 					}
 				}
 				catch(ClassNotFoundException classnot){

@@ -1,3 +1,4 @@
+
 package project;
 
 import java.io.BufferedReader;
@@ -42,13 +43,20 @@ public class peerProcess {
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
 				//syso the same.
+<<<<<<< HEAD
 				
 				//Thread.sleep(1000);
+=======
+				Server serverThread = new Server(Peer.getInstance().portNum, Peer.getInstance().neighbors.keySet());
+				serverThread.start();
+			//	Thread.sleep(1000);
+>>>>>>> ad1a63b3ce1ff53821b9ffe9cd63cad0e30f5149
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
 				Server serverThread = new Server(Peer.getInstance().portNum);
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+					System.out.println("inside");
 					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
 					clientThread.start();
 				}

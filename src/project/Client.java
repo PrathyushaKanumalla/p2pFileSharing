@@ -36,17 +36,37 @@ public class Client extends Thread {
 			
 			handShake = "handshakeSent";
 			sendMessage(handShake);
+<<<<<<< HEAD
+=======
+			System.out.printf("handshake message sent", neighborAddr, neighborPort);
+			int peerId = Peer.getInstance().peerID;
+			System.out.println(peerId);
+			sendMessage("peertest "+peerId);
+			
+			
+>>>>>>> ad1a63b3ce1ff53821b9ffe9cd63cad0e30f5149
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
 			{
 				//Send the sentence to the server
+<<<<<<< HEAD
 				message = "PrathyushaClient";
+=======
+				message = "Sridhar client";
+>>>>>>> ad1a63b3ce1ff53821b9ffe9cd63cad0e30f5149
 				sendMessage(message);
+				
 				//Receive the upperCase sentence from the server
+<<<<<<< HEAD
 				message = (String)in.readObject();
 				//show the message to the user
 				System.out.printf("CLIENT:- Received the message: <%s>\n", message);
+=======
+				MESSAGE = (String)in.readObject();
+//				show the message to the user
+				System.out.println("Receive message: " + MESSAGE);
+>>>>>>> ad1a63b3ce1ff53821b9ffe9cd63cad0e30f5149
 			}
 		}
 		catch (ConnectException e) {
