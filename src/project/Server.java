@@ -67,8 +67,8 @@ public class Server extends Thread{
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
 				try{
-					while(true)
-					{
+		//			while(true)
+			///		{
 						//receive the message sent from the client
 						message = (String)in.readObject();
 						//show the message to the user
@@ -76,8 +76,8 @@ public class Server extends Thread{
 						//Capitalize all letters in the message
 						MESSAGE = message.toUpperCase();
 						//send MESSAGE back to the client
-						sendMessage(MESSAGE);
-					}
+						sendMessage("Muneer's Server");
+				//	}
 				}
 				catch(ClassNotFoundException classnot){
 					System.err.println("Data received in unknown format");

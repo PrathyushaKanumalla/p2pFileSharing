@@ -41,18 +41,18 @@ public class Client extends Thread {
 			System.out.println(peerId);
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-			while(true)
+		while(true)
 			{
 				//System.out.print("Hello, please input a sentence: ");
 				//read a sentence from the standard input
 				//message = bufferedReader.readLine();
 				//Send the sentence to the server
-				message = "Prathyusha";
+				message = "Muneer client";
 				sendMessage(message);
 				//Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
 				//show the message to the user
-				//System.out.println("Receive message: " + MESSAGE);
+				System.out.println("Receive message: " + MESSAGE);
 			}
 		}
 		catch (ConnectException e) {
