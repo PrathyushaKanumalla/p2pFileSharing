@@ -15,7 +15,6 @@ public class Peer {
 	public static Peer getInstance() {
 		return PeerSingletonHelper.peer;
 	}
-	
 
 	public int peerID;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());

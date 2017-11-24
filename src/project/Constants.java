@@ -9,5 +9,6 @@ public class Constants {
 	public static final String COMMONCFG = "Common.cfg";
 	public static final String PEERINFO = "PeerInfo.cfg";
 	
-	
+	public static final  byte[] HANDSHAKEHEADER = "P2PFILESHARINGPROJ".getBytes();
+	public static final byte[] ZERO_BITS = {0,0,0,0,0,0,0,0,0,0};
 }

@@ -38,6 +38,7 @@ public class peerProcess {
 					//commonInf.put(split[0], split[1]);				
 				// Step 3: Set up Peer Information
 				setPeerNeighbors(currPeerId);
+				Peer.getInstance().peerID=currPeerId;
 				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
@@ -47,7 +48,7 @@ public class peerProcess {
 				Thread.sleep(1000);
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-				System.out.println("here sss");
+				System.out.println("here");
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
 					clientThread.start();

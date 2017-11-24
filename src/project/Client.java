@@ -37,6 +37,8 @@ public class Client extends Thread {
 			handShake = "handshakeSent";
 			sendMessage(handShake);
 			System.out.printf("handshake message sent", neighborAddr, neighborPort);
+			int peerId = Peer.getInstance().peerID;
+			System.out.println(peerId);
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
