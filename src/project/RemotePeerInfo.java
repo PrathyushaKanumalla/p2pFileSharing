@@ -1,4 +1,5 @@
 package project;
+
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -13,6 +14,7 @@ public class RemotePeerInfo {
 	public String peerAddress;
 	public String peerPort;
 	public byte[] peerBitFieldInfo;
+	public boolean flag;
 	
 	public RemotePeerInfo(String pId, String pAddress, String pPort) {
 		peerId = pId;
