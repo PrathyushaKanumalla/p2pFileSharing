@@ -3,6 +3,7 @@ package project;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map.Entry;
 
 
 public class peerProcess {
@@ -41,9 +42,15 @@ public class peerProcess {
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
 				//syso the same.
+				Server serverThread = new Server(currPeerId);
+				serverThread.start();
+				
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-			
+				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
+					clientThread.start();
+				}
 			} catch (NumberFormatException e) {
 		        System.err.println("Argument " + args[0] + " must be an integer.");
 		        System.exit(1);
