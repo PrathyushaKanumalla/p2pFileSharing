@@ -15,8 +15,8 @@ public class Server extends Thread{
 		this.clientNum = clientNum;
 	}
 
-	Server (int portNum) {
-		this.portNum = portNum;
+	Server (String portNum) {
+		this.portNum = new Integer(portNum);
 	}
 
 	public void run(){
@@ -103,7 +103,7 @@ public class Server extends Thread{
 			try{
 				out.writeObject(msg);
 				out.flush();
-				System.out.println("Send message: " + msg + " to Client " + clientNum);
+				//System.out.println("Send message: " + msg + " to Client " + clientNum);
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
