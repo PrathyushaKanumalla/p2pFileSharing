@@ -14,13 +14,8 @@ import java.util.Set;
 public class Server extends Thread{
 
 	private int portNum;
-	private int clientNum;
 	private Set<Integer> neighbors;
 	
-	public void setClientNum(int clientNum) {
-		this.clientNum = clientNum;
-	}
-
 	Server (String portNum, Set<Integer> set) {
 		this.portNum = new Integer(portNum);
 		this.neighbors = set;		
