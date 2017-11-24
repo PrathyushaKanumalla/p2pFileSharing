@@ -5,18 +5,25 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Server extends Thread{
 
 	private int portNum;
 	private int clientNum;
+	private Set<Integer> neighbors;
 	
 	public void setClientNum(int clientNum) {
 		this.clientNum = clientNum;
 	}
 
-	Server (String portNum) {
+	Server (String portNum, Set<Integer> set) {
 		this.portNum = new Integer(portNum);
+		this.neighbors = set;		
 	}
 
 	public void run(){
@@ -25,9 +32,9 @@ public class Server extends Thread{
 
 		try {
 			listener = new ServerSocket(portNum);
-			while(true) {
-				new Handler(listener.accept(),clientNum).start();
-				System.out.println("Client "  + clientNum + " is connected!");
+			for (Integer clientPeerId : neighbors) {
+				new Handler(listener.accept(),clientPeerId).start();
+				System.out.println("Client "  + clientPeerId + " is connected!");
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
