@@ -1,37 +1,24 @@
 package project;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 
 public class peerProcess {
 	
-	//private final static String peerInfoFile = "PeerInfo.cfg";
-	//private final static String commonFile = "Common.cfg";
-	
 	public static void setCommonConfig() throws IOException
 	{
-		FileInputStream fis;
-		File file=new File(Constants.COMMONCFG);
-		fis = new FileInputStream(new File(Constants.COMMONCFG));
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-	 
+		BufferedReader br = new BufferedReader(new FileReader(Constants.COMMONCFG));
 		String configLine = null;
-		
+
 		while ((configLine = br.readLine()) != null) {
-			
-			String[] split = configLine.split(" ");
-			Peer.getInstance().configProps.put(split[0], split[1]);
+
+		String[] split = configLine.split(" ");
+		Peer.getInstance().configProps.put(split[0], split[1]);
+
 		}
 		br.close();
-	
-		
 	}
 	
 	
@@ -49,19 +36,13 @@ public class peerProcess {
 					//insert variable as key and store its value....
 					//commonInf.put(split[0], split[1]);				
 				// Step 3: Set up Peer Information
-				
+				setPeerNeighbors(currPeerId);
 				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
 				//syso the same.
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-				
-			
-				
-				setPeerNeighbors(currPeerId);
-
-				
 			
 			} catch (NumberFormatException e) {
 		        System.err.println("Argument " + args[0] + " must be an integer.");
