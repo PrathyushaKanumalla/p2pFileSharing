@@ -45,11 +45,12 @@ public class peerProcess {
 				//syso the same.
 				Server serverThread = new Server(Peer.getInstance().portNum, Peer.getInstance().neighbors.keySet());
 				serverThread.start();
-				Thread.sleep(1000);
+			//	Thread.sleep(1000);
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
 				System.out.println("here");
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+					System.out.println("inside");
 					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
 					clientThread.start();
 				}

@@ -76,7 +76,7 @@ public class Server extends Thread{
 						//Capitalize all letters in the message
 						MESSAGE = message.toUpperCase();
 						//send MESSAGE back to the client
-						sendMessage(MESSAGE);
+						sendMessage("sridhar's server");
 					}
 				}
 				catch(ClassNotFoundException classnot){
