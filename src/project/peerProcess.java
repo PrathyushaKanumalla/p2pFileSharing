@@ -38,22 +38,20 @@ public class peerProcess {
 					//commonInf.put(split[0], split[1]);				
 				// Step 3: Set up Peer Information
 				setPeerNeighbors(currPeerId);
-				Peer.getInstance().peerID=currPeerId;
 				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
 				//syso the same.
-				Server serverThread = new Server(Peer.getInstance().portNum, Peer.getInstance().neighbors.keySet());
-				serverThread.start();
-				Thread.sleep(1000);
+				
+				//Thread.sleep(1000);
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-				System.out.println("here");
+				Server serverThread = new Server(Peer.getInstance().portNum);
+				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
 					clientThread.start();
 				}
-				System.out.println("end");
 			} catch (NumberFormatException e) {
 		        System.err.println("Argument " + args[0] + " must be an integer.");
 		        System.exit(1);
@@ -65,6 +63,7 @@ public class peerProcess {
 	}
 
 	private static void setPeerNeighbors(int currPeerId) {
+		Peer.getInstance().peerID = currPeerId;
 		String row = null;
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));

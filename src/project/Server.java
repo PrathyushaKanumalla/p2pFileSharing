@@ -5,31 +5,25 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 public class Server extends Thread{
 
 	private int portNum;
-	private Set<Integer> neighbors;
 	
-	Server (String portNum, Set<Integer> set) {
+	Server (String portNum) {
 		this.portNum = new Integer(portNum);
-		this.neighbors = set;		
 	}
 
 	public void run(){
-		System.out.println("The server is running."); 
+		System.out.print("*The Server is running*"); 
 		ServerSocket listener = null;
 
 		try {
 			listener = new ServerSocket(portNum);
-			for (Integer clientPeerId : neighbors) {
+			for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
 				new Handler(listener.accept(),clientPeerId).start();
-				System.out.println("Client "  + clientPeerId + " is connected!");
+				System.out.println("*My Server Connected to "  + clientPeerId + " *");
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -49,17 +43,16 @@ public class Server extends Thread{
 	 */
 	private static class Handler extends Thread {
 		private String message;    //message received from the client
-		private String MESSAGE;    //uppercase message send to the client
 		private Socket connection;
 		private ObjectInputStream in;	//stream read from the socket
 		private ObjectOutputStream out;    //stream write to the socket
 		private int clientNum;
-
+		
 		public Handler(Socket connection, int clientNum) {
 			this.connection = connection;
 			this.clientNum = clientNum;
 		}
-
+		
 		public void run() {
 			try{
 				//initialize Input and Output streams
@@ -72,11 +65,12 @@ public class Server extends Thread{
 						//receive the message sent from the client
 						message = (String)in.readObject();
 						//show the message to the user
-						System.out.println("Receive message: " + message + " from client " + clientNum);
-						//Capitalize all letters in the message
-						MESSAGE = message.toUpperCase();
+						System.out.printf("SERVER:- Received message: <%s> from client %s\n" ,message, clientNum);
 						//send MESSAGE back to the client
-						sendMessage(MESSAGE);
+						sendMessage("Prathyusha Server Received");
+						for (Entry<Integer, RemotePeerInfo> peer : Peer.getInstance().neighbors.entrySet()) {
+							peer.getValue().flag = true;
+						}
 					}
 				}
 				catch(ClassNotFoundException classnot){
@@ -84,7 +78,7 @@ public class Server extends Thread{
 				}
 			}
 			catch(IOException ioException){
-				System.out.println("Disconnect with Client " + clientNum);
+				System.out.printf("Disconnect with Client %s\n" ,clientNum);
 			}
 			finally{
 				//Close connections
@@ -94,7 +88,7 @@ public class Server extends Thread{
 					connection.close();
 				}
 				catch(IOException ioException){
-					System.out.println("Disconnect with Client " + clientNum);
+					System.out.printf("Disconnect with Client %s\n" , clientNum);
 				}
 			}
 		}
@@ -105,7 +99,7 @@ public class Server extends Thread{
 			try{
 				out.writeObject(msg);
 				out.flush();
-				//System.out.println("Send message: " + msg + " to Client " + clientNum);
+				System.out.printf("SERVER:- Sent message:<%s> to Client %s\n" ,msg, clientNum);
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();

@@ -12,7 +12,6 @@ public class Client extends Thread {
 	ObjectOutputStream out;         //stream write to the socket
  	ObjectInputStream in;          //stream read from the socket
 	String message;                //message send to the server
-	String MESSAGE;                //capitalized message read from the server
 	String handShake;
 	String neighborAddr;
 	String neighborPort;
@@ -26,8 +25,9 @@ public class Client extends Thread {
 	{
 		try{
 			//create a socket to connect to the server
+			System.out.println("*The Client is running*");
 			requestSocket = new Socket(neighborAddr, new Integer(neighborPort));
-			System.out.printf("Connected to %s in port %s", neighborAddr, neighborPort);
+			System.out.printf("*My Client Connected to %s in port %s*", neighborAddr, neighborPort);
 			//initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
@@ -36,23 +36,17 @@ public class Client extends Thread {
 			
 			handShake = "handshakeSent";
 			sendMessage(handShake);
-			System.out.printf("handshake message sent", neighborAddr, neighborPort);
-			int peerId = Peer.getInstance().peerID;
-			System.out.println(peerId);
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
 			{
-				//System.out.print("Hello, please input a sentence: ");
-				//read a sentence from the standard input
-				//message = bufferedReader.readLine();
 				//Send the sentence to the server
-				message = "Prathyusha";
+				message = "PrathyushaClient";
 				sendMessage(message);
 				//Receive the upperCase sentence from the server
-				MESSAGE = (String)in.readObject();
+				message = (String)in.readObject();
 				//show the message to the user
-				//System.out.println("Receive message: " + MESSAGE);
+				System.out.printf("CLIENT:- Received the message: <%s>\n", message);
 			}
 		}
 		catch (ConnectException e) {
@@ -66,7 +60,7 @@ public class Client extends Thread {
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
-		} 
+		}
 		finally{
 			//Close connections
 			try{
@@ -79,16 +73,22 @@ public class Client extends Thread {
 			}
 		}
 	}
-	//send a message to the output stream
+	
 	void sendMessage(String msg)
 	{
 		try{
 			//stream write the message
 			out.writeObject(msg);
 			out.flush();
+			System.out.printf("CLIENT:- Message<"+msg+"> sent to %s:%s\n", neighborAddr, neighborPort);
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
+	}
+	
+	public boolean getBoolean() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 }
