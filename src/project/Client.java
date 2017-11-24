@@ -13,6 +13,7 @@ public class Client extends Thread {
  	ObjectInputStream in;          //stream read from the socket
 	String message;                //message send to the server
 	String MESSAGE;                //capitalized message read from the server
+	String handShake;
 	String neighborAddr;
 	String neighborPort;
 	
@@ -31,7 +32,11 @@ public class Client extends Thread {
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
+			//sending handshake message
 			
+			handShake = "handshakeSent";
+			sendMessage(handShake);
+			System.out.printf("handshake message sent", neighborAddr, neighborPort);
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
