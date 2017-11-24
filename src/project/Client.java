@@ -1,8 +1,6 @@
 package project;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
@@ -28,25 +26,26 @@ public class Client extends Thread {
 		try{
 			//create a socket to connect to the server
 			requestSocket = new Socket(neighborAddr, new Integer(neighborPort));
-			System.out.printf("Connected to %d in port %d", neighborAddr, neighborPort);
+			System.out.printf("Connected to %s in port %s", neighborAddr, neighborPort);
 			//initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 			
 			//get Input from standard input
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
 			{
-				System.out.print("Hello, please input a sentence: ");
+				//System.out.print("Hello, please input a sentence: ");
 				//read a sentence from the standard input
-				message = bufferedReader.readLine();
+				//message = bufferedReader.readLine();
 				//Send the sentence to the server
+				message = "Prathyusha";
 				sendMessage(message);
 				//Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
 				//show the message to the user
-				System.out.println("Receive message: " + MESSAGE);
+				//System.out.println("Receive message: " + MESSAGE);
 			}
 		}
 		catch (ConnectException e) {
@@ -60,7 +59,7 @@ public class Client extends Thread {
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
-		}
+		} 
 		finally{
 			//Close connections
 			try{
