@@ -48,7 +48,6 @@ public class peerProcess {
 				Server serverThread = new Server(Peer.getInstance().portNum);
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
-					System.out.println("inside");
 					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
 					clientThread.start();
 				}
