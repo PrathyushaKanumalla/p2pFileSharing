@@ -131,6 +131,10 @@ public class Client extends Thread {
 		sendMessage(bitField);
 	}
 
+	private void sendInterested(){
+		String interestedMsg = "dummy text";
+		sendMessage(interestedMsg);
+	}
 	void sendMessage(String msg)
 	{
 		try{
