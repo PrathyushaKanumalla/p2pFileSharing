@@ -6,24 +6,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Map.Entry;
 
-public class Server extends Thread{
+import project.Constants.ScanState;
 
-	private int portNum;
-	
-	Server (String portNum) {
-		this.portNum = new Integer(portNum);
-	}
+public class Server extends Thread{
 
 	public void run(){
 		System.out.print("*The Server is running*"); 
 		ServerSocket listener = null;
 
 		try {
-			listener = new ServerSocket(portNum);
+			listener = new ServerSocket(Integer.parseInt(Peer.getInstance().portNum));
 			for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
-				new Handler(listener.accept(),clientPeerId).start();
+				new Handler(listener.accept(),Peer.getInstance().neighbors.get(clientPeerId)).start();
 				System.out.println("*My Server Connected to "  + clientPeerId + " *");
 			}
 		} catch (IOException e) {
@@ -43,43 +40,64 @@ public class Server extends Thread{
 	 * loop and are responsible for dealing with a single client's requests.
 	 */
 	private static class Handler extends Thread {
-		private String message;    //message received from the client
 		private Socket connection;
 		private ObjectInputStream in;	//stream read from the socket
 		private ObjectOutputStream out;    //stream write to the socket
-		private int clientNum;
-		
-		public Handler(Socket connection, int clientNum) {
+		private RemotePeerInfo neighbor;
+
+		public Handler(Socket connection, RemotePeerInfo neighbor) {
 			this.connection = connection;
-			this.clientNum = clientNum;
+			this.neighbor = neighbor;
 		}
-		
+
 		public void run() {
 			try{
 				//initialize Input and Output streams
 				out = new ObjectOutputStream(connection.getOutputStream());
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
-				try{
-					while(true)
-					{
-						//receive the message sent from the client
-						message = (String)in.readObject();
-						//show the message to the user
-						System.out.printf("SERVER:- Received message: <%s> from client %s\n" ,message, clientNum);
-						//send MESSAGE back to the client
-						sendMessage("Prathyusha Server Received");
-						for (Entry<Integer, RemotePeerInfo> peer : Peer.getInstance().neighbors.entrySet()) {
-							peer.getValue().flag = true;
+				while(true)
+				{
+					//show the message to the user
+					switch (neighbor.getState()) {
+						case START: {
+							if (neighbor.peerId > Peer.getInstance().peerID) {
+								byte[] handShakeMsg = new byte[32];
+								if ((in.read(handShakeMsg)) > 0) {
+									byte[] peerId =  Arrays.copyOfRange(handShakeMsg, 28, 32);
+									if (neighbor.peerId == Integer.parseInt(peerId.toString())) {
+										System.out.println("SERVER:- Neighbor <" + peerId + "> validated");
+										//if not validated it does not proceed further
+										neighbor.setState(ScanState.RXVED_HAND_SHAKE);
+									}
+									System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,handShakeMsg, neighbor.peerId);
+									break;
+								}
+							}
+						}
+						case RXVED_HAND_SHAKE: {
+							sendHandShake();
+							neighbor.setState(ScanState.SENT_HAND_SHAKE);
+						}
+						default: {
+							String message = null;
+							//receive the message sent from the client
+							if ((message = (String)in.readObject()) != null ) {
+								System.out.printf("SERVER:- Received message: <%s> from client %d\n" , message, neighbor.peerId);
+								message = "Prathyusha Server Received " + message;
+								//send MESSAGE back to the client
+								sendMessage(message);
+							}
+							break;
 						}
 					}
 				}
-				catch(ClassNotFoundException classnot){
-					System.err.println("Data received in unknown format");
-				}
 			}
 			catch(IOException ioException){
-				System.out.printf("Disconnect with Client %s\n" ,clientNum);
+				System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			finally{
 				//Close connections
@@ -89,9 +107,14 @@ public class Server extends Thread{
 					connection.close();
 				}
 				catch(IOException ioException){
-					System.out.printf("Disconnect with Client %s\n" , clientNum);
+					System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
 				}
 			}
+		}
+
+		private void sendHandShake() {
+			String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
+			sendMessage(handShake);
 		}
 
 		//send a message to the output stream
@@ -100,7 +123,7 @@ public class Server extends Thread{
 			try{
 				out.writeObject(msg);
 				out.flush();
-				System.out.printf("SERVER:- Sent message:<%s> to Client %s\n" ,msg, clientNum);
+				System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,msg, neighbor.peerId);
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();

@@ -45,10 +45,10 @@ public class peerProcess {
 				//syso the same.
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-				Server serverThread = new Server(Peer.getInstance().portNum);
+				Server serverThread = new Server();
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
-					Client clientThread = new Client(neighbor.getValue().peerAddress, neighbor.getValue().peerPort);
+					Client clientThread = new Client(neighbor.getValue());
 					clientThread.start();
 				}
 			} catch (NumberFormatException e) {
@@ -69,7 +69,7 @@ public class peerProcess {
 			while((row = in.readLine()) != null) {
 				 String[] tokens = row.split("\\s+");
 			     Peer.getInstance().neighbors.put(new Integer(tokens[0]), 
-			    		 new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
+			    		 new RemotePeerInfo(new Integer(tokens[0]), tokens[1], tokens[2]));
 			}
 			Peer.getInstance().portNum = Peer.getInstance().neighbors.get(currPeerId).peerPort;
 			Peer.getInstance().neighbors.remove(currPeerId);

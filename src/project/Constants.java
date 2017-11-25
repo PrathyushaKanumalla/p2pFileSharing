@@ -9,6 +9,20 @@ public class Constants {
 	public static final String COMMONCFG = "Common.cfg";
 	public static final String PEERINFO = "PeerInfo.cfg";
 	
-	public static final  byte[] HANDSHAKEHEADER = "P2PFILESHARINGPROJ".getBytes();
-	public static final byte[] ZERO_BITS = {0,0,0,0,0,0,0,0,0,0};
+	public static final String HANDSHAKEHEADER="P2PFILESHARINGPROJ";
+	public static final String ZERO_BITS="0000000000";
+	
+	public static enum ScanState{
+		START("START"), SENT_HAND_SHAKE("SENT_HAND_SHAKE"), RXVED_HAND_SHAKE("RXVED_HAND_SHAKE");
+		
+		ScanState(String text) {
+			this.text = text;
+		}
+
+		final String text;
+
+		String getText() {
+			return text;
+		}
+	}
 }

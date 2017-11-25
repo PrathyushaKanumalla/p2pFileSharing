@@ -1,5 +1,7 @@
 package project;
 
+import project.Constants.ScanState;
+
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -10,13 +12,22 @@ package project;
  */
 
 public class RemotePeerInfo {
-	public String peerId;
+	public int peerId;
 	public String peerAddress;
 	public String peerPort;
 	public byte[] peerBitFieldInfo;
 	public boolean flag;
+	private ScanState state =  ScanState.START;
 	
-	public RemotePeerInfo(String pId, String pAddress, String pPort) {
+	public synchronized ScanState getState() {
+		return state;
+	}
+
+	public synchronized void setState(ScanState state) {
+		this.state = state;
+	}
+
+	public RemotePeerInfo(int pId, String pAddress, String pPort) {
 		peerId = pId;
 		peerAddress = pAddress;
 		peerPort = pPort;
