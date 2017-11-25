@@ -143,5 +143,21 @@ public class Client extends Thread {
 			ioException.printStackTrace();
 		}
 	}
+		
+	public byte[] getMessage(String messageType){
+		byte[] res = messageType.getBytes();
+		int length =messageType.length();
+//		byte[] temp = ByteBuffer.allocate(4).putInt(length).array();
+		byte[] bytes = new byte[4];
+		for (int i = 0; i < 4; i++) {
+		    bytes[i] = (byte)(length >>> (i * 8));
+		}
+		
+		byte[] combined = new byte[bytes.length + res.length];
+		System.arraycopy(bytes,0,combined,0         ,bytes.length);
+		System.arraycopy(res,0,combined,res.length,res.length);
+		return combined;
+	}
+	
 
 }
