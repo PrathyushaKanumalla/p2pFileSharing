@@ -76,8 +76,20 @@ public class Server extends Thread{
 							}
 						}
 						case RXVED_HAND_SHAKE: {
+							System.out.println("SERVER:- Sent handShake message ");
 							sendHandShake();
 							neighbor.setState(ScanState.SENT_HAND_SHAKE);
+						}
+						case SENT_HAND_SHAKE:{
+							//receive bit field message
+							System.out.println("SERVER:- Received bit filed message ");
+							neighbor.setState(ScanState.RXVED_BIT_FIELD);
+							break;
+						}
+						case RXVED_BIT_FIELD:{
+							System.out.println("SERVER:- Sent Bit field ack");
+							break;
+							// neighbor.setState(ScanState.)
 						}
 						default: {
 							String message = null;

@@ -60,6 +60,29 @@ public class Client extends Thread {
 						} //else continues to wait
 						break;
 					}
+					case RXVED_HAND_SHAKE:{
+						sendBitFiled();
+						neighbor.setState(ScanState.SENT_BIT_FIELD);
+						break;
+					}
+					case SENT_BIT_FIELD:{
+						byte[] sentBitFiled = new byte[32];
+						if(in.read(sentBitFiled) > 0){
+							//do something related to this
+							System.out.println("CLIENT:- Neighbor Bit field ack");
+							neighbor.setState(ScanState.RXVED_BIT_FIELD);
+						}
+						break;
+					}
+					case RXVED_BIT_FIELD:{
+						sendInterested();
+						neighbor.setState(ScanState.SENT_INTERESTED);
+						break;
+
+					}
+					case SENT_INTERESTED:{
+						//do something with interested.
+					}
 					default: {
 						//Send the sentence to the server
 						String message = "default_behavior_pratServer";
@@ -101,6 +124,11 @@ public class Client extends Thread {
 	private void sendHandShake() {
 		String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
 		sendMessage(handShake);
+	}
+
+	private void sendBitFiled(){
+		String bitField = "dont know what to send and how to store";
+		sendMessage(bitField);
 	}
 
 	void sendMessage(String msg)

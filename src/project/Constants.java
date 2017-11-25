@@ -13,7 +13,12 @@ public class Constants {
 	public static final String ZERO_BITS="0000000000";
 	
 	public static enum ScanState{
-		START("START"), SENT_HAND_SHAKE("SENT_HAND_SHAKE"), RXVED_HAND_SHAKE("RXVED_HAND_SHAKE");
+		START("START"), 
+		SENT_HAND_SHAKE("SENT_HAND_SHAKE"), 
+		RXVED_HAND_SHAKE("RXVED_HAND_SHAKE"), 
+		SENT_BIT_FIELD("SENT_BIT_FIELD"),
+		RXVED_BIT_FIELD("RXVED_BIT_FIELD"),
+		SENT_INTERESTED("SENT_INTERESTED");
 		
 		ScanState(String text) {
 			this.text = text;

@@ -17,6 +17,7 @@ public class Peer {
 	}
 
 	public int peerID;
+	public byte[] bitField;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
 	public static String portNum;
