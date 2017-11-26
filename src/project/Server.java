@@ -63,88 +63,86 @@ public class Server extends Thread{
 				{
 					//show the message to the user
 					switch (neighbor.getState()) {
-						case SERVER_START: {
-								byte[] handShakeMsg = new byte[32];
-								System.out.println("SERVER:- server waiting to read");
-								if ((in.read(handShakeMsg)) > 0) {
-									byte[] peerId =  Arrays.copyOfRange(handShakeMsg, 28, 32);
-									if (neighbor.peerId == Integer.parseInt(peerId.toString())) {
-										System.out.println("SERVER:- Neighbor <" + peerId + "> validated");
-										//if not validated it does not proceed further
-										neighbor.setState(ScanState.SERVER_RXVED_HAND_SHAKE);
-									}
-									System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,handShakeMsg, neighbor.peerId);
-									break;
-								} else 
-									System.out.println("SERVER:- couldn't receive the msg");
+					case SERVER_START: {
+						byte[] handShakeMsg = new byte[32];
+						System.out.println("SERVER:- server waiting to read");
+						in.read(handShakeMsg);
+						if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
+							System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,new String(handShakeMsg), neighbor.peerId);
+							System.out.println("SERVER:- Neighbor <" + neighbor.peerId +"> validated");
+							//if not validated it does not proceed further
+							neighbor.setState(ScanState.SERVER_RXVED_HAND_SHAKE);
 						}
-						case SERVER_RXVED_HAND_SHAKE: {
-							System.out.println("SERVER:- Sent handShake message ");
-							sendHandShake();
-							neighbor.setState(ScanState.SERVER_SENT_HAND_SHAKE);
-						}
-						case SERVER_SENT_HAND_SHAKE:{
-							//receive bit field message
-							System.out.println("SERVER:- Received bit filed message ");
-							neighbor.setState(ScanState.SERVER_RXVED_BIT_FIELD);
-							break;
-						}
-						case SERVER_RXVED_BIT_FIELD:{
-							System.out.println("SERVER:- Sent Bit field ack");
-							break;
-							// neighbor.setState(ScanState.)
-						}
-						default: {
-							String message = null;
+						break;
+					} 
+				case SERVER_RXVED_HAND_SHAKE: {
+					System.out.println("SERVER:- Sent handShake message ");
+					sendHandShake();
+					neighbor.setState(ScanState.SERVER_SENT_HAND_SHAKE);
+					break;
+				}
+				case SERVER_SENT_HAND_SHAKE:{
+					//receive bit field message
+					System.out.println("SERVER:- Received bit filed message ");
+					neighbor.setState(ScanState.SERVER_RXVED_BIT_FIELD);
+					break;
+				}
+				case SERVER_RXVED_BIT_FIELD:{
+					System.out.println("SERVER:- Sent Bit field ack");
+					break;
+					// neighbor.setState(ScanState.)
+				}
+				default: {
+					/*String message = null;
 							//receive the message sent from the client
 							if ((message = (String)in.readObject()) != null ) {
 								System.out.printf("SERVER:- Received message: <%s> from client %d\n" , message, neighbor.peerId);
 								message = "Prathyusha Server Received " + message;
 								//send MESSAGE back to the client
 								sendMessage(message);
-							}
-							break;
-						}
-					}
+							}*/
+					break;
 				}
+				}
+			}
+		}
+		catch(IOException ioException){
+			System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
+		}/* catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+		finally{
+			//Close connections
+			try{
+				in.close();
+				out.close();
+				connection.close();
 			}
 			catch(IOException ioException){
 				System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			finally{
-				//Close connections
-				try{
-					in.close();
-					out.close();
-					connection.close();
-				}
-				catch(IOException ioException){
-					System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
-				}
 			}
 		}
-
-		private void sendHandShake() {
-			String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
-			sendMessage(handShake);
-		}
-
-		//send a message to the output stream
-		public void sendMessage(String msg)
-		{
-			try{
-				out.writeObject(msg);
-				out.flush();
-				System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,msg, neighbor.peerId);
-			}
-			catch(IOException ioException){
-				ioException.printStackTrace();
-			}
-		}
-
 	}
+
+	private void sendHandShake() {
+		String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
+		sendMessage(handShake);
+	}
+
+	//send a message to the output stream
+	public void sendMessage(String msg)
+	{
+		try{
+			out.write(msg.getBytes());
+			out.flush();
+			System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,msg, neighbor.peerId);
+		}
+		catch(IOException ioException){
+			ioException.printStackTrace();
+		}
+	}
+
+}
 
 }

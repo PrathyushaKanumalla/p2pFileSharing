@@ -17,7 +17,7 @@ public class RemotePeerInfo {
 	public String peerPort;
 	public byte[] peerBitFieldInfo;
 	public boolean flag;
-	private ScanState state =  ScanState.START;
+	private ScanState state =  ScanState.DEFAULT;
 	
 	public synchronized ScanState getState() {
 		return state;

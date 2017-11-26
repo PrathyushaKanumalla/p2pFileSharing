@@ -21,4 +21,13 @@ public class Peer {
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
 	public static String portNum;
+	
+	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
+		String message = new String(handShakeMsg);
+		if (message.startsWith(Constants.HANDSHAKEHEADER) &&
+				neighbors.containsKey(Integer.parseInt(message.substring(28, 32)))) {
+			return true;
+		}
+		return false;
+	}
 }
