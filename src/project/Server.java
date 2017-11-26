@@ -56,37 +56,40 @@ public class Server extends Thread{
 				out = new ObjectOutputStream(connection.getOutputStream());
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
+				if (neighbor.peerId > Peer.getInstance().peerID) {
+					neighbor.setState(ScanState.SERVER_START);
+				}
 				while(true)
 				{
 					//show the message to the user
 					switch (neighbor.getState()) {
-						case START: {
-							if (neighbor.peerId > Peer.getInstance().peerID) {
+						case SERVER_START: {
 								byte[] handShakeMsg = new byte[32];
+								System.out.println("SERVER:- server waiting to read");
 								if ((in.read(handShakeMsg)) > 0) {
 									byte[] peerId =  Arrays.copyOfRange(handShakeMsg, 28, 32);
 									if (neighbor.peerId == Integer.parseInt(peerId.toString())) {
 										System.out.println("SERVER:- Neighbor <" + peerId + "> validated");
 										//if not validated it does not proceed further
-										neighbor.setState(ScanState.RXVED_HAND_SHAKE);
+										neighbor.setState(ScanState.SERVER_RXVED_HAND_SHAKE);
 									}
 									System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,handShakeMsg, neighbor.peerId);
 									break;
-								}
-							}
+								} else 
+									System.out.println("SERVER:- couldn't receive the msg");
 						}
-						case RXVED_HAND_SHAKE: {
+						case SERVER_RXVED_HAND_SHAKE: {
 							System.out.println("SERVER:- Sent handShake message ");
 							sendHandShake();
-							neighbor.setState(ScanState.SENT_HAND_SHAKE);
+							neighbor.setState(ScanState.SERVER_SENT_HAND_SHAKE);
 						}
-						case SENT_HAND_SHAKE:{
+						case SERVER_SENT_HAND_SHAKE:{
 							//receive bit field message
 							System.out.println("SERVER:- Received bit filed message ");
-							neighbor.setState(ScanState.RXVED_BIT_FIELD);
+							neighbor.setState(ScanState.SERVER_RXVED_BIT_FIELD);
 							break;
 						}
-						case RXVED_BIT_FIELD:{
+						case SERVER_RXVED_BIT_FIELD:{
 							System.out.println("SERVER:- Sent Bit field ack");
 							break;
 							// neighbor.setState(ScanState.)

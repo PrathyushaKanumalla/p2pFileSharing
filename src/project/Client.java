@@ -39,15 +39,20 @@ public class Client extends Thread {
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
 			{
+				if (neighbor.peerId < Peer.getInstance().peerID) {
+					neighbor.setState(ScanState.CLIENT_START);
+				}
+				
 				switch (neighbor.getState()) {
-					case START: {
-						if (neighbor.peerId < Peer.getInstance().peerID) {
+					case CLIENT_START: {
+						System.out.println("CLIENT:- the state is START");
+							System.out.println("CLIENT:- sent handshake msg");
 							sendHandShake();
-							neighbor.setState(ScanState.SENT_HAND_SHAKE);
-						} //else states are modified by server
+							neighbor.setState(ScanState.CLIENT_SENT_HAND_SHAKE);
+						 //else states are modified by server
 						break;
 					}	
-					case SENT_HAND_SHAKE: {
+					case CLIENT_SENT_HAND_SHAKE: {
 						byte[] handShakeMsg = new byte[32];
 						if ((in.read(handShakeMsg)) > 0) {
 							//hand shake msg received
@@ -55,32 +60,32 @@ public class Client extends Thread {
 							if (Peer.getInstance().neighbors.containsKey(peerId)) {
 								System.out.println("CLIENT:- Neighbor <" + peerId + "> validated");
 								//if not validated it does not proceed further
-								neighbor.setState(ScanState.RXVED_HAND_SHAKE);
+								neighbor.setState(ScanState.CLIENT_RXVED_HAND_SHAKE);
 							}
 						} //else continues to wait
 						break;
 					}
-					case RXVED_HAND_SHAKE:{
+					case CLIENT_RXVED_HAND_SHAKE:{
 						sendBitFiled();
-						neighbor.setState(ScanState.SENT_BIT_FIELD);
+						neighbor.setState(ScanState.CLIENT_SENT_BIT_FIELD);
 						break;
 					}
-					case SENT_BIT_FIELD:{
+					case CLIENT_SENT_BIT_FIELD:{
 						byte[] sentBitFiled = new byte[32];
 						if(in.read(sentBitFiled) > 0){
 							//do something related to this
 							System.out.println("CLIENT:- Neighbor Bit field ack");
-							neighbor.setState(ScanState.RXVED_BIT_FIELD);
+							neighbor.setState(ScanState.CLIENT_RXVED_BIT_FIELD);
 						}
 						break;
 					}
-					case RXVED_BIT_FIELD:{
+					case CLIENT_RXVED_BIT_FIELD:{
 						sendInterested();
-						neighbor.setState(ScanState.SENT_INTERESTED);
+						neighbor.setState(ScanState.CLIENT_SENT_INTERESTED);
 						break;
 
 					}
-					case SENT_INTERESTED:{
+					case CLIENT_SENT_INTERESTED:{
 						//do something with interested.
 					}
 					default: {
