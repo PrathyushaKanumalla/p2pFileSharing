@@ -83,14 +83,28 @@ public class Server extends Thread{
 				}
 				case SERVER_SENT_HAND_SHAKE:{
 					//receive bit field message
-					System.out.println("SERVER:- Received bit filed message ");
-					neighbor.setState(ScanState.SERVER_RXVED_BIT_FIELD);
+					byte[] bitFieldMsg = new byte[32];
+					in.read(bitFieldMsg);
+					if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
+						//do something related to this
+						System.out.println("SERVER:- Received bit field message ");
+						neighbor.setState(ScanState.SERVER_RXVED_BIT_FIELD);
+					}
 					break;
 				}
 				case SERVER_RXVED_BIT_FIELD:{
+					sendBitField();
 					System.out.println("SERVER:- Sent Bit field ack");
+					neighbor.setState(ScanState.SERVER_SENT_BIT_FIELD);
 					break;
 					// neighbor.setState(ScanState.)
+				}
+				case SERVER_SENT_BIT_FIELD :{
+					byte[] interestedMsg = new byte[32];
+					in.read(interestedMsg);
+					System.out.println("SERVER:- Received interested messgae- " + new String(interestedMsg));
+					neighbor.setState(ScanState.SERVER_RXVED_INTERESTED);
+					break;
 				}
 				default: {
 					/*String message = null;
@@ -141,6 +155,11 @@ public class Server extends Thread{
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
+	}
+	
+	private void sendBitField(){
+		String bitField = "server dont know what to send and how to store";
+		sendMessage(bitField);
 	}
 
 }

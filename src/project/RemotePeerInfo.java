@@ -27,7 +27,7 @@ public class RemotePeerInfo {
 		this.state = state;
 	}
 
-	public RemotePeerInfo(int pId, String pAddress, String pPort) {
+	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;
 		peerAddress = pAddress;
 		peerPort = pPort;

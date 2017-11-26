@@ -64,15 +64,16 @@ public class Client extends Thread {
 					break;
 				}
 				case CLIENT_RXVED_HAND_SHAKE:{
-					sendBitFiled();
+					sendBitField();
 					neighbor.setState(ScanState.CLIENT_SENT_BIT_FIELD);
 					break;
 				}
 				case CLIENT_SENT_BIT_FIELD:{
-					byte[] sentBitFiled = new byte[32];
-					if(in.read(sentBitFiled) > 0){
+					byte[] bitFieldMsg = new byte[32];
+					in.read(bitFieldMsg);
+					if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
 						//do something related to this
-						System.out.println("CLIENT:- Neighbor Bit field ack");
+						System.out.println("CLIENT:- Received Neighbor Bit field");
 						neighbor.setState(ScanState.CLIENT_RXVED_BIT_FIELD);
 					}
 					break;
@@ -129,8 +130,8 @@ public class Client extends Thread {
 		sendMessage(handShake);
 	}
 
-	private void sendBitFiled(){
-		String bitField = "dont know what to send and how to store";
+	private void sendBitField(){
+		String bitField = "client dont know what to send and how to store";
 		sendMessage(bitField);
 	}
 

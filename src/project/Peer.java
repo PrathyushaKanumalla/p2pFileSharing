@@ -30,4 +30,9 @@ public class Peer {
 		}
 		return false;
 	}
+
+	public boolean validateBitFieldMsg(byte[] bitFieldMsg) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 }
