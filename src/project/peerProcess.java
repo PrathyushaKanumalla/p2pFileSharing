@@ -4,6 +4,7 @@ package project;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 
@@ -16,9 +17,24 @@ public class peerProcess {
 
 		while ((configLine = br.readLine()) != null) {
 
-		String[] split = configLine.split(" ");
-		Peer.getInstance().configProps.put(split[0], split[1]);
-
+			String[] split = configLine.split(" ");
+			Peer.getInstance().configProps.put(split[0], split[1]);
+			
+			int fileSize = Integer.parseInt(Peer.getInstance().configProps.get("FileSize"));
+			int pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
+			
+			int noOfPieces=0;
+			if(fileSize % pieceSize ==0){
+				noOfPieces = fileSize/pieceSize;
+			}
+			else{
+				noOfPieces = fileSize/pieceSize;
+				int excess = fileSize - fileSize * noOfPieces;
+				noOfPieces+=1;
+			}
+			Peer.getInstance().bitField = new byte[(int)noOfPieces];
+			Arrays.fill(Peer.getInstance().bitField, (byte) 0);
+		
 		}
 		br.close();
 	}
