@@ -6,8 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.Map.Entry;
 
 import project.Constants.ScanState;
 
@@ -61,32 +59,32 @@ public class Server extends Thread{
 				}
 				while(true)
 				{
-					// if i receive have msg
-					//send interested or not interested as response; 
-					
+					/** if i receive have msg
+					send interested or not interested as response; 
+					**/
 					//show the message to the user
 					switch (neighbor.getServerState()) {
 					case DONE_HAND_SHAKE: {
 						//go to SERVER_LISTEN
 					}
 					case SERVER_LISTEN: {
-						//listen  for messages
-						// 1. initial && if bitfield -> send interested/not interested, set initial = false;
-						// 2. unchoke message -> state = unchoke; set initial = false if it is true;
-						//listen for unchoke/choke msges
-						//state = unchoke or choke
+						/**listen  for messages
+						1. initial && if bitfield -> send interested/not interested, set initial = false;
+						 2. unchoke message -> state = unchoke; set initial = false if it is true;
+						listen for unchoke/choke msges
+						state = unchoke or choke**/
 					}
 					case UNCHOKE: {
-						//respond with request or not interested
-						// if request -> state = PIECE
-						//or send not interested and go to server_listen
+						/**respond with request or not interested
+						if request -> state = PIECE
+						or send not interested and go to server_listen*/
 					}
 					case PIECE: {
-						//listen for a piece msg;
-						//if piece -> update bit field
-						//->then update  updatePieceInfo in peer;
-						//send request again by putting state = unchoke;
-						//if choke occurs -go to server listen again
+						/**listen for a piece msg;
+						if piece -> update bit field
+						->then update  updatePieceInfo in peer;
+						send request again by putting state = unchoke;
+						if choke occurs -go to server listen again**/
 					}
 					case START: {
 						byte[] handShakeMsg = new byte[32];
