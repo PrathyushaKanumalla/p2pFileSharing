@@ -20,7 +20,7 @@ public class Peer {
 	public byte[] bitField;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
-	public static String portNum;
+	public String portNum;
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
 		String message = new String(handShakeMsg);
@@ -34,5 +34,10 @@ public class Peer {
 	public boolean validateBitFieldMsg(byte[] bitFieldMsg) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+
+	public boolean hasCompleteFile() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
