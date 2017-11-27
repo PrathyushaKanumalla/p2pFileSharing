@@ -38,73 +38,95 @@ public class Client extends Thread {
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			if (neighbor.peerId < Peer.getInstance().peerID) {
-				neighbor.setState(ScanState.CLIENT_START);
+				neighbor.setClientState(ScanState.START);
 			}
 
 			while(true)
 			{
-				switch (neighbor.getState()) {
-				case CLIENT_START: {
-					System.out.println("CLIENT:- the state is START");
-					System.out.println("CLIENT:- sent handshake msg");
-					sendHandShake();
-					neighbor.setState(ScanState.CLIENT_SENT_HAND_SHAKE);
-					//else states are modified by server
-					break;
-				}	
-				case CLIENT_SENT_HAND_SHAKE: {
-					byte[] handShakeMsg = new byte[32];
-					in.read(handShakeMsg);
-					//hand shake msg received
-					if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
-						System.out.println("CLIENT:- Neighbor <" + neighbor.peerId +"> validated");
-						//if not validated it does not proceed further
-						neighbor.setState(ScanState.CLIENT_RXVED_HAND_SHAKE);
-					} //else continues to wait
-					break;
+				if (neighbor.updatePieceInfo) {
+					/**send have message to this neighbor
+					receive interested msg - set to false
+					update interested list**/
 				}
-				case CLIENT_RXVED_HAND_SHAKE:{
-					if (Peer.getInstance().hasCompleteFile()) {
-						sendBitField();
-						neighbor.setState(ScanState.CLIENT_SENT_BIT_FIELD);
+				switch (neighbor.getClientState()) {
+					case START: {
+						System.out.println("CLIENT:- the state is START");
+						System.out.println("CLIENT:- sent handshake msg");
+						sendHandShake();
+						neighbor.setClientState(ScanState.SENT_HAND_SHAKE);
+						//else states are modified by server
+						break;
+					}	
+					case SENT_HAND_SHAKE: {
+						byte[] handShakeMsg = new byte[32];
+						in.read(handShakeMsg);
+						//hand shake msg received
+						if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
+							System.out.println("CLIENT:- Neighbor <" + neighbor.peerId +"> validated");
+							//if not validated it does not proceed further
+							neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
+							neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
+						} //else continues to wait
+						break;
 					}
-					break;
-				}
-				case CLIENT_SENT_BIT_FIELD:{
-					//if bit field message sent wait for interested/not interested msg
-					byte[] interestedMsg = new byte[10];
-					in.read(interestedMsg);
-					System.out.println("CLIENT:- Received interested messgae- " + new String(interestedMsg));
-					neighbor.setState(ScanState.CLIENT_RXVED_INTERESTED);
-					
-					/*byte[] bitFieldMsg = new byte[9];
-					in.read(bitFieldMsg);
-					if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
-						//do something related to this
-						System.out.println("CLIENT:- Received Neighbor Bit field");
-						neighbor.setState(ScanState.CLIENT_RXVED_BIT_FIELD);
-					}*/
-					break;
-				}
-				case CLIENT_RXVED_BIT_FIELD:{
-					sendInterested();
-					neighbor.setState(ScanState.CLIENT_SENT_INTERESTED);
-					break;
-
-				}
-				case CLIENT_SENT_INTERESTED:{
-					//do something with interested.
-				}
-				default: {
-					/*//Send the sentence to the server
-						String message = "default_behavior_pratServer";
-						sendMessage(message);
-						//Receive the upperCase sentence from the server
-						message = (String)in.readObject();
-						//show the message to the user
-						System.out.printf("CLIENT:- Received the message: <%s>\n", message);*/
-					break;
-				}
+					case DONE_HAND_SHAKE:{
+						if (Peer.getInstance().hasCompleteFile()) {
+							sendBitField();
+							neighbor.setClientState(ScanState.SENT_BIT_FIELD);
+						} else {
+							neighbor.setClientState(ScanState.UPLOAD_START);
+						}
+						break;
+					}
+					case SENT_BIT_FIELD:{
+						//if bit field message sent wait for interested/not interested msg
+						byte[] interestedMsg = new byte[10];
+						in.read(interestedMsg);
+						System.out.println("CLIENT:- Received interested messgae- " + new String(interestedMsg));
+						neighbor.setClientState(ScanState.UPLOAD_START);
+	
+						/*byte[] bitFieldMsg = new byte[9];
+						in.read(bitFieldMsg);
+						if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
+							//do something related to this
+							System.out.println("CLIENT:- Received Neighbor Bit field");
+							neighbor.setState(ScanState.CLIENT_RXVED_BIT_FIELD);
+						}*/
+						break;
+					}
+					case UNCHOKE: {
+						//if this neighbor is selected as preferred neighbor
+						//send unchoke msg to the neighbor
+						//change state to RXVE_REQUEST
+					}
+					case RXVE_REQUEST: {
+						//if pref neighbors changed -> state to choke in the scheduler
+						//rxve request msg
+						//change state to PIECE
+					}
+					case PIECE: {
+						//if pref neighbors changed -> state to choke in the scheduler
+						//send peice msg
+						//wait to receive either request or not interested.
+						// in the mean time if the neighbbor is choked it should be handled.
+						//if request received -> go to piece again ;
+						// if not interested - > go to UPLOAD_START state.
+					}
+					case CHOKE: {
+						//if pref neighbors changed -> state to choke in the scheduler
+						//expect nothing.
+						//change to CLIENT_RXVED_INTERESTED
+					}
+					default: {
+						/*//Send the sentence to the server
+							String message = "default_behavior_pratServer";
+							sendMessage(message);
+							//Receive the upperCase sentence from the server
+							message = (String)in.readObject();
+							//show the message to the user
+							System.out.printf("CLIENT:- Received the message: <%s>\n", message);*/
+						break;
+					}
 				}
 			}
 		}

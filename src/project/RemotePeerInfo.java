@@ -17,19 +17,31 @@ public class RemotePeerInfo {
 	public String peerPort;
 	public byte[] peerBitFieldInfo;
 	public boolean flag;
-	private ScanState state =  ScanState.DEFAULT;
+	private ScanState clientState =  ScanState.DEFAULT;
+	private ScanState serverState =  ScanState.DEFAULT;
+	public boolean updatePieceInfo = false;
 	
-	public synchronized ScanState getState() {
-		return state;
-	}
-
-	public synchronized void setState(ScanState state) {
-		this.state = state;
-	}
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;
 		peerAddress = pAddress;
 		peerPort = pPort;
 	}
+	
+	public synchronized ScanState getClientState() {
+		return clientState;
+	}
+
+	public synchronized void setClientState(ScanState clientState) {
+		this.clientState = clientState;
+	}
+
+	public ScanState getServerState() {
+		return serverState;
+	}
+
+	public void setServerState(ScanState serverState) {
+		this.serverState = serverState;
+	}
+
 }

@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import project.Constants.ScanState;
+
 public class Peer {
 	
 	private Peer() {}

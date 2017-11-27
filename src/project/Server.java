@@ -57,13 +57,38 @@ public class Server extends Thread{
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
 				if (neighbor.peerId > Peer.getInstance().peerID) {
-					neighbor.setState(ScanState.SERVER_START);
+					neighbor.setServerState(ScanState.START);
 				}
 				while(true)
 				{
+					// if i receive have msg
+					//send interested or not interested as response; 
+					
 					//show the message to the user
-					switch (neighbor.getState()) {
-					case SERVER_START: {
+					switch (neighbor.getServerState()) {
+					case DONE_HAND_SHAKE: {
+						//go to SERVER_LISTEN
+					}
+					case SERVER_LISTEN: {
+						//listen  for messages
+						// 1. initial && if bitfield -> send interested/not interested, set initial = false;
+						// 2. unchoke message -> state = unchoke; set initial = false if it is true;
+						//listen for unchoke/choke msges
+						//state = unchoke or choke
+					}
+					case UNCHOKE: {
+						//respond with request or not interested
+						// if request -> state = PIECE
+						//or send not interested and go to server_listen
+					}
+					case PIECE: {
+						//listen for a piece msg;
+						//if piece -> update bit field
+						//->then update  updatePieceInfo in peer;
+						//send request again by putting state = unchoke;
+						//if choke occurs -go to server listen again
+					}
+					case START: {
 						byte[] handShakeMsg = new byte[32];
 						System.out.println("SERVER:- server waiting to read");
 						in.read(handShakeMsg);
@@ -71,41 +96,48 @@ public class Server extends Thread{
 							System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,new String(handShakeMsg), neighbor.peerId);
 							System.out.println("SERVER:- Neighbor <" + neighbor.peerId +"> validated");
 							//if not validated it does not proceed further
-							neighbor.setState(ScanState.SERVER_RXVED_HAND_SHAKE);
+							neighbor.setServerState(ScanState.RXVED_HAND_SHAKE);
 						}
 						break;
 					} 
-				case SERVER_RXVED_HAND_SHAKE: {
+				case RXVED_HAND_SHAKE: {
 					System.out.println("SERVER:- Sent handShake message ");
 					sendHandShake();
-					neighbor.setState(ScanState.SERVER_SENT_HAND_SHAKE);
+					neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
+					neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
 					break;
 				}
-				case SERVER_SENT_HAND_SHAKE:{
-					//receive bit field message
-					byte[] bitFieldMsg = new byte[9];
+				//case AFTER_HAND_SHAKE:{
+					//If I receive bit field message -> update neighbors bit field
+					// change state to SERVER_RXVED_BIT_FIELD
+					//
+					/*byte[] bitFieldMsg = new byte[9];
 					in.read(bitFieldMsg);
 					if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
 						//do something related to this
 						System.out.println("SERVER:- Received bit field message ");
 						neighbor.setState(ScanState.SERVER_RXVED_BIT_FIELD);
-					}
-					break;
-				}
-				case SERVER_RXVED_BIT_FIELD:{
+					}*/
+					//break;
+				//}
+				/*case SERVER_RXVED_BIT_FIELD:{
+					//if I have file 
+					//send not interested
+					//and state = SERVER_SENT_BIT_FIELD
 					sendBitField();
 					System.out.println("SERVER:- Sent Bit field ack");
-					neighbor.setState(ScanState.SERVER_SENT_BIT_FIELD);
+					neighbor.setState(ScanState.SERVER_LISTEN);
 					break;
 					// neighbor.setState(ScanState.)
 				}
 				case SERVER_SENT_BIT_FIELD :{
+					//wait for int/ not interested msg
 					byte[] interestedMsg = new byte[10];
 					in.read(interestedMsg);
 					System.out.println("SERVER:- Received interested messgae- " + new String(interestedMsg));
-					neighbor.setState(ScanState.SERVER_RXVED_INTERESTED);
+					neighbor.setState(ScanState.SERVER_LISTEN);
 					break;
-				}
+				}*/
 				default: {
 					/*String message = null;
 							//receive the message sent from the client
