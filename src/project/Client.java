@@ -79,7 +79,7 @@ public class Client extends Thread {
 						break;
 					}
 					case SENT_BIT_FIELD:{
-						//if bit field message sent wait for interested/not interested msg
+						/**if bit field message sent wait for interested/not interested msg*/
 						byte[] interestedMsg = new byte[10];
 						in.read(interestedMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(interestedMsg));
@@ -95,30 +95,30 @@ public class Client extends Thread {
 						break;
 					}
 					case UNCHOKE: {
-						//if this neighbor is selected as preferred neighbor
-						//send unchoke msg to the neighbor
-						//change state to RXVE_REQUEST
+						/**if this neighbor is selected as preferred neighbor
+						send unchoke msg to the neighbor
+						change state to RXVE_REQUEST**/
 					}
 					case RXVE_REQUEST: {
-						//if pref neighbors changed -> state to choke in the scheduler
-						//rxve request msg
-						//change state to PIECE
+						/** if pref neighbors changed -> state to choke in the scheduler
+						rxve request msg
+						change state to PIECE**/
 					}
 					case PIECE: {
-						//if pref neighbors changed -> state to choke in the scheduler
-						//send peice msg
-						//wait to receive either request or not interested.
-						// in the mean time if the neighbbor is choked it should be handled.
-						//if request received -> go to piece again ;
-						// if not interested - > go to UPLOAD_START state.
+						/**if pref neighbors changed -> state to choke in the scheduler
+						send peice msg
+						wait to receive either request or not interested.
+						in the mean time if the neighbbor is choked it should be handled.
+						if request received -> go to piece again ;
+						if not interested - > go to UPLOAD_START state.**/
 					}
 					case CHOKE: {
-						//if pref neighbors changed -> state to choke in the scheduler
-						//expect nothing.
-						//change to CLIENT_RXVED_INTERESTED
+						/**if pref neighbors changed -> state to choke in the scheduler
+						expect nothing.
+						change to UPLOCAD_START**/
 					}
 					default: {
-						/*//Send the sentence to the server
+						/*Send the sentence to the server
 							String message = "default_behavior_pratServer";
 							sendMessage(message);
 							//Receive the upperCase sentence from the server
