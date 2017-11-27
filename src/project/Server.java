@@ -83,7 +83,7 @@ public class Server extends Thread{
 				}
 				case SERVER_SENT_HAND_SHAKE:{
 					//receive bit field message
-					byte[] bitFieldMsg = new byte[32];
+					byte[] bitFieldMsg = new byte[9];
 					in.read(bitFieldMsg);
 					if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
 						//do something related to this
@@ -100,7 +100,7 @@ public class Server extends Thread{
 					// neighbor.setState(ScanState.)
 				}
 				case SERVER_SENT_BIT_FIELD :{
-					byte[] interestedMsg = new byte[32];
+					byte[] interestedMsg = new byte[10];
 					in.read(interestedMsg);
 					System.out.println("SERVER:- Received interested messgae- " + new String(interestedMsg));
 					neighbor.setState(ScanState.SERVER_RXVED_INTERESTED);
@@ -158,7 +158,7 @@ public class Server extends Thread{
 	}
 	
 	private void sendBitField(){
-		String bitField = "server dont know what to send and how to store";
+		String bitField = "server123";
 		sendMessage(bitField);
 	}
 

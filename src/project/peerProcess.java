@@ -84,11 +84,14 @@ public class peerProcess {
 			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));
 			while((row = in.readLine()) != null) {
 				 String[] tokens = row.split("\\s+");
-			     Peer.getInstance().neighbors.put(new Integer(tokens[0]), 
-			    		 new RemotePeerInfo(new Integer(tokens[0]), tokens[1], tokens[2]));
+				 Integer peerId = new Integer(tokens[0]);
+			     if (peerId == currPeerId) {
+			    	 Peer.getInstance().portNum = tokens[2];
+			     } else {
+			    	 Peer.getInstance().neighbors.put(peerId, 
+				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
+			     }
 			}
-			Peer.getInstance().portNum = Peer.getInstance().neighbors.get(currPeerId).peerPort;
-			Peer.getInstance().neighbors.remove(currPeerId);
 			in.close();
 		}
 		catch (Exception e) {

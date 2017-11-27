@@ -64,18 +64,26 @@ public class Client extends Thread {
 					break;
 				}
 				case CLIENT_RXVED_HAND_SHAKE:{
-					sendBitField();
-					neighbor.setState(ScanState.CLIENT_SENT_BIT_FIELD);
+					if (Peer.getInstance().hasCompleteFile()) {
+						sendBitField();
+						neighbor.setState(ScanState.CLIENT_SENT_BIT_FIELD);
+					}
 					break;
 				}
 				case CLIENT_SENT_BIT_FIELD:{
-					byte[] bitFieldMsg = new byte[32];
+					//if bit field message sent wait for interested/not interested msg
+					byte[] interestedMsg = new byte[10];
+					in.read(interestedMsg);
+					System.out.println("CLIENT:- Received interested messgae- " + new String(interestedMsg));
+					neighbor.setState(ScanState.CLIENT_RXVED_INTERESTED);
+					
+					/*byte[] bitFieldMsg = new byte[9];
 					in.read(bitFieldMsg);
 					if (Peer.getInstance().validateBitFieldMsg(bitFieldMsg)) {
 						//do something related to this
 						System.out.println("CLIENT:- Received Neighbor Bit field");
 						neighbor.setState(ScanState.CLIENT_RXVED_BIT_FIELD);
-					}
+					}*/
 					break;
 				}
 				case CLIENT_RXVED_BIT_FIELD:{
@@ -131,7 +139,7 @@ public class Client extends Thread {
 	}
 
 	private void sendBitField(){
-		String bitField = "client dont know what to send and how to store";
+		String bitField = "client123";
 		sendMessage(bitField);
 	}
 
