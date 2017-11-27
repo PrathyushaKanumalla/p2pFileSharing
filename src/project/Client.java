@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
+import project.Constants.MsgType;
 import project.Constants.ScanState;
 
 public class Client extends Thread {
@@ -50,11 +51,9 @@ public class Client extends Thread {
 				}
 				switch (neighbor.getClientState()) {
 					case START: {
-						System.out.println("CLIENT:- the state is START");
-						System.out.println("CLIENT:- sent handshake msg");
+						System.out.println("CLIENT== MODE-START- sent handshake msg");
 						sendHandShake();
 						neighbor.setClientState(ScanState.SENT_HAND_SHAKE);
-						//else states are modified by server
 						break;
 					}	
 					case SENT_HAND_SHAKE: {
@@ -62,7 +61,7 @@ public class Client extends Thread {
 						in.read(handShakeMsg);
 						//hand shake msg received
 						if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
-							System.out.println("CLIENT:- Neighbor <" + neighbor.peerId +"> validated");
+							System.out.println("CLIENT== MODE-SENT_HAND_SHAKE - Neighbor <" + neighbor.peerId +"> validated");
 							//if not validated it does not proceed further
 							neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
 							neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
@@ -157,22 +156,36 @@ public class Client extends Thread {
 
 	private void sendHandShake() {
 		String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
-		sendMessage(handShake);
+		sendMessage(handShake.getBytes());
 	}
 
 	private void sendBitField(){
-		String bitField = "client123";
-		sendMessage(bitField);
+		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().bitField));
+	}
+
+	private byte[] msgWithPayLoad(MsgType msgType, byte[] bitField) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private byte[] msgWithoutPayLoad(MsgType msgType) {
+		byte[] message = new byte[5];
+		message[0] = (byte) 0x00000000;
+		message[1] = (byte) 0x00000000;
+		message[2] = (byte) 0x00000000;
+		message[3] = (byte) 1;
+		message[4] = msgType.value;
+		return message;
 	}
 
 	private void sendInterested(){
 		String interestedMsg = "dummy text";
-		sendMessage(interestedMsg);
+		sendMessage(interestedMsg.getBytes());
 	}
-	void sendMessage(String msg)
+	void sendMessage(byte[] msg)
 	{
 		try{
-			out.write(msg.getBytes());
+			out.write(msg);
 			out.flush();
 			System.out.printf("CLIENT:- Message<"+msg+"> sent to %s:%s\n", neighbor.peerAddress, neighbor.peerPort);
 		}
