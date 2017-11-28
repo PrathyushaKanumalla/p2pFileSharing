@@ -85,9 +85,9 @@ public class Server extends Thread{
 								in.read(bitField, 5, bitFieldSize);
 								Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
 								if (Peer.getInstance().bitField.equals(bitField)) {
-									sendInterestedMessage();
+									sendInterested();
 								} else {
-									sendNotInterestedMessage();
+									sendNotInterested();
 								}
 								neighbor.initial=false;
 							} else if (msg[0] == MsgType.UNCHOKE.value) {
@@ -100,23 +100,19 @@ public class Server extends Thread{
 							break;
 					}
 					case UNCHOKE: {
-
 						/**respond with request or not interested
 						if request -> state = PIECE
 						or send not interested and go to server_listen*/
-						byte [] msg=new byte[5];
-						in.read(msg);
-						Constants.MsgType msgType=Constants.getMsgType(msg);
-
-						if(compareBitField   ?? )
-						{
-							sendRequestMessage();
+						byte [] msg = new byte[1];
+						in.read(msg, 4, 1);
+						if (msg[0] == MsgType.UNCHOKE.value ) {
+							//sendRequestMessage();
 							neighbor.setServerState(Constants.ScanState.PIECE);
 						}
 
 						else
 						{
-							sendNotInterestedMessage();
+							sendNotInterested();
 							neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
 						}
 
@@ -134,8 +130,8 @@ public class Server extends Thread{
 
 						if(msgType==Constants.MsgType.PIECE)
 						{
-							updateBitField();
-							updatePieceInfo();
+							//updateBitField();
+							//updatePieceInfo();
 							neighbor.setServerState(Constants.ScanState.UNCHOKE);
 						}
 						if(msgType==Constants.MsgType.CHOKE)
@@ -244,100 +240,44 @@ public class Server extends Thread{
 			}
 		}
 
-		//private void sendBitField(){
-		//String bitField = "server123";
-		//sendMessage(bitField);
-		//	}
-
-
-		private byte[] msgWithPayLoad(MsgType msgType, byte[] field, byte[] payLoad) {
-			if (payLoad != null) {
-				byte[] result = new byte[field.length + payLoad.length];
-				System.arraycopy(field, 0, result, 0, field.length);
-				System.arraycopy(payLoad, 0, result, field.length, payLoad.length);
-				field = result;
-			}
-			int length = field.length;
+		
+		private void sendInterested(){
+			sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
+		}
+		
+		private void sendNotInterested(){
+			sendMessage(msgWithoutPayLoad(MsgType.NOT_INTERESTED));
+		}
+		
+		private byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+			/*if (payLoad != null) {
+				byte[] result = new byte[payLoad.length];
+		        System.arraycopy(field, 0, result, 0, field.length);
+		        System.arraycopy(payLoad, 0, result, field.length, payLoad.length);
+		        field = result;
+			}*/
+			int length = payLoad.length;
 			byte[] message = new byte[5+length];
-			System.arraycopy(createPrefix(length), 0, message, 0, 4);
+			System.arraycopy(createPrefix(length+1), 0, message, 0, 4);
 			message[4] = msgType.value;
-			System.arraycopy(field, 0, message, 5, field.length);
+			System.arraycopy(payLoad, 0, message, 5, payLoad.length);
 			return message;
 		}
-		private byte[] createPrefix(int len) {
-			byte[] prefix = new byte[4];
-			prefix[0] = (byte) ((len & 0xFF000000) >> 24);
-			prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
-			prefix[2] = (byte) ((len & 0x0000FF00) >> 8);
-			prefix[3] = (byte) (len & 0x000000FF);
-			return prefix;
-		}
+
 		private byte[] msgWithoutPayLoad(MsgType msgType) {
 			byte[] message = new byte[5];
 			System.arraycopy(createPrefix(1), 0, message, 0, 4);
 			message[4] = msgType.value;
 			return message;
 		}
-		private void sendInterestedMessage()
-		{
-			sendMessage(msgWithoutPayLoad(Constants.MsgType.INTERESTED));
-		}
-		private void sendNotInterestedMessage()
-		{
-			sendMessage(msgWithoutPayLoad(Constants.MsgType.NOT_INTERESTED));
-		}
-		private void sendChokeMessage()
-		{
-			sendMessage(msgWithoutPayLoad(Constants.MsgType.CHOKE));
-		}
-		private void sendUnChokeMesssage()
-		{
-			sendMessage(msgWithoutPayLoad(Constants.MsgType.UNCHOKE));
-		}
-
-		private void sendRequestMessage()
-		{
-			sendMessage(msgWithPayLoad(Constants.MsgType.REQUEST, Peer.getInstance().bitField, null));
-		}
-
-		/*private String getMsgType (byte a[])
-		{
-
-			char []message=(new String(a)).toCharArray();
-
-			switch(message[4])
-			{
-			case '0':
-				return "CHOKE";
-			case '1':
-				return "UNCHOKE";
-
-			case '2':
-				return "INTERESTED";
-
-
-			case '3':
-				return "NOT INTERESTED";
-
-			case '4':
-				return "HAVE";
-
-			case '5':
-				return "BITFIELD";
-
-			case '6':
-				return "REQUEST";
-
-			case '7':
-				return "PIECE";
-
-			default:
-				return "INVALID MSG";
-
-
-			}	
-		}*/
-
-	}
-
+		
+		public byte[] createPrefix(int len) {
+			byte[] prefix = new byte[4];
+			prefix[0] = (byte) ((len & 0xFF000000) >> 24);
+			prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
+			prefix[2] = (byte) ((len & 0x0000FF00) >> 8);
+			prefix[3] = (byte) (len & 0x000000FF);
+	        return prefix;
+	    }
+		
 }
