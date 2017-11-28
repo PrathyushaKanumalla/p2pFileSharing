@@ -7,5 +7,9 @@ public class Receivedpieces {
 	public Receivedpieces() {
 		pieceInfo = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 	}
+
+	public Receivedpieces(byte[] piece) {
+		pieceInfo = piece;
+	}
 	
 }

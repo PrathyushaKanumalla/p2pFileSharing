@@ -5,7 +5,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -124,12 +126,23 @@ public class peerProcess {
 				 Integer peerId = new Integer(tokens[0]);
 			     if (peerId == currPeerId) {
 			    	 Peer.getInstance().portNum = tokens[2];
+			    	 if (tokens[3].equals("1")) {
+				    	 Peer.getInstance().bitField.flip(0, Peer.getInstance().noOfPieces);
+				    	 String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
+				    			 + Peer.getInstance().configProps.get("FileName");
+				    	 FileInputStream fis = new FileInputStream(new File(fileName));
+				    	 for (int i = 0; i < Peer.getInstance().noOfPieces-2; i ++) {
+				    		 byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
+				    		 fis.read(piece, 0, Integer.parseInt(Peer.getInstance().configProps.get("PieceSize")));
+				    		 Peer.getInstance().pieces[i] = new Receivedpieces(piece);
+				    	 }
+				    	 byte[] piece = new byte[Peer.getInstance().excessPieceSize];
+			    		 fis.read(piece, 0, Peer.getInstance().excessPieceSize);
+			    		 Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
+				     }
 			     } else {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
-			     }
-			     if (tokens[3].equals("1")) {
-			    	 Peer.getInstance().bitField.flip(0, Peer.getInstance().noOfPieces);
 			     }
 			}
 			in.close();
