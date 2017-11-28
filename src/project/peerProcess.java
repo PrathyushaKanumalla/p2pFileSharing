@@ -293,11 +293,9 @@ public class peerProcess {
 				}
 				else{
 					System.out.println("determine logic started");
-					System.out.println(Peer.getInstance().interestedInMe.size());
-//					for(int i=0;i<Peer.getInstance().interestedInMe.size();i++){
-//						System.out.println(Peer.getInstance().interestedInMe.get(i));
-//					}
+
 					List<Integer> peerList = Peer.getInstance().interestedInMe;
+					
 					Map<Integer, Double> peerVsDownrate = new HashMap<Integer, Double>();
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						if(peerList.contains(neighbor.getKey())){
@@ -312,9 +310,10 @@ public class peerProcess {
 						int count =0;
 						if(initialFlow){
 							System.out.println("initial flow started");
-							System.out.println("iterator val "+ iterator.next());
-							System.out.println("count val "+ count);
-							System.out.println("k val "+ k);
+//							System.out.println("iterator val "+ iterator.next());
+//							System.out.println("iterator val "+ iterator.hasNext());
+//							System.out.println("count val "+ count);
+//							System.out.println("k val "+ k);
 							while(count<k && iterator.hasNext()){
 								System.out.println("while loop started");
 								int prefPeer = iterator.next();

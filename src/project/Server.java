@@ -67,6 +67,7 @@ public class Server extends Thread{
 					switch (neighbor.getServerState()) {
 					case DONE_HAND_SHAKE: {
 						//go to SERVER_LISTEN
+						System.out.println("SERVER:- DONEHANDSHAKE STATE ");
 						neighbor.setServerState(ScanState.SERVER_LISTEN);
 					}
 					case SERVER_LISTEN: {
@@ -76,6 +77,7 @@ public class Server extends Thread{
 						 2. unchoke message -> state = unchoke; set initial = false if it is true;
 						listen for unchoke/choke msges
 						state = unchoke or choke**/
+						System.out.println("SERVER:- SERVER LISTEN STATE ");
 							byte[] msg = new byte[5];
 							in.read(msg);
 							if (neighbor.initial && msg[4] == MsgType.BITFIELD.value) {
@@ -106,6 +108,7 @@ public class Server extends Thread{
 						/**respond with request or not interested
 						if request -> state = PIECE
 						or send not interested and go to server_listen*/
+						System.out.println("SERVER:- UNCHOKE STATE ");
 						byte [] msg = new byte[5];
 						in.read(msg);
 						if (msg[4] == MsgType.UNCHOKE.value) {
@@ -163,6 +166,7 @@ public class Server extends Thread{
 					case START: {
 						byte[] handShakeMsg = new byte[32];
 						System.out.println("SERVER:- server waiting to read");
+						System.out.println("SERVER:- STARTE STATE ");
 						in.read(handShakeMsg);
 						if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
 							System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,new String(handShakeMsg), neighbor.peerId);
@@ -174,12 +178,14 @@ public class Server extends Thread{
 					} 
 					case RXVED_HAND_SHAKE: {
 						System.out.println("SERVER:- Sent handShake message ");
+						System.out.println("SERVER:- RCVED HAND SHAKE STATE ");
 						sendHandShake();
 						neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
 						neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
 						break;
 					}
 					case KILL:{
+						System.out.println("SERVER:- KILL STATE ");
 						interrupt();
 						break;
 					}
