@@ -100,6 +100,8 @@ public class peerProcess {
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
 				determineKPreferred(k,p);
+				determineOptimisticallyUnchokedPeer(m);
+				shutdownChecker();
 				Server serverThread = new Server();
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
