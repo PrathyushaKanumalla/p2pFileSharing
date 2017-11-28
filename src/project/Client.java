@@ -56,6 +56,7 @@ public class Client extends Thread {
 						} 
 						neighbor.piecesRxved.remove(pieceIndex);
 					}
+					System.out.println("CLIENT:- Have message sent");
 					if (neighbor.piecesRxved.isEmpty())
 						neighbor.setUpdatePieceInfo(false);;
 				}
@@ -77,6 +78,7 @@ public class Client extends Thread {
 						break;
 					}
 					case DONE_HAND_SHAKE:{
+						System.out.println("CLIENT:- DONE HAND SHAKE STATE REACHED");
 						if (Peer.getInstance().hasCompleteFile()) {
 							sendBitField();
 							neighbor.setClientState(ScanState.SENT_BIT_FIELD);
@@ -87,6 +89,7 @@ public class Client extends Thread {
 					}
 					case SENT_BIT_FIELD:{
 						/**if bit field message sent wait for interested/not interested msg*/
+						System.out.println("CLIENT:- STATE SENT BIT FIELD");
 						byte[] responseMsg = new byte[10];
 						in.read(responseMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
@@ -97,6 +100,7 @@ public class Client extends Thread {
 						break;
 					}
 					case UNCHOKE: {
+						System.out.println("CLIENT:- UNCHOKE STATE REACHED");
 						/**if this neighbor is selected as preferred neighbor
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
@@ -110,6 +114,7 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
+						System.out.println("CLIENT:- RXVE REQUEST STATE REACHED");
 						byte[] responseMsg = new byte[5];
 						in.read(responseMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
@@ -126,6 +131,7 @@ public class Client extends Thread {
 						in the mean time if the neighbor is choked it should be handled.
 						if request received -> go to piece again ;
 						if not interested - > go to UPLOAD_START state.**/
+						System.out.println("CLIENT:- PIECE STATE REACHED");
 						byte[] pieceIndex = new byte[4];
 						in.read(pieceIndex);
 						sendPieceMsg(pieceIndex);
@@ -142,11 +148,13 @@ public class Client extends Thread {
 						/**if pref neighbors changed -> state to choke in the scheduler
 						expect nothing.
 						change to UPLOCAD_START**/
+						System.out.println("CLIENT:- CHOKE STATE REACHED");
 						sendChokeMsg();
 						neighbor.setClientState(ScanState.UPLOAD_START);
 						break;
 					}
 					case KILL:{
+						System.out.println("CLIENT:- KILL STATE REACHED");
 						interrupt();
 						break;
 					}
