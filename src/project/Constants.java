@@ -54,13 +54,4 @@ public class Constants {
 		}
 	}
 
-	public static Constants.MsgType getMsgType(byte[] msg) {
-		String s = Arrays.toString(msg);
-		for (Constants.MsgType actMsgType : Constants.MsgType.values()) {
-			if (actMsgType.value == msg[4]) {
-				return actMsgType;
-			}
-		}
-		return null; 
-	}	
 }

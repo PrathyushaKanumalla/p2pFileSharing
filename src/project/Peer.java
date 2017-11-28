@@ -27,6 +27,7 @@ public class Peer {
 	public List<Integer> interestedInMe = Collections.synchronizedList(new ArrayList<>());
 	public String portNum;
 	public Receivedpieces pieces[];
+	public int excessPieceSize = 0;
 	public Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {

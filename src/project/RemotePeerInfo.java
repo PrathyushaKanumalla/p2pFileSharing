@@ -1,6 +1,7 @@
 package project;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +21,6 @@ public class RemotePeerInfo {
 	public int peerId;
 	public String peerAddress;
 	public String peerPort;
-	public byte[] peerBitFieldInfo;
 	public boolean flag;
 	private ScanState clientState =  ScanState.DEFAULT;
 	private ScanState serverState =  ScanState.DEFAULT;

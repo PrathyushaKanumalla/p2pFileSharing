@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -111,12 +110,12 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
-						byte[] responseMsg = new byte[1];
-						in.read(responseMsg, 4, 1);
+						byte[] responseMsg = new byte[5];
+						in.read(responseMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
-						if (responseMsg[0] == MsgType.REQUEST.value) {
+						if (responseMsg[4] == MsgType.REQUEST.value) {
 							neighbor.setClientState(ScanState.PIECE);
-						} else if (responseMsg[0] == MsgType.NOT_INTERESTED.value) {
+						} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
 							neighbor.setClientState(ScanState.UPLOAD_START);
 						}
 						break;
@@ -128,13 +127,13 @@ public class Client extends Thread {
 						if request received -> go to piece again ;
 						if not interested - > go to UPLOAD_START state.**/
 						byte[] pieceIndex = new byte[4];
-						in.read(pieceIndex, 4, 4);
+						in.read(pieceIndex);
 						sendPieceMsg(pieceIndex);
 						byte[] responseMsg = new byte[9];
 						in.read(responseMsg);
 						if (responseMsg[4] == MsgType.REQUEST.value) {
 							neighbor.setClientState(ScanState.PIECE);
-						}  else if (responseMsg[0] == MsgType.NOT_INTERESTED.value) {
+						}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
 							neighbor.setClientState(ScanState.UPLOAD_START);
 						} 
 						break;

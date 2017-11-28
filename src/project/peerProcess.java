@@ -9,7 +9,12 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -45,6 +50,7 @@ public class peerProcess {
 			else{
 				noOfPieces = fileSize/pieceSize;
 				int excess = fileSize - fileSize * noOfPieces;
+				Peer.getInstance().excessPieceSize = excess;
 				noOfPieces+=1;
 			}
 			Peer.getInstance().noOfPieces = noOfPieces;
