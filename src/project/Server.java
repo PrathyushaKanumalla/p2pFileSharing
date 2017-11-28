@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.BitSet;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -67,7 +68,6 @@ public class Server extends Thread{
 					//show the message to the user
 					switch (neighbor.getServerState()) {
 					case DONE_HAND_SHAKE: {
-
 						//go to SERVER_LISTEN
 						neighbor.setServerState(ScanState.SERVER_LISTEN);
 					}
@@ -78,19 +78,20 @@ public class Server extends Thread{
 					 2. unchoke message -> state = unchoke; set initial = false if it is true;
 					listen for unchoke/choke msges
 					state = unchoke or choke**/
-						byte [] msg=new byte[5];
+						byte[] msg = new byte[5];
 						in.read(msg);
 						Constants.MsgType msgType=Constants.getMsgType(msg);
-
-						if(neighbor.initial && msgType==Constants.MsgType.BITFIELD  )
-						{
-
-							if(compareBitField())
-							{ 
-								sendInterestedMessage();
+						byte[] bitField = new byte[Peer.getInstance().noOfPieces];
+						if (neighbor.initial && msg[0] == Constants.MsgType.BITFIELD.value)	{
+							if (!Peer.getInstance().neighborsBitSet.containsKey(neighbor.peerId)) {
+								Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
+							} else {
+								
 							}
-							else
-							{
+							if (compareBitField())
+							{ 
+								sendInterestedMessage(); 
+							} else {
 								sendNotInterestedMessage();
 							}
 
@@ -122,7 +123,7 @@ public class Server extends Thread{
 						in.read(msg);
 						Constants.MsgType msgType=Constants.getMsgType(msg);
 						
-						if(compareBitField)
+						if(compareBitField   ?? )
 						{
 							sendRequestMessage();
 							neighbor.setServerState(Constants.ScanState.PIECE);
