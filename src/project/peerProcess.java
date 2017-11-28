@@ -134,6 +134,9 @@ public class peerProcess {
 				    	 Peer.getInstance().bitField.flip(0, Peer.getInstance().noOfPieces);
 				    	 String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
 				    			 + Peer.getInstance().configProps.get("FileName");
+				    	 
+				    	 fileName = Peer.getInstance().configProps.get("FileName");
+				    	 
 				    	 FileInputStream fis = new FileInputStream(new File(fileName));
 				    	 for (int i = 0; i < Peer.getInstance().noOfPieces-2; i ++) {
 				    		 byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
