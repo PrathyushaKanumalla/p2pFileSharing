@@ -28,7 +28,7 @@ public class Peer {
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
 	public List<Integer> interestedInMe = Collections.synchronizedList(new ArrayList<>());
 	public String portNum;
-	public Receivedpieces pieces[];
+	public Receivedpieces[] pieces;
 	public int excessPieceSize = 0;
 	public Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
 	

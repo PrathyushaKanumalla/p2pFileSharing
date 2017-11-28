@@ -95,6 +95,7 @@ public class peerProcess {
 				
 				
 				setPeerNeighbors(currPeerId);
+				
 				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
@@ -138,7 +139,6 @@ public class peerProcess {
 				    			 + Peer.getInstance().configProps.get("FileName");
 				    	 
 				    	 fileName = Peer.getInstance().configProps.get("FileName");
-				    	 
 				    	 FileInputStream fis = new FileInputStream(new File(fileName));
 				    	 for (int i = 0; i < Peer.getInstance().noOfPieces-2; i ++) {
 				    		 byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
@@ -147,6 +147,7 @@ public class peerProcess {
 				    	 }
 				    	 byte[] piece = new byte[Peer.getInstance().excessPieceSize];
 			    		 fis.read(piece, 0, Peer.getInstance().excessPieceSize);
+			    		 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    		 Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
 			    		 fis.close();
 				     }
