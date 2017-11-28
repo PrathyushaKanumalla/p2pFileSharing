@@ -1,5 +1,7 @@
 package project;
 
+import java.util.Arrays;
+
 public class Constants {
 
 	public static final String LOGFILEPREFIX = "log_peer_";
@@ -50,5 +52,15 @@ public class Constants {
 		private MsgType(byte n){
 			this.value = n;
 		}
-	}
+}
+	
+	 public static Constants.MsgType getMsgType(byte[] msg) {
+	        String s = Arrays.toString(msg);
+	        for (Constants.MsgType actMsgType : Constants.MsgType.values()) {
+	            if (actMsgType.value == msg[4]) {
+	                return actMsgType;
+	            }
+	        }
+	        return null; 
+	    }	
 }

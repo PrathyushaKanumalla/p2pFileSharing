@@ -6,6 +6,7 @@ import java.util.List;
 
 import project.Constants.ScanState;
 
+
 /*
  *                     CEN5501C Project2
  * This is the program starting remote processes.
@@ -24,6 +25,7 @@ public class RemotePeerInfo {
 	private ScanState clientState =  ScanState.DEFAULT;
 	private ScanState serverState =  ScanState.DEFAULT;
 	private boolean updatePieceInfo = false;
+	public boolean initial=true; 
 	public List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
@@ -55,5 +57,4 @@ public class RemotePeerInfo {
 	public synchronized void setUpdatePieceInfo(boolean updatePieceInfo) {
 		this.updatePieceInfo = updatePieceInfo;
 	}
-
 }
