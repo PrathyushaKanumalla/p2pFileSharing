@@ -21,6 +21,7 @@ public class Peer {
 
 	public int peerID;
 	public BitSet bitField;
+	public BitSet requestedbitField;
 	public int noOfPieces;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
@@ -37,11 +38,6 @@ public class Peer {
 			return true;
 		}
 		return false;
-	}
-
-	public boolean validateBitFieldMsg(byte[] bitFieldMsg) {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	public boolean hasCompleteFile() {
