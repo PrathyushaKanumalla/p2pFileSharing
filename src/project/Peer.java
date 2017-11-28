@@ -20,7 +20,7 @@ public class Peer {
 	}
 
 	public int peerID;
-	public BitSet bitField= new BitSet();
+	public BitSet bitField = new BitSet();
 	public BitSet requestedbitField = new BitSet();
 	public BitSet fileBitfield= new BitSet();
 	public int noOfPieces;

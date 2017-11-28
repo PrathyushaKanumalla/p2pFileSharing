@@ -92,7 +92,7 @@ public class Client extends Thread {
 					}
 					case SENT_BIT_FIELD:{
 						/**if bit field message sent wait for interested/not interested msg*/
-						System.out.println("CLIENT:- STATE SENT BIT FIELD");
+//						System.out.println("CLIENT:- STATE SENT BIT FIELD");
 						if(in.available() >0){
 							byte[] responseMsg = new byte[10];
 							in.read(responseMsg);

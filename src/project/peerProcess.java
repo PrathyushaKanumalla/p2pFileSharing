@@ -128,6 +128,16 @@ public class peerProcess {
 		String row = null;
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));
+			//Peer.getInstance().bitField = new BitSet(Peer.getInstance().noOfPieces);
+			
+//			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+//				Peer.getInstance().bitField.clear(i);
+//			}
+			//Peer.getInstance().bitField.clear(0, Peer.getInstance().noOfPieces);
+//			System.out.println("my bitfield-> "+Peer.getInstance().bitField.toString());
+//			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+//				System.out.println(Peer.getInstance().bitField.get(i));
+//			}
 			while((row = in.readLine()) != null) {
 				 String[] tokens = row.split("\\s+");
 				 Integer peerId = new Integer(tokens[0]);
@@ -135,7 +145,13 @@ public class peerProcess {
 			    	 Peer.getInstance().portNum = tokens[2];
 			    	 if (tokens[3].equals("1")) {
 			    		 Peer.getInstance().hasCompletefile=true;
+			    		 System.out.println("my bitfield-> "+Peer.getInstance().bitField.toString());
+//			    		 System.out.println(Peer.getInstance().noOfPieces);
 				    	 Peer.getInstance().bitField.flip(0, Peer.getInstance().noOfPieces);
+				    	 for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+								System.out.println(Peer.getInstance().bitField.get(i));
+							}
+				    	 System.out.println("my bitfield-> "+Peer.getInstance().bitField.toString());
 				    	 String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
 				    			 + Peer.getInstance().configProps.get("FileName");
 				    	 

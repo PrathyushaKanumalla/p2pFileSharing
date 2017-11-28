@@ -224,7 +224,7 @@ public class Server extends Thread{
 			BitSet myBitfield = Peer.getInstance().bitField;
 			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			int resultPieceIndex=-1;
-			for(int i=0;i<myBitfield.length();i++){
+			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
 				if(!myBitfield.get(i) && neighborBitset.get(i) && !Peer.getInstance().requestedbitField.get(i)){
 					Peer.getInstance().requestedbitField.set(i);
 					resultPieceIndex=i;
