@@ -5,7 +5,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -182,6 +185,24 @@ public class peerProcess {
 							RemotePeerInfo info = neighbor.getValue();
 							info.setClientState(ScanState.KILL);
 							info.setServerState(ScanState.KILL);
+						}
+						try {
+							String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
+									+ Peer.getInstance().configProps.get("FileName");
+							File dateFile = new File(fileName);
+							FileOutputStream fos = new FileOutputStream(dateFile);
+							for (Receivedpieces piece : Peer.getInstance().pieces) {
+								fos.write(piece.pieceInfo);
+							}
+				            fos.flush();
+				            fos.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						for (int index = 0; index < Peer.getInstance().pieces.length - 1; index++) {
+							
 						}
 						scheduler.shutdown();
 					}
