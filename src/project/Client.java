@@ -69,11 +69,13 @@ public class Client extends Thread {
 					}	
 					case SENT_HAND_SHAKE: {
 						byte[] handShakeMsg = new byte[32];
-						in.read(handShakeMsg);
-						if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
-							System.out.println("CLIENT== MODE-SENT_HAND_SHAKE - Neighbor <" + neighbor.peerId +"> validated");
-							neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
-							neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
+						if(in.available() >0){
+							in.read(handShakeMsg);
+							if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
+								System.out.println("CLIENT== MODE-SENT_HAND_SHAKE - Neighbor <" + neighbor.peerId +"> validated");
+								neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
+								neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
+							}
 						}
 						break;
 					}
@@ -91,14 +93,16 @@ public class Client extends Thread {
 					case SENT_BIT_FIELD:{
 						/**if bit field message sent wait for interested/not interested msg*/
 						System.out.println("CLIENT:- STATE SENT BIT FIELD");
-						byte[] responseMsg = new byte[10];
-						in.read(responseMsg);
-						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
-						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-							System.out.println("got interested message");
-							Peer.getInstance().interestedInMe.add(neighbor.peerId);
-						} // if not interested do nothing
-						neighbor.setClientState(ScanState.UPLOAD_START);
+						if(in.available() >0){
+							byte[] responseMsg = new byte[10];
+							in.read(responseMsg);
+							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+								System.out.println("got interested message");
+								Peer.getInstance().interestedInMe.add(neighbor.peerId);
+							} // if not interested do nothing
+							neighbor.setClientState(ScanState.UPLOAD_START);
+						}
 						break;
 					}
 					case UNCHOKE: {
@@ -116,18 +120,22 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
-						System.out.println("CLIENT:- RXVE REQU	EST STATE REACHED");
-						byte[] responseMsg = new byte[5];
-						in.read(responseMsg);
-						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
-						if (responseMsg[4] == MsgType.REQUEST.value) {
-							System.out.println("CLIENT:- REQUST VAL GOT STATE ");
-							neighbor.setClientState(ScanState.PIECE);
-						} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
-							System.out.println("CLIENT:- NOT INTERRSTDDDDD here GOT STATE ");
-							neighbor.setClientState(ScanState.UPLOAD_START);
+						if(in.available() >0){
+							System.out.println("CLIENT:- RXVE REQUEST STATE REACHED");
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+							if (responseMsg[4] == MsgType.REQUEST.value) {
+								System.out.println("CLIENT:- REQUST VAL GOT STATE ");
+								neighbor.setClientState(ScanState.PIECE);
+							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+								System.out.println("CLIENT:- NOT INTERRSTDDDDD here GOT STATE ");
+								neighbor.setClientState(ScanState.UPLOAD_START);
+							}
 						}
+						
 						break;
+						
 					}
 					case PIECE: {
 						/**
@@ -136,16 +144,20 @@ public class Client extends Thread {
 						if request received -> go to piece again ;
 						if not interested - > go to UPLOAD_START state.**/
 						System.out.println("CLIENT:- PIECE STATE REACHED");
-						byte[] pieceIndex = new byte[4];
-						in.read(pieceIndex);
-						sendPieceMsg(pieceIndex);
-						byte[] responseMsg = new byte[9];
-						in.read(responseMsg);
-						if (responseMsg[4] == MsgType.REQUEST.value) {
-							neighbor.setClientState(ScanState.PIECE);
-						}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
-							neighbor.setClientState(ScanState.UPLOAD_START);
-						} 
+						if(in.available() >0){
+							byte[] pieceIndex = new byte[4];
+							in.read(pieceIndex);
+							sendPieceMsg(pieceIndex);
+							byte[] responseMsg = new byte[9];
+							in.read(responseMsg);
+							while (in.available() < 0) {
+							}
+							if (responseMsg[4] == MsgType.REQUEST.value) {
+								neighbor.setClientState(ScanState.PIECE);
+							}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+								neighbor.setClientState(ScanState.UPLOAD_START);
+							}
+						}
 						break;
 					}
 					case CHOKE: {

@@ -236,7 +236,7 @@ public class Server extends Thread{
 		}
 
 		private void sendRequestMessage(byte[] pieceIndex) {
-			msgWithPayLoad(MsgType.REQUEST, pieceIndex);
+			sendMessage(msgWithPayLoad(MsgType.REQUEST, pieceIndex));
 		}
 
 		private void sendHandShake() {
