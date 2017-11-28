@@ -279,5 +279,5 @@ public class Server extends Thread{
 			prefix[3] = (byte) (len & 0x000000FF);
 	        return prefix;
 	    }
-		
+	}
 }
