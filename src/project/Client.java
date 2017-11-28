@@ -120,8 +120,10 @@ public class Client extends Thread {
 						in.read(responseMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
 						if (responseMsg[4] == MsgType.REQUEST.value) {
+							System.out.println("CLIENT:- REQUST VAL GOT STATE ");
 							neighbor.setClientState(ScanState.PIECE);
 						} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+							System.out.println("CLIENT:- NOT INTERRSTDDDDD here GOT STATE ");
 							neighbor.setClientState(ScanState.UPLOAD_START);
 						}
 						break;
