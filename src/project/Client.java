@@ -52,8 +52,13 @@ public class Client extends Thread {
 						sendHaveMsg(pieceIndex);
 						byte[] interestedMsg = new byte[9];
 						in.read(interestedMsg);
-						Peer.getInstance().interestedInMe.contains(neighbor.peerId);
+						if (!Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+						}
+						neighbor.piecesRxved.remove(pieceIndex);
 					}
+					if (neighbor.piecesRxved.isEmpty())
+						neighbor.setUpdatePieceInfo(false);;
 				}
 				switch (neighbor.getClientState()) {
 					case START: {
@@ -86,6 +91,9 @@ public class Client extends Thread {
 						byte[] interestedMsg = new byte[10];
 						in.read(interestedMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(interestedMsg));
+						if (!Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+						}
 						neighbor.setClientState(ScanState.UPLOAD_START);
 						break;
 					}
@@ -93,6 +101,8 @@ public class Client extends Thread {
 						/**if this neighbor is selected as preferred neighbor
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
+						sendUnchokeMsg();
+						neighbor.setClientState(ScanState.RXVE_REQUEST);
 					}
 					case RXVE_REQUEST: {
 						/** if pref neighbors changed -> state to choke in the scheduler
@@ -148,6 +158,10 @@ public class Client extends Thread {
 				ioException.printStackTrace();
 			}
 		}
+	}
+
+	private void sendUnchokeMsg() {
+		sendMessage(msgWithoutPayLoad(MsgType.UNCHOKE));
 	}
 
 	private void sendHaveMsg(byte[] pieceIndex) {
