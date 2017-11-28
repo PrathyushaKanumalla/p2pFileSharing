@@ -101,15 +101,17 @@ public class peerProcess {
 				//syso the same.
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-				determineKPreferred(k,p);
-				determineOptimisticallyUnchokedPeer(m);
-				shutdownChecker();
+
 				Server serverThread = new Server();
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 					Client clientThread = new Client(neighbor.getValue());
 					clientThread.start();
 				}
+				Thread.sleep(1000);
+				determineKPreferred(k,p);
+				determineOptimisticallyUnchokedPeer(m);
+				shutdownChecker();
 			} catch (NumberFormatException e) {
 		        System.err.println("Argument " + args[0] + " must be an integer.");
 		        System.exit(1);
