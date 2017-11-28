@@ -61,6 +61,6 @@ public class Constants {
 	                return actMsgType;
 	            }
 	        }
-	        return null;
+	        return null; 
 	    }	
 }
