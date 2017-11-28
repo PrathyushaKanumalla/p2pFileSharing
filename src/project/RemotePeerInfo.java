@@ -27,6 +27,9 @@ public class RemotePeerInfo {
 	private boolean updatePieceInfo = false;
 	public boolean initial = true; 
 	public List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
+	public boolean isOptimisticallyChosen;
+	
+	public Double downRate;
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;

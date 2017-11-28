@@ -254,10 +254,6 @@ public class Client extends Thread {
         return prefix;
     }
 
-	private void sendInterested(){
-		String interestedMsg = "dummy text";
-		sendMessage(interestedMsg.getBytes());
-	}
 	void sendMessage(byte[] msg)
 	{
 		try{
