@@ -1,4 +1,3 @@
-
 package project;
 
 import java.io.IOException;
@@ -72,47 +71,33 @@ public class Server extends Thread{
 						neighbor.setServerState(ScanState.SERVER_LISTEN);
 					}
 					case SERVER_LISTEN: {
-
-						/**listen  for messages
-					1. initial && if bitfield -> send interested/not interested, set initial = false;
-					 2. unchoke message -> state = unchoke; set initial = false if it is true;
-					listen for unchoke/choke msges
-					state = unchoke or choke**/
-						byte[] msg = new byte[5];
-						in.read(msg);
-						Constants.MsgType msgType=Constants.getMsgType(msg);
-						byte[] bitField = new byte[Peer.getInstance().noOfPieces];
-						if (neighbor.initial && msg[0] == Constants.MsgType.BITFIELD.value)	{
-							if (!Peer.getInstance().neighborsBitSet.containsKey(neighbor.peerId)) {
+	
+							/**listen  for messages
+						1. initial && if bitfield -> send interested/not interested, set initial = false;
+						 2. unchoke message -> state = unchoke; set initial = false if it is true;
+						listen for unchoke/choke msges
+						state = unchoke or choke**/
+							byte[] msg = new byte[1];
+							in.read(msg, 4, 1);
+							if (neighbor.initial && msg[0] == MsgType.BITFIELD.value) {
+								int bitFieldSize = Peer.getInstance().noOfPieces;
+								byte[] bitField = new byte[bitFieldSize];
+								in.read(bitField, 5, bitFieldSize);
 								Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
-							} else {
-								
-							}
-							if (compareBitField())
-							{ 
-								sendInterestedMessage(); 
-							} else {
-								sendNotInterestedMessage();
-							}
-
-							neighbor.initial=false;
-						}
-
-						if(msgType==Constants.MsgType.UNCHOKE)
-						{
-							neighbor.setServerState(Constants.ScanState.UNCHOKE);
-							if(neighbor.initial)
-							{
+								if (Peer.getInstance().bitField.equals(bitField)) {
+									sendInterestedMessage();
+								} else {
+									sendNotInterestedMessage();
+								}
 								neighbor.initial=false;
+							} else if (msg[0] == MsgType.UNCHOKE.value) {
+								if (neighbor.initial) 
+									neighbor.initial = false;
+								neighbor.setServerState(ScanState.UNCHOKE);
+							} else if (msg[0] == MsgType.CHOKE.value) {
+								neighbor.setServerState(ScanState.CHOKE);
 							}
-						}
-						if(msgType==Constants.MsgType.CHOKE)
-						{
-							neighbor.setServerState(Constants.ScanState.CHOKE);
-
-						}
-
-
+							break;
 					}
 					case UNCHOKE: {
 
@@ -122,22 +107,22 @@ public class Server extends Thread{
 						byte [] msg=new byte[5];
 						in.read(msg);
 						Constants.MsgType msgType=Constants.getMsgType(msg);
-						
+
 						if(compareBitField   ?? )
 						{
 							sendRequestMessage();
 							neighbor.setServerState(Constants.ScanState.PIECE);
 						}
-							
+
 						else
 						{
 							sendNotInterestedMessage();
 							neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
 						}
-						
+
 					}
 					case PIECE: {
-						
+
 						/**listen for a piece msg;
 						if piece -> update bit field
 						->then update  updatePieceInfo in peer;
@@ -146,12 +131,12 @@ public class Server extends Thread{
 						byte [] msg=new byte[5];
 						in.read(msg);
 						Constants.MsgType msgType=Constants.getMsgType(msg);
-						
+
 						if(msgType==Constants.MsgType.PIECE)
 						{
 							updateBitField();
 							updatePieceInfo();
-						    neighbor.setServerState(Constants.ScanState.UNCHOKE);
+							neighbor.setServerState(Constants.ScanState.UNCHOKE);
 						}
 						if(msgType==Constants.MsgType.CHOKE)
 						{
@@ -260,17 +245,17 @@ public class Server extends Thread{
 		}
 
 		//private void sendBitField(){
-			//String bitField = "server123";
-			//sendMessage(bitField);
-	//	}
-		
-		
+		//String bitField = "server123";
+		//sendMessage(bitField);
+		//	}
+
+
 		private byte[] msgWithPayLoad(MsgType msgType, byte[] field, byte[] payLoad) {
 			if (payLoad != null) {
 				byte[] result = new byte[field.length + payLoad.length];
-		        System.arraycopy(field, 0, result, 0, field.length);
-		        System.arraycopy(payLoad, 0, result, field.length, payLoad.length);
-		        field = result;
+				System.arraycopy(field, 0, result, 0, field.length);
+				System.arraycopy(payLoad, 0, result, field.length, payLoad.length);
+				field = result;
 			}
 			int length = field.length;
 			byte[] message = new byte[5+length];
@@ -285,8 +270,8 @@ public class Server extends Thread{
 			prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
 			prefix[2] = (byte) ((len & 0x0000FF00) >> 8);
 			prefix[3] = (byte) (len & 0x000000FF);
-	        return prefix;
-	    }
+			return prefix;
+		}
 		private byte[] msgWithoutPayLoad(MsgType msgType) {
 			byte[] message = new byte[5];
 			System.arraycopy(createPrefix(1), 0, message, 0, 4);
@@ -309,7 +294,7 @@ public class Server extends Thread{
 		{
 			sendMessage(msgWithoutPayLoad(Constants.MsgType.UNCHOKE));
 		}
-		
+
 		private void sendRequestMessage()
 		{
 			sendMessage(msgWithPayLoad(Constants.MsgType.REQUEST, Peer.getInstance().bitField, null));
