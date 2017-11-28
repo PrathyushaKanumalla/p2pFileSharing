@@ -31,6 +31,7 @@ public class Peer {
 	public Receivedpieces[] pieces;
 	public int excessPieceSize = 0;
 	public Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
+	public boolean hasCompletefile = false;
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
 		String message = new String(handShakeMsg);
@@ -43,6 +44,7 @@ public class Peer {
 
 	public boolean hasCompleteFile() {
 		// TODO Auto-generated method stub
-		return false;
+		
+		return Peer.getInstance().hasCompletefile;
 	}
 }

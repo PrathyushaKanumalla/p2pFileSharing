@@ -80,6 +80,7 @@ public class Client extends Thread {
 					case DONE_HAND_SHAKE:{
 						System.out.println("CLIENT:- DONE HAND SHAKE STATE REACHED");
 						if (Peer.getInstance().hasCompleteFile()) {
+							System.out.println("have complete file");
 							sendBitField();
 							neighbor.setClientState(ScanState.SENT_BIT_FIELD);
 						} else {
