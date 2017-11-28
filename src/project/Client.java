@@ -146,6 +146,10 @@ public class Client extends Thread {
 						neighbor.setClientState(ScanState.UPLOAD_START);
 						break;
 					}
+					case KILL:{
+						interrupt();
+						break;
+					}
 					default: {
 						/*Send the sentence to the server
 							String message = "default_behavior_pratServer";

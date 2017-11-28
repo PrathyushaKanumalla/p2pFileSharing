@@ -22,6 +22,7 @@ public class Peer {
 	public int peerID;
 	public BitSet bitField;
 	public BitSet requestedbitField;
+	public BitSet fileBitfield;
 	public int noOfPieces;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());

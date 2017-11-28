@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ public class peerProcess {
 			int pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
 			
 			int noOfPieces=0;
+			
 			if(fileSize % pieceSize ==0){
 				noOfPieces = fileSize/pieceSize;
 			}
@@ -54,6 +56,16 @@ public class peerProcess {
 				noOfPieces+=1;
 			}
 			Peer.getInstance().noOfPieces = noOfPieces;
+			int i;
+			for(i=0;i<Peer.getInstance().noOfPieces -1 ;i++){
+				Peer.getInstance().fileBitfield.set(i);
+			}
+			int tempPieces = Peer.getInstance().excessPieceSize;
+			while(tempPieces>0){
+				Peer.getInstance().fileBitfield.set(i);
+				i++;
+				tempPieces--;
+			}
 		}
 		br.close();
 	}
@@ -147,6 +159,37 @@ public class peerProcess {
 	    } finally {
 	        is.close();
 	    }
+	}
+	
+	public static void shutdownChecker(){
+		final Runnable checkShutdownChecker = new Runnable(){
+			public void run(){
+				BitSet myBitfield = Peer.getInstance().bitField;
+				BitSet filebitfield = Peer.getInstance().fileBitfield;
+				if(myBitfield.equals(filebitfield)){
+					System.out.println("Peer bitset and file bit set are equal");
+					boolean shutdown = true;
+					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+						int peerNeighborId = neighbor.getKey();
+						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
+						if(!neighborBitset.equals(filebitfield)){
+							shutdown= false;
+							break;
+						}
+					}
+					if(shutdown){
+						for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+							RemotePeerInfo info = neighbor.getValue();
+							info.setClientState(ScanState.KILL);
+							info.setServerState(ScanState.KILL);
+						}
+						scheduler.shutdown();
+					}
+				}
+			}
+		};
+		scheduler.scheduleAtFixedRate(checkShutdownChecker, 3, 3, SECONDS);
+		
 	}
 	
 	public static int previouslyOptimisticallyPeer;

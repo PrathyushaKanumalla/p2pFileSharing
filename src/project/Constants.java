@@ -26,7 +26,8 @@ public class Constants {
 		PIECE("PIECE"),
 		DEFAULT("DEFAULT"), 
 		SERVER_LISTEN("SERVER_LISTEN"),
-		CHOKE("CHOKE");
+		CHOKE("CHOKE"),
+		KILL("KILL");
 
 		ScanState(String text) {
 			this.text = text;

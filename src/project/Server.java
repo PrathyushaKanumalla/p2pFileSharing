@@ -179,6 +179,10 @@ public class Server extends Thread{
 						neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
 						break;
 					}
+					case KILL:{
+						interrupt();
+						break;
+					}
 					default: 
 						break;
 					}
