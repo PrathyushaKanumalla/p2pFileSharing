@@ -109,65 +109,65 @@ public class Server extends Thread{
 						if request -> state = PIECE
 						or send not interested and go to server_listen*/
 						System.out.println("SERVER:- UNCHOKE STATE ");
-						byte [] msg = new byte[5];
-						in.read(msg);
-						if (msg[4] == MsgType.UNCHOKE.value) {
-							System.out.println("SERVER:- unchoke val ");
-							byte[] pieceIndex = new byte[4];
-							int genPieceindx = genPieceIndex();
-							pieceIndex = createPrefix(genPieceindx);
-							System.out.println("SERVER:- pieceindex val ");
-							if (pieceIndex != null) {
-								System.out.println("SERVER:- pieceindex val not null ");
-								sendRequestMessage(pieceIndex);
-								/**listen for a piece msg;
-								if piece -> update bit field
-								->then update  updatePieceInfo in peer;
-								send request again by putting state = unchoke;
-								if choke occurs -go to server listen again**/
-								byte[] message = new byte[5];
-								in.read(message);
-								if (message[4] == MsgType.PIECE.value) {
-									byte[] reqPieceIndex = new byte[4];
-									in.read(reqPieceIndex);
-									int reqPieceInd = getPieceIndex(reqPieceIndex);
-									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
-										byte[] piece = new byte[Peer.getInstance().noOfPieces];
-										in.read(piece);
-										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
-									} else {
-										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-										in.read(piece, 5, Peer.getInstance().excessPieceSize);
-										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
-									}
-									//update all neighbors
-									for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
-										neighbor.setUpdatePieceInfo(true);
-										neighbor.piecesRxved.add(reqPieceIndex);
-									}
-									Peer.getInstance().bitField.set(reqPieceInd);
-									neighbor.setClientState(Constants.ScanState.UNCHOKE);
-									
-								} else if (message[4] == MsgType.CHOKE.value) {
-									System.out.println("SERVER:- choke sent val ");
-									neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
-									Peer.getInstance().requestedbitField.clear(genPieceindx);
-								} else if (message[4] == MsgType.HAVE.value) {
-									byte[] havePieceIndex = new byte[4];
-									in.read(havePieceIndex);
-									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+//						byte [] msg = new byte[5];
+//						in.read(msg);
+//						if (msg[4] == MsgType.UNCHOKE.value) {
+						System.out.println("SERVER:- unchoke val ");
+						byte[] pieceIndex = new byte[4];
+						int genPieceindx = genPieceIndex();
+						pieceIndex = createPrefix(genPieceindx);
+						System.out.println("SERVER:- pieceindex val ");
+						if (pieceIndex != null) {
+							System.out.println("SERVER:- pieceindex val not null ");
+							sendRequestMessage(pieceIndex);
+							/**listen for a piece msg;
+							if piece -> update bit field
+							->then update  updatePieceInfo in peer;
+							send request again by putting state = unchoke;
+							if choke occurs -go to server listen again**/
+							byte[] message = new byte[5];
+							in.read(message);
+							if (message[4] == MsgType.PIECE.value) {
+								byte[] reqPieceIndex = new byte[4];
+								in.read(reqPieceIndex);
+								int reqPieceInd = getPieceIndex(reqPieceIndex);
+								if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
+									byte[] piece = new byte[Peer.getInstance().noOfPieces];
+									in.read(piece);
+									Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
+								} else {
+									byte[] piece = new byte[Peer.getInstance().excessPieceSize];
+									in.read(piece, 5, Peer.getInstance().excessPieceSize);
+									Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
 								}
-							} else {
-								System.out.println("SERVER:- unchke not interested val ");
-								sendNotInterested();
+								//update all neighbors
+								for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
+									neighbor.setUpdatePieceInfo(true);
+									neighbor.piecesRxved.add(reqPieceIndex);
+								}
+								Peer.getInstance().bitField.set(reqPieceInd);
+								neighbor.setServerState(Constants.ScanState.UNCHOKE);
+								
+							} else if (message[4] == MsgType.CHOKE.value) {
+								System.out.println("SERVER:- choke sent val ");
 								neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
+								Peer.getInstance().requestedbitField.clear(genPieceindx);
+							} else if (message[4] == MsgType.HAVE.value) {
+								byte[] havePieceIndex = new byte[4];
+								in.read(havePieceIndex);
+								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
 							}
-						} else if (msg[4] == MsgType.HAVE.value) {
-							System.out.println("SERVER:- have val in choke state val ");
-							byte[] pieceIndex = new byte[4];
-							in.read(pieceIndex);
-							Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
+						} else {
+							System.out.println("SERVER:- unchke not interested val ");
+							sendNotInterested();
+							neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
 						}
+//						} else if (msg[4] == MsgType.HAVE.value) {
+//							System.out.println("SERVER:- have val in choke state val ");
+//							byte[] pieceIndex = new byte[4];
+//							in.read(pieceIndex);
+//							Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
+//						}
 						break;
 					}
 					case START: {

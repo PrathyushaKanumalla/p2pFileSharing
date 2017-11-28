@@ -95,6 +95,7 @@ public class Client extends Thread {
 						in.read(responseMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
 						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+							System.out.println("got interested message");
 							Peer.getInstance().interestedInMe.add(neighbor.peerId);
 						} // if not interested do nothing
 						neighbor.setClientState(ScanState.UPLOAD_START);
@@ -115,7 +116,7 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
-						System.out.println("CLIENT:- RXVE REQUEST STATE REACHED");
+						System.out.println("CLIENT:- RXVE REQU	EST STATE REACHED");
 						byte[] responseMsg = new byte[5];
 						in.read(responseMsg);
 						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
