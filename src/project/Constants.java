@@ -1,7 +1,5 @@
 package project;
 
-import java.util.Arrays;
-
 public class Constants {
 
 	public static final String LOGFILEPREFIX = "log_peer_";

@@ -139,6 +139,7 @@ public class peerProcess {
 				    	 byte[] piece = new byte[Peer.getInstance().excessPieceSize];
 			    		 fis.read(piece, 0, Peer.getInstance().excessPieceSize);
 			    		 Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
+			    		 fis.close();
 				     }
 			     } else {
 			    	 Peer.getInstance().neighbors.put(peerId, 
@@ -195,6 +196,24 @@ public class peerProcess {
 							RemotePeerInfo info = neighbor.getValue();
 							info.setClientState(ScanState.KILL);
 							info.setServerState(ScanState.KILL);
+						}
+						try {
+							String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
+									+ Peer.getInstance().configProps.get("FileName");
+							File dateFile = new File(fileName);
+							FileOutputStream fos = new FileOutputStream(dateFile);
+							for (Receivedpieces piece : Peer.getInstance().pieces) {
+								fos.write(piece.pieceInfo);
+							}
+				            fos.flush();
+				            fos.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						for (int index = 0; index < Peer.getInstance().pieces.length - 1; index++) {
+							
 						}
 						scheduler.shutdown();
 					}
