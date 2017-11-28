@@ -37,37 +37,38 @@ public class peerProcess {
 	{
 		BufferedReader br = new BufferedReader(new FileReader(Constants.COMMONCFG));
 		String configLine = null;
-
+		
 		while ((configLine = br.readLine()) != null) {
-
 			String[] split = configLine.split(" ");
 			Peer.getInstance().configProps.put(split[0], split[1]);
+//			String test = Peer.getInstance().configProps.get("FileSize");
+//			int val = Integer.parseInt(test);
 			
-			int fileSize = Integer.parseInt(Peer.getInstance().configProps.get("FileSize"));
-			int pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
-			
-			int noOfPieces=0;
-			
-			if(fileSize % pieceSize ==0){
-				noOfPieces = fileSize/pieceSize;
-			}
-			else{
-				noOfPieces = fileSize/pieceSize;
-				int excess = fileSize - fileSize * noOfPieces;
-				Peer.getInstance().excessPieceSize = excess;
-				noOfPieces+=1;
-			}
-			Peer.getInstance().noOfPieces = noOfPieces;
-			int i;
-			for(i=0;i<Peer.getInstance().noOfPieces -1 ;i++){
-				Peer.getInstance().fileBitfield.set(i);
-			}
-			int tempPieces = Peer.getInstance().excessPieceSize;
-			while(tempPieces>0){
-				Peer.getInstance().fileBitfield.set(i);
-				i++;
-				tempPieces--;
-			}
+		}
+		int fileSize = Integer.parseInt(Peer.getInstance().configProps.get("FileSize"));
+		int pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
+		
+		int noOfPieces=0;
+		
+		if(fileSize % pieceSize ==0){
+			noOfPieces = fileSize/pieceSize;
+		}
+		else{
+			noOfPieces = fileSize/pieceSize;
+			int excess = fileSize - fileSize * noOfPieces;
+			Peer.getInstance().excessPieceSize = excess;
+			noOfPieces+=1;
+		}
+		Peer.getInstance().noOfPieces = noOfPieces;
+		int i;
+		for(i=0;i<Peer.getInstance().noOfPieces -1 ;i++){
+			Peer.getInstance().fileBitfield.set(i);
+		}
+		int tempPieces = Peer.getInstance().excessPieceSize;
+		while(tempPieces>0){
+			Peer.getInstance().fileBitfield.set(i);
+			i++;
+			tempPieces--;
 		}
 		br.close();
 	}
@@ -82,6 +83,7 @@ public class peerProcess {
 				// Step 1: Initiate Logs
 				Log.setUpSingleTonLog(currPeerId);
 				Log.addLog("Success!!");
+				
 				// Step 2: Set up Config Information
 				setCommonConfig();
 					//insert variable as key and store its value....
