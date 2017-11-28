@@ -1,5 +1,9 @@
 package project;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import project.Constants.ScanState;
 
 /*
@@ -19,8 +23,8 @@ public class RemotePeerInfo {
 	public boolean flag;
 	private ScanState clientState =  ScanState.DEFAULT;
 	private ScanState serverState =  ScanState.DEFAULT;
-	public boolean updatePieceInfo = false;
-	
+	private boolean updatePieceInfo = false;
+	public List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;
@@ -42,6 +46,14 @@ public class RemotePeerInfo {
 
 	public void setServerState(ScanState serverState) {
 		this.serverState = serverState;
+	}
+	
+	public synchronized boolean isUpdatePieceInfo() {
+		return updatePieceInfo;
+	}
+
+	public synchronized void setUpdatePieceInfo(boolean updatePieceInfo) {
+		this.updatePieceInfo = updatePieceInfo;
 	}
 
 }
