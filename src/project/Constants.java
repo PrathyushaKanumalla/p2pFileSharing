@@ -7,13 +7,13 @@ public class Constants {
 	public static final String LOGFILEPREFIX = "log_peer_";
 	public static final String LOGFILESUFFIX = ".log";
 	public static final String LOGTIMEFORMAT = "MMM dd,yyyy HH:mm:ss";
-	
+
 	public static final String COMMONCFG = "Common.cfg";
 	public static final String PEERINFO = "PeerInfo.cfg";
-	
+
 	public static final String HANDSHAKEHEADER="P2PFILESHARINGPROJ";
 	public static final String ZERO_BITS="0000000000";
-	
+
 	public static enum ScanState{
 		START("START"),
 		SENT_HAND_SHAKE("SENT_HAND_SHAKE"),
@@ -27,7 +27,7 @@ public class Constants {
 		DEFAULT("DEFAULT"), 
 		SERVER_LISTEN("SERVER_LISTEN"),
 		CHOKE("CHOKE");
-		
+
 		ScanState(String text) {
 			this.text = text;
 		}
@@ -38,7 +38,7 @@ public class Constants {
 			return text;
 		}
 	}
-	
+
 	public enum MsgType{
 		CHOKE((byte)0), 
 		UNCHOKE((byte)1), 
@@ -52,15 +52,15 @@ public class Constants {
 		private MsgType(byte n){
 			this.value = n;
 		}
-}
-	
-	 public static Constants.MsgType getMsgType(byte[] msg) {
-	        String s = Arrays.toString(msg);
-	        for (Constants.MsgType actMsgType : Constants.MsgType.values()) {
-	            if (actMsgType.value == msg[4]) {
-	                return actMsgType;
-	            }
-	        }
-	        return null; 
-	    }	
+	}
+
+	public static Constants.MsgType getMsgType(byte[] msg) {
+		String s = Arrays.toString(msg);
+		for (Constants.MsgType actMsgType : Constants.MsgType.values()) {
+			if (actMsgType.value == msg[4]) {
+				return actMsgType;
+			}
+		}
+		return null; 
+	}	
 }

@@ -1,6 +1,7 @@
 package project;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +20,14 @@ public class Peer {
 	}
 
 	public int peerID;
-	public byte[] bitField;
+	public BitSet bitField;
+	public int noOfPieces;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
 	public List<Integer> interestedInMe = Collections.synchronizedList(new ArrayList<>());
 	public String portNum;
+	public Receivedpieces pieces[];
+	public Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
 		String message = new String(handShakeMsg);

@@ -50,10 +50,15 @@ public class Client extends Thread {
 					update interested list**/
 					for (byte[] pieceIndex : neighbor.piecesRxved) {
 						sendHaveMsg(pieceIndex);
-						byte[] interestedMsg = new byte[9];
-						in.read(interestedMsg);
-						Peer.getInstance().interestedInMe.contains(neighbor.peerId);
+						byte[] responseMsg = new byte[9];
+						in.read(responseMsg);
+						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+						} 
+						neighbor.piecesRxved.remove(pieceIndex);
 					}
+					if (neighbor.piecesRxved.isEmpty())
+						neighbor.setUpdatePieceInfo(false);;
 				}
 				switch (neighbor.getClientState()) {
 					case START: {
@@ -83,9 +88,12 @@ public class Client extends Thread {
 					}
 					case SENT_BIT_FIELD:{
 						/**if bit field message sent wait for interested/not interested msg*/
-						byte[] interestedMsg = new byte[10];
-						in.read(interestedMsg);
-						System.out.println("CLIENT:- Received interested messgae- " + new String(interestedMsg));
+						byte[] responseMsg = new byte[10];
+						in.read(responseMsg);
+						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+						} // if not interested do nothing
 						neighbor.setClientState(ScanState.UPLOAD_START);
 						break;
 					}
@@ -93,24 +101,51 @@ public class Client extends Thread {
 						/**if this neighbor is selected as preferred neighbor
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
+						sendUnchokeMsg();
+						neighbor.setClientState(ScanState.RXVE_REQUEST);
+						break;
 					}
 					case RXVE_REQUEST: {
 						/** if pref neighbors changed -> state to choke in the scheduler
 						rxve request msg
+						if pref neighbors changed -> state to choke in the scheduler
+						send peice msg
 						change state to PIECE**/
+						byte[] responseMsg = new byte[1];
+						in.read(responseMsg, 4, 1);
+						System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+						if (responseMsg[0] == MsgType.REQUEST.value) {
+							neighbor.setClientState(ScanState.PIECE);
+						} else if (responseMsg[0] == MsgType.NOT_INTERESTED.value) {
+							neighbor.setClientState(ScanState.UPLOAD_START);
+						}
+						break;
 					}
 					case PIECE: {
-						/**if pref neighbors changed -> state to choke in the scheduler
-						send peice msg
+						/**
 						wait to receive either request or not interested.
-						in the mean time if the neighbbor is choked it should be handled.
+						in the mean time if the neighbor is choked it should be handled.
 						if request received -> go to piece again ;
 						if not interested - > go to UPLOAD_START state.**/
+						byte[] pieceIndex = new byte[4];
+						in.read(pieceIndex, 4, 4);
+						sendPieceMsg(pieceIndex);
+						byte[] responseMsg = new byte[9];
+						in.read(responseMsg);
+						if (responseMsg[4] == MsgType.REQUEST.value) {
+							neighbor.setClientState(ScanState.PIECE);
+						}  else if (responseMsg[0] == MsgType.NOT_INTERESTED.value) {
+							neighbor.setClientState(ScanState.UPLOAD_START);
+						} 
+						break;
 					}
 					case CHOKE: {
 						/**if pref neighbors changed -> state to choke in the scheduler
 						expect nothing.
 						change to UPLOCAD_START**/
+						sendChokeMsg();
+						neighbor.setClientState(ScanState.UPLOAD_START);
+						break;
 					}
 					default: {
 						/*Send the sentence to the server
@@ -150,8 +185,33 @@ public class Client extends Thread {
 		}
 	}
 
+	private void sendChokeMsg() {
+		sendMessage(msgWithoutPayLoad(MsgType.CHOKE));
+	}
+
+	private void sendPieceMsg(byte[] pieceIndex) {
+		byte[] piece = Peer.getInstance().pieces[getPieceIndex(pieceIndex)].pieceInfo;
+		byte[] result = new byte[piece.length+4];
+		System.arraycopy(pieceIndex, 0, result, 0, 4);
+		System.arraycopy(piece, 0, result, 4, piece.length);
+		sendMessage(msgWithPayLoad(MsgType.PIECE, result));		
+	}
+
+	private int getPieceIndex(byte[] pieceIndex) {
+		int integerValue = 0;
+        for (int index = 0; index < 4; index++) {
+            int shift = (4 - 1 - index) * 8;
+            integerValue += (pieceIndex[index] & 0x000000FF) << shift;
+        }
+        return integerValue;
+	}
+
+	private void sendUnchokeMsg() {
+		sendMessage(msgWithoutPayLoad(MsgType.UNCHOKE));
+	}
+
 	private void sendHaveMsg(byte[] pieceIndex) {
-		sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex, null));
+		sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
 	}
 
 	private void sendHandShake() {
@@ -160,21 +220,21 @@ public class Client extends Thread {
 	}
 
 	private void sendBitField(){
-		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().bitField, null));
+		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().bitField.toByteArray()));
 	}
-
-	private byte[] msgWithPayLoad(MsgType msgType, byte[] field, byte[] payLoad) {
-		if (payLoad != null) {
-			byte[] result = new byte[field.length + payLoad.length];
+	
+	private byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+		/*if (payLoad != null) {
+			byte[] result = new byte[payLoad.length];
 	        System.arraycopy(field, 0, result, 0, field.length);
 	        System.arraycopy(payLoad, 0, result, field.length, payLoad.length);
 	        field = result;
-		}
-		int length = field.length;
+		}*/
+		int length = payLoad.length;
 		byte[] message = new byte[5+length];
-		System.arraycopy(createPrefix(length), 0, message, 0, 4);
+		System.arraycopy(createPrefix(length+1), 0, message, 0, 4);
 		message[4] = msgType.value;
-		System.arraycopy(field, 0, message, 5, field.length);
+		System.arraycopy(payLoad, 0, message, 5, payLoad.length);
 		return message;
 	}
 

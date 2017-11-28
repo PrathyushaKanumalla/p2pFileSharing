@@ -47,9 +47,7 @@ public class peerProcess {
 				int excess = fileSize - fileSize * noOfPieces;
 				noOfPieces+=1;
 			}
-			Peer.getInstance().bitField = new byte[(int)noOfPieces];
-			Arrays.fill(Peer.getInstance().bitField, (byte) 0);
-		
+			Peer.getInstance().noOfPieces = noOfPieces;
 		}
 		br.close();
 	}
@@ -111,6 +109,9 @@ public class peerProcess {
 			     } else {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
+			     }
+			     if (tokens[3].equals("1")) {
+			    	 Peer.getInstance().bitField.flip(0, Peer.getInstance().noOfPieces);
 			     }
 			}
 			in.close();
