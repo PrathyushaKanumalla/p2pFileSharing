@@ -20,7 +20,7 @@ public class RemotePeerInfo {
 	private ScanState clientState =  ScanState.DEFAULT;
 	private ScanState serverState =  ScanState.DEFAULT;
 	public boolean updatePieceInfo = false;
-	public boolean initial=true;
+	public boolean initial=true; 
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;
