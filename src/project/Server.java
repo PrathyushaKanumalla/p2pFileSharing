@@ -64,23 +64,6 @@ public class Server extends Thread{
 					/** if i receive have msg
 					send interested or not interested as response; 
 					 **/
-					byte h[]=new byte[5];
-					in.read(h);
-					Constants.MsgType type=Constants.getMsgType(h);
-					
-					if(type==Constants.MsgType.HAVE)
-					{
-					    if(Peer.getInstance().bitField.equals(Peer.getInstance().neighborsBitSet.get(neighbor.peerId)))
-					    {
-					    	sendInterestedMessage();
-					    }
-					    
-					    else
-					    {
-					    	sendNotInterestedMessage();
-					    }
-						
-					}
 					//show the message to the user
 					switch (neighbor.getServerState()) {
 					case DONE_HAND_SHAKE: {

@@ -25,7 +25,7 @@ public class RemotePeerInfo {
 	private ScanState clientState =  ScanState.DEFAULT;
 	private ScanState serverState =  ScanState.DEFAULT;
 	private boolean updatePieceInfo = false;
-	public boolean initial = true; 
+	public boolean initial=true; 
 	public List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
 	public boolean isOptimisticallyChosen;
 	
