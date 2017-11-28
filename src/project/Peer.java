@@ -20,9 +20,9 @@ public class Peer {
 	}
 
 	public int peerID;
-	public BitSet bitField;
-	public BitSet requestedbitField;
-	public BitSet fileBitfield;
+	public BitSet bitField= new BitSet();
+	public BitSet requestedbitField = new BitSet();
+	public BitSet fileBitfield= new BitSet();
 	public int noOfPieces;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());

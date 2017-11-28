@@ -55,7 +55,7 @@ public class peerProcess {
 		}
 		else{
 			noOfPieces = fileSize/pieceSize;
-			int excess = fileSize - fileSize * noOfPieces;
+			int excess = fileSize - pieceSize * noOfPieces;
 			Peer.getInstance().excessPieceSize = excess;
 			noOfPieces+=1;
 		}
