@@ -1,5 +1,7 @@
 package project;
 
+import java.util.Arrays;
+
 public class Constants {
 
 	public static final String LOGFILEPREFIX = "log_peer_";
@@ -36,4 +38,29 @@ public class Constants {
 			return text;
 		}
 	}
+	
+	public enum MsgType{
+		CHOKE((byte)0), 
+		UNCHOKE((byte)1), 
+		INTERESTED((byte)2), 
+		NOT_INTERESTED((byte)3), 
+		HAVE((byte)4), 
+		BITFIELD((byte)5), 
+		REQUEST((byte)6), 
+		PIECE((byte)7);
+		byte value = -1;
+		private MsgType(byte n){
+			this.value = n;
+		}
+}
+	
+	 public static Constants.MsgType getMsgType(byte[] msg) {
+	        String s = Arrays.toString(msg);
+	        for (Constants.MsgType actMsgType : Constants.MsgType.values()) {
+	            if (actMsgType.value == msg[4]) {
+	                return actMsgType;
+	            }
+	        }
+	        return null;
+	    }	
 }
