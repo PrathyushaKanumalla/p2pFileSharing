@@ -113,18 +113,19 @@ public class Server extends Thread{
 						/**respond with request or not interested
 						if request -> state = PIECE
 						or send not interested and go to server_listen*/
-						System.out.println("SERVER:- UNCHOKE STATE ");
+//						System.out.println("SERVER:- UNCHOKE STATE ");
 //						byte [] msg = new byte[5];
 //						in.read(msg);
 //						if (msg[4] == MsgType.UNCHOKE.value) {
-						System.out.println("SERVER:- unchoke val ");
+//						System.out.println("SERVER:- unchoke val ");
 						byte[] pieceIndex = new byte[4];
 						int genPieceindx = genPieceIndex();
 						pieceIndex = createPrefix(genPieceindx);
-						System.out.println("SERVER:- pieceindex val ");
+//						System.out.println("SERVER:- pieceindex val ");
 						if (pieceIndex != null) {
-							System.out.println("SERVER:- pieceindex val not null ");
+							System.out.println("SERVER:- pieceindex req "+ genPieceindx);
 							sendRequestMessage(pieceIndex);
+							System.out.println("SERVER:- sent pieceindex req");
 							/**listen for a piece msg;
 							if piece -> update bit field
 							->then update  updatePieceInfo in peer;
