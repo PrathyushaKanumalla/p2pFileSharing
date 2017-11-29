@@ -150,7 +150,9 @@ public class Server extends Thread{
 									} else {
 										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
 //										while(in.available()<0){}
-										in.read(piece, 5, Peer.getInstance().excessPieceSize);
+										in.read(piece);
+										System.out.println("last index val");
+										System.out.println("for not LAST ONE -> "+ new String(piece));
 										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
 									}
 									//update all neighbors
