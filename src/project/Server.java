@@ -146,17 +146,18 @@ public class Server extends Thread{
 //							if(in.available() >0){
 							while(in.available()<0){}
 								in.read(message);
+								
 								System.out.println("Message type --> "+ new String(message));
 								if (message[4] == MsgType.PIECE.value) {
 									System.out.println("PIECE 2nd time here");
 									byte[] reqPieceIndex = new byte[4];
-									while(in.available()<0){}
+//									while(in.available()<0){}
 									in.read(reqPieceIndex);
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
 									System.out.println("REQ INDEX -> "+ reqPieceInd);
 									//not sure about this
 //									genPieceindx= reqPieceInd;
-									while(in.available()<0){}
+//									while(in.available()<0){}
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 										
@@ -228,7 +229,7 @@ public class Server extends Thread{
 						break;
 					}
 					case KILL:{
-						System.out.println("SERVER:- KILL STATE ");
+//						System.out.println("SERVER:- KILL STATE ");
 						interrupt();
 						break;
 					}
@@ -271,7 +272,7 @@ public class Server extends Thread{
 			return resultPieceIndex;
 		}
 
-		private void sendRequestMessage(byte[] pieceIndex) {
+		private synchronized void sendRequestMessage(byte[] pieceIndex) {
 			sendMessage(msgWithPayLoad(MsgType.REQUEST, pieceIndex));
 		}
 

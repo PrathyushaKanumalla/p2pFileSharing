@@ -57,6 +57,7 @@ public class peerProcess {
 			noOfPieces = fileSize/pieceSize;
 			int excess = fileSize - pieceSize * noOfPieces;
 			Peer.getInstance().excessPieceSize = excess;
+			System.out.println("excess size- "+excess);
 			noOfPieces+=1;
 		}
 		Peer.getInstance().noOfPieces = noOfPieces;
@@ -185,7 +186,7 @@ public class peerProcess {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
 			    	 BitSet bset = new BitSet();
-			    	 bset.flip(0, Peer.getInstance().noOfPieces);
+			    	 bset.flip(1, Peer.getInstance().noOfPieces);
 			    	
 			    	 Peer.getInstance().neighborsBitSet.put(peerId, bset);
 			     }
@@ -245,28 +246,30 @@ public class peerProcess {
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
-						boolean compareNCheckFlag = true;
+//						boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
-							if(!neighborBitset.get(i)){
-								compareNCheckFlag=false;
+							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i));
+							if(!neighborBitset.get(i) ){
+//								compareNCheckFlag=false;
+								shutdown=false;
 								break;
 							}
 						}
 						
-						if(compareNCheckFlag){
-							shutdown= false;
-							break;
-						}
+//						if(compareNCheckFlag){
+//							shutdown= true;
+//							break;
+//						}
 					}
 					if(shutdown){
+						
 						for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 							RemotePeerInfo info = neighbor.getValue();
 							info.setClientState(ScanState.KILL);
 							info.setServerState(ScanState.KILL);
 						}
 						try {
-							String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
-									+ Peer.getInstance().configProps.get("FileName");
+							String fileName =  Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
 							FileOutputStream fos = new FileOutputStream(dateFile);
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
