@@ -135,7 +135,8 @@ public class Server extends Thread{
 							while(in.available()<0){
 								
 							}
-							if(in.available() >0){
+//							if(in.available() >0){
+							while(in.available()>0){}
 								in.read(message);
 								if (message[4] == MsgType.PIECE.value) {
 									byte[] reqPieceIndex = new byte[4];
@@ -179,7 +180,7 @@ public class Server extends Thread{
 									in.read(havePieceIndex);
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
 								}
-							}
+//							}
 						} else {
 							System.out.println("SERVER:- unchke not interested val ");
 							sendNotInterested();
