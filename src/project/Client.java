@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -47,15 +48,29 @@ public class Client extends Thread {
 					/**send have message to this neighbor
 					receive interested msg - set to false
 					update interested list**/
-					for (byte[] pieceIndex : neighbor.piecesRxved) {
-						sendHaveMsg(pieceIndex);
+					Iterator<byte[]> iterator = neighbor.piecesRxved.iterator();
+					while(iterator.hasNext()){
+						byte[] tempPIndx = iterator.next();
+						sendHaveMsg(tempPIndx);
 						byte[] responseMsg = new byte[9];
 						in.read(responseMsg);
 						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 							Peer.getInstance().interestedInMe.add(neighbor.peerId);
 						} 
-						neighbor.piecesRxved.remove(pieceIndex);
+						iterator.remove();
 					}
+//					
+//					for (byte[] pieceIndex : neighbor.piecesRxved) {
+//						sendHaveMsg(pieceIndex);
+//						byte[] responseMsg = new byte[9];
+//						in.read(responseMsg);
+//						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+//							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+//						} 
+//						neighbor.piecesRxved.remove(pieceIndex);
+//					}
+					
+					
 					System.out.println("CLIENT:- Have message sent");
 					if (neighbor.piecesRxved.isEmpty())
 						neighbor.setUpdatePieceInfo(false);;
