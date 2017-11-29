@@ -102,7 +102,7 @@ public class Server extends Thread{
 									neighbor.setServerState(ScanState.CHOKE);
 								} else if (msg[4] == MsgType.HAVE.value) {
 									byte[] pieceIndex = new byte[4];
-//									while(in.available()<0){}
+									while(in.available()<0){}
 									in.read(pieceIndex);
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
 								}
