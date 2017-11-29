@@ -85,7 +85,7 @@ public class Server extends Thread{
 								if (neighbor.initial && msg[4] == MsgType.BITFIELD.value) {
 									int bitFieldSize = Peer.getInstance().noOfPieces;
 									byte[] bitField = new byte[bitFieldSize];
-									while(in.available()<0){}
+//									while(in.available()<0){}
 									in.read(bitField);
 									Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
 									if (!Peer.getInstance().bitField.equals(bitField)) {
@@ -102,7 +102,7 @@ public class Server extends Thread{
 									neighbor.setServerState(ScanState.CHOKE);
 								} else if (msg[4] == MsgType.HAVE.value) {
 									byte[] pieceIndex = new byte[4];
-									while(in.available()<0){}
+//									while(in.available()<0){}
 									in.read(pieceIndex);
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
 								}
@@ -141,12 +141,12 @@ public class Server extends Thread{
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										byte[] piece = new byte[Peer.getInstance().noOfPieces];
-										while(in.available()<0){}
+//										while(in.available()<0){}
 										in.read(piece);
 										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
 									} else {
 										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-										while(in.available()<0){}
+//										while(in.available()<0){}
 										in.read(piece, 5, Peer.getInstance().excessPieceSize);
 										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
 									}
@@ -164,7 +164,7 @@ public class Server extends Thread{
 									Peer.getInstance().requestedbitField.clear(genPieceindx);
 								} else if (message[4] == MsgType.HAVE.value) {
 									byte[] havePieceIndex = new byte[4];
-									while(in.available()<0){}
+//									while(in.available()<0){}
 									in.read(havePieceIndex);
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
 								}
