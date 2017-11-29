@@ -124,6 +124,10 @@ public class Server extends Thread{
 //						System.out.println("SERVER:- unchoke val ");
 						byte[] pieceIndex = new byte[4];
 						int genPieceindx = genPieceIndex();
+						if(genPieceindx==-1){
+							neighbor.setServerState(Constants.ScanState.UNCHOKE);
+							break;
+						}
 						pieceIndex = createPrefix(genPieceindx);
 //						System.out.println("SERVER:- pieceindex val ");
 						if (pieceIndex != null) {
