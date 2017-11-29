@@ -148,10 +148,11 @@ public class Client extends Thread {
 							System.out.println("here");
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
+							System.out.println(new String(pieceIndex));
 							System.out.println(getPieceIndex(pieceIndex));
 							sendPieceMsg(pieceIndex);
 							System.out.println("send piece message");
-							byte[] responseMsg = new byte[9];
+							byte[] responseMsg = new byte[5];
 							
 							while (in.available() < 0) {
 							}

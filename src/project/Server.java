@@ -77,7 +77,7 @@ public class Server extends Thread{
 						 2. unchoke message -> state = unchoke; set initial = false if it is true;
 						listen for unchoke/choke msges
 						state = unchoke or choke**/
-						System.out.println("SERVER:- SERVER LISTEN STATE ");
+//						System.out.println("SERVER:- SERVER LISTEN STATE ");
 							byte[] msg = new byte[5];
 							
 							if(in.available() >0){
