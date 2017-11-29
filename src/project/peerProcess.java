@@ -184,6 +184,7 @@ public class peerProcess {
 			     } else {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
+			    	 Peer.getInstance().neighborsBitSet.put(peerId, new BitSet());
 			     }
 			}
 			in.close();
