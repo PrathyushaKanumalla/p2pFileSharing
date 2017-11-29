@@ -159,7 +159,9 @@ public class Client extends Thread {
 						if request received -> go to piece again ;
 						if not interested - > go to UPLOAD_START state.**/
 						System.out.println("CLIENT:- PIECE STATE REACHED");
-						if(in.available() >0){
+//						if(in.available() >0){
+						while (in.available() < 0) {
+						}
 							System.out.println("here");
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
@@ -177,7 +179,7 @@ public class Client extends Thread {
 							}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
 								neighbor.setClientState(ScanState.UPLOAD_START);
 							}
-						}
+//						}
 						break;
 					}
 					case CHOKE: {
