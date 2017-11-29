@@ -148,7 +148,7 @@ public class Client extends Thread {
 							System.out.println("here");
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
-							System.out.println(new String(pieceIndex));
+//							System.out.println(new String(pieceIndex));
 							System.out.println(getPieceIndex(pieceIndex));
 							sendPieceMsg(pieceIndex);
 							System.out.println("send piece message");
@@ -227,6 +227,7 @@ public class Client extends Thread {
 		byte[] result = new byte[piece.length+4];
 		System.arraycopy(pieceIndex, 0, result, 0, 4);
 		System.arraycopy(piece, 0, result, 4, piece.length);
+		System.out.println(new String(result));
 		sendMessage(msgWithPayLoad(MsgType.PIECE, result));		
 	}
 
