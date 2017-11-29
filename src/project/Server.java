@@ -142,7 +142,7 @@ public class Server extends Thread{
 									in.read(reqPieceIndex);
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
-										byte[] piece = new byte[Peer.getInstance().noOfPieces];
+										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 //										while(in.available()<0){}
 										in.read(piece);
 										System.out.println("for not LAST ONE -> "+ new String(piece));
