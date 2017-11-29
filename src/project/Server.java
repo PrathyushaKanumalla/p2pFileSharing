@@ -105,6 +105,9 @@ public class Server extends Thread{
 //									while(in.available()<0){}
 									in.read(pieceIndex);
 									System.out.println("HAVE PIECE INDEX ---> "+ getPieceIndex(pieceIndex));
+									System.out.println("peer id for have message ---> "+ neighbor.peerId);
+									System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+									
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
 								}
 							}
