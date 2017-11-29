@@ -145,13 +145,17 @@ public class Client extends Thread {
 						if not interested - > go to UPLOAD_START state.**/
 						System.out.println("CLIENT:- PIECE STATE REACHED");
 						if(in.available() >0){
+							System.out.println("here");
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
+							System.out.println(getPieceIndex(pieceIndex));
 							sendPieceMsg(pieceIndex);
+							System.out.println("send piece message");
 							byte[] responseMsg = new byte[9];
-							in.read(responseMsg);
+							
 							while (in.available() < 0) {
 							}
+							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								neighbor.setClientState(ScanState.PIECE);
 							}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
@@ -218,6 +222,7 @@ public class Client extends Thread {
 
 	private void sendPieceMsg(byte[] pieceIndex) {
 		byte[] piece = Peer.getInstance().pieces[getPieceIndex(pieceIndex)].pieceInfo;
+		
 		byte[] result = new byte[piece.length+4];
 		System.arraycopy(pieceIndex, 0, result, 0, 4);
 		System.arraycopy(piece, 0, result, 4, piece.length);

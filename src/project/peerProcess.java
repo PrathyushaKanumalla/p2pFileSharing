@@ -142,6 +142,7 @@ public class peerProcess {
 				 String[] tokens = row.split("\\s+");
 				 Integer peerId = new Integer(tokens[0]);
 			     if (peerId == currPeerId) {
+			    	 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    	 Peer.getInstance().portNum = tokens[2];
 			    	 if (tokens[3].equals("1")) {
 			    		 Peer.getInstance().hasCompletefile=true;
@@ -157,15 +158,27 @@ public class peerProcess {
 				    	 
 				    	 fileName = Peer.getInstance().configProps.get("FileName");
 				    	 FileInputStream fis = new FileInputStream(new File(fileName));
-				    	 for (int i = 0; i < Peer.getInstance().noOfPieces-2; i ++) {
+				    	 
+				    	 for (int i = 0; i < Peer.getInstance().noOfPieces-1; i ++) {
 				    		 byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 				    		 fis.read(piece, 0, Integer.parseInt(Peer.getInstance().configProps.get("PieceSize")));
+//				    		 System.out.println("i val-> "+ i);
+//				    		 System.out.println(new String(piece));
 				    		 Peer.getInstance().pieces[i] = new Receivedpieces(piece);
 				    	 }
 				    	 byte[] piece = new byte[Peer.getInstance().excessPieceSize];
 			    		 fis.read(piece, 0, Peer.getInstance().excessPieceSize);
-			    		 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
+			    		 
+//			    		 System.out.println("here");
+//			    		 System.out.println(new String(piece));
+			    		 
+//			    		 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    		 Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
+			    		 System.out.println("pieces info");
+			    		 for(int i=0;i<Peer.getInstance().pieces.length;i++){
+			    			 System.out.println(i);
+			    			 System.out.println(Peer.getInstance().pieces[i]);
+			    		 }
 			    		 fis.close();
 				     }
 			     } else {
@@ -176,7 +189,8 @@ public class peerProcess {
 			in.close();
 		}
 		catch (Exception e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
+//			System.err.println(e.getMessage());
 		}
 	}
 	

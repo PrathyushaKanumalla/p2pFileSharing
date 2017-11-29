@@ -79,28 +79,33 @@ public class Server extends Thread{
 						state = unchoke or choke**/
 						System.out.println("SERVER:- SERVER LISTEN STATE ");
 							byte[] msg = new byte[5];
-							in.read(msg);
-							if (neighbor.initial && msg[4] == MsgType.BITFIELD.value) {
-								int bitFieldSize = Peer.getInstance().noOfPieces;
-								byte[] bitField = new byte[bitFieldSize];
-								in.read(bitField);
-								Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
-								if (!Peer.getInstance().bitField.equals(bitField)) {
-									sendInterested();
-								} else {
-									sendNotInterested();
+							
+							if(in.available() >0){
+								in.read(msg);
+								if (neighbor.initial && msg[4] == MsgType.BITFIELD.value) {
+									int bitFieldSize = Peer.getInstance().noOfPieces;
+									byte[] bitField = new byte[bitFieldSize];
+									while(in.available()<0){}
+									in.read(bitField);
+									Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
+									if (!Peer.getInstance().bitField.equals(bitField)) {
+										sendInterested();
+									} else {
+										sendNotInterested();
+									}
+									neighbor.initial=false;
+								} else if (msg[4] == MsgType.UNCHOKE.value) {
+									if (neighbor.initial) 
+										neighbor.initial = false;
+									neighbor.setServerState(ScanState.UNCHOKE);
+								} else if (msg[4] == MsgType.CHOKE.value) {
+									neighbor.setServerState(ScanState.CHOKE);
+								} else if (msg[4] == MsgType.HAVE.value) {
+									byte[] pieceIndex = new byte[4];
+									while(in.available()<0){}
+									in.read(pieceIndex);
+									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
 								}
-								neighbor.initial=false;
-							} else if (msg[4] == MsgType.UNCHOKE.value) {
-								if (neighbor.initial) 
-									neighbor.initial = false;
-								neighbor.setServerState(ScanState.UNCHOKE);
-							} else if (msg[4] == MsgType.CHOKE.value) {
-								neighbor.setServerState(ScanState.CHOKE);
-							} else if (msg[4] == MsgType.HAVE.value) {
-								byte[] pieceIndex = new byte[4];
-								in.read(pieceIndex);
-								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
 							}
 							break;
 					}
@@ -126,36 +131,43 @@ public class Server extends Thread{
 							send request again by putting state = unchoke;
 							if choke occurs -go to server listen again**/
 							byte[] message = new byte[5];
-							in.read(message);
-							if (message[4] == MsgType.PIECE.value) {
-								byte[] reqPieceIndex = new byte[4];
-								in.read(reqPieceIndex);
-								int reqPieceInd = getPieceIndex(reqPieceIndex);
-								if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
-									byte[] piece = new byte[Peer.getInstance().noOfPieces];
-									in.read(piece);
-									Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
-								} else {
-									byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-									in.read(piece, 5, Peer.getInstance().excessPieceSize);
-									Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
+							
+							if(in.available() >0){
+								in.read(message);
+								if (message[4] == MsgType.PIECE.value) {
+									byte[] reqPieceIndex = new byte[4];
+									while(in.available()<0){}
+									in.read(reqPieceIndex);
+									int reqPieceInd = getPieceIndex(reqPieceIndex);
+									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
+										byte[] piece = new byte[Peer.getInstance().noOfPieces];
+										while(in.available()<0){}
+										in.read(piece);
+										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
+									} else {
+										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
+										while(in.available()<0){}
+										in.read(piece, 5, Peer.getInstance().excessPieceSize);
+										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
+									}
+									//update all neighbors
+									for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
+										neighbor.setUpdatePieceInfo(true);
+										neighbor.piecesRxved.add(reqPieceIndex);
+									}
+									Peer.getInstance().bitField.set(reqPieceInd);
+									neighbor.setServerState(Constants.ScanState.UNCHOKE);
+									
+								} else if (message[4] == MsgType.CHOKE.value) {
+									System.out.println("SERVER:- choke sent val ");
+									neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
+									Peer.getInstance().requestedbitField.clear(genPieceindx);
+								} else if (message[4] == MsgType.HAVE.value) {
+									byte[] havePieceIndex = new byte[4];
+									while(in.available()<0){}
+									in.read(havePieceIndex);
+									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
 								}
-								//update all neighbors
-								for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
-									neighbor.setUpdatePieceInfo(true);
-									neighbor.piecesRxved.add(reqPieceIndex);
-								}
-								Peer.getInstance().bitField.set(reqPieceInd);
-								neighbor.setServerState(Constants.ScanState.UNCHOKE);
-								
-							} else if (message[4] == MsgType.CHOKE.value) {
-								System.out.println("SERVER:- choke sent val ");
-								neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
-								Peer.getInstance().requestedbitField.clear(genPieceindx);
-							} else if (message[4] == MsgType.HAVE.value) {
-								byte[] havePieceIndex = new byte[4];
-								in.read(havePieceIndex);
-								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
 							}
 						} else {
 							System.out.println("SERVER:- unchke not interested val ");
@@ -174,12 +186,14 @@ public class Server extends Thread{
 						byte[] handShakeMsg = new byte[32];
 						System.out.println("SERVER:- server waiting to read");
 						System.out.println("SERVER:- STARTE STATE ");
+						if(in.available()>0){
 						in.read(handShakeMsg);
-						if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
-							System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,new String(handShakeMsg), neighbor.peerId);
-							System.out.println("SERVER:- Neighbor <" + neighbor.peerId +"> validated");
-							//if not validated it does not proceed further
-							neighbor.setServerState(ScanState.RXVED_HAND_SHAKE);
+							if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
+								System.out.printf("SERVER:- Received message: <%s> from client %d\n" ,new String(handShakeMsg), neighbor.peerId);
+								System.out.println("SERVER:- Neighbor <" + neighbor.peerId +"> validated");
+								//if not validated it does not proceed further
+								neighbor.setServerState(ScanState.RXVED_HAND_SHAKE);
+							}
 						}
 						break;
 					} 
