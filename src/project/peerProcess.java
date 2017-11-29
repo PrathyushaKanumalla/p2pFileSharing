@@ -216,17 +216,6 @@ public class peerProcess {
 	    }
 	}
 	
-	public static int compareBitsets(BitSet lhs, BitSet rhs) {
-	    if (lhs.equals(rhs)) return 0;
-	    BitSet xor = (BitSet)lhs.clone();
-	    xor.xor(rhs);
-	    int firstDifferent = xor.length()-1;
-	    if(firstDifferent==-1)
-	            return 0;
-
-	    return rhs.get(firstDifferent) ? 1 : -1;
-	}
-	
 	public static void shutdownChecker(){
 		final Runnable checkShutdownChecker = new Runnable(){
 			public void run(){
@@ -239,13 +228,28 @@ public class peerProcess {
 					System.out.println(myBitfield.get(i));
 					System.out.println(filebitfield.get(i));
 				}
-				if(compareBitsets(myBitfield, filebitfield)==1){
+				boolean compareFlag = true;
+				for(int i=0;i<noOfPieces;i++){
+					if(!myBitfield.get(i) || !filebitfield.get(i)){
+						compareFlag=false;
+						break;
+					}
+				}
+				if(compareFlag){
 					System.out.println("Peer bitset and file bit set are equal");
 					boolean shutdown = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
-						if(compareBitsets(filebitfield, neighborBitset)==-1){
+						boolean compareNCheckFlag = true;
+						for(int i=0;i<noOfPieces;i++){
+							if(!neighborBitset.get(i) || !filebitfield.get(i)){
+								compareNCheckFlag=false;
+								break;
+							}
+						}
+						
+						if(compareNCheckFlag){
 							shutdown= false;
 							break;
 						}
