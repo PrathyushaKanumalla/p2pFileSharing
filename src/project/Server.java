@@ -142,6 +142,8 @@ public class Server extends Thread{
 									in.read(reqPieceIndex);
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
 									System.out.println("REQ INDEX -> "+ reqPieceInd);
+									//not sure about this
+									genPieceindx= reqPieceInd;
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 										while(in.available()<0){}
