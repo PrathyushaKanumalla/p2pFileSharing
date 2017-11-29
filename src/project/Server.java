@@ -145,6 +145,7 @@ public class Server extends Thread{
 										byte[] piece = new byte[Peer.getInstance().noOfPieces];
 //										while(in.available()<0){}
 										in.read(piece);
+										System.out.println("for not LAST ONE -> "+ new String(piece));
 										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
 									} else {
 										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
@@ -157,6 +158,7 @@ public class Server extends Thread{
 										neighbor.setUpdatePieceInfo(true);
 										neighbor.piecesRxved.add(reqPieceIndex);
 									}
+									System.out.println(reqPieceInd + "---> to update bitfield after receive");
 									Peer.getInstance().bitField.set(reqPieceInd);
 									neighbor.setServerState(Constants.ScanState.UNCHOKE);
 									
