@@ -141,6 +141,7 @@ public class Server extends Thread{
 									while(in.available()<0){}
 									in.read(reqPieceIndex);
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
+									System.out.println("REQ INDEX -> "+ reqPieceInd);
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 //										while(in.available()<0){}
@@ -152,7 +153,7 @@ public class Server extends Thread{
 //										while(in.available()<0){}
 										in.read(piece);
 										System.out.println("last index val");
-										System.out.println("for not LAST ONE -> "+ new String(piece));
+										System.out.println("for LAST ONE -> "+ new String(piece));
 										Peer.getInstance().pieces[reqPieceInd].pieceInfo = piece;
 									}
 									//update all neighbors
