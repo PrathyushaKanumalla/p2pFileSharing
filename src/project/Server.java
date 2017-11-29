@@ -136,11 +136,11 @@ public class Server extends Thread{
 							send request again by putting state = unchoke;
 							if choke occurs -go to server listen again**/
 							byte[] message = new byte[5];
-							while(in.available()<0){
-								
-							}
+//							while(in.available()<0){
+//								
+//							}
 //							if(in.available() >0){
-							while(in.available()>0){}
+							while(in.available()<0){}
 								in.read(message);
 								if (message[4] == MsgType.PIECE.value) {
 									byte[] reqPieceIndex = new byte[4];
