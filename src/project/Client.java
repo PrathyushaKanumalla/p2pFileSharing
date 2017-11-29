@@ -221,7 +221,7 @@ public class Client extends Thread {
 		sendMessage(msgWithoutPayLoad(MsgType.CHOKE));
 	}
 
-	private void sendPieceMsg(byte[] pieceIndex) {
+	private synchronized void sendPieceMsg(byte[] pieceIndex) {
 		byte[] piece = Peer.getInstance().pieces[getPieceIndex(pieceIndex)].pieceInfo;
 		
 		byte[] result = new byte[piece.length+4];

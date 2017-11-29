@@ -143,16 +143,17 @@ public class Server extends Thread{
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
 									System.out.println("REQ INDEX -> "+ reqPieceInd);
 									//not sure about this
-									genPieceindx= reqPieceInd;
+//									genPieceindx= reqPieceInd;
+									while(in.available()<0){}
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
-										while(in.available()<0){}
+										
 										in.read(piece);
 										System.out.println("for not LAST ONE -> "+ new String(piece));
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									} else {
 										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-										while(in.available()<0){}
+										
 										in.read(piece);
 										System.out.println("last index val");
 										System.out.println("for LAST ONE -> "+ new String(piece));
@@ -243,7 +244,7 @@ public class Server extends Thread{
 			}
 		}
 
-		private int genPieceIndex() {
+		private synchronized int genPieceIndex() {
 			BitSet myBitfield = Peer.getInstance().bitField;
 			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			int resultPieceIndex=-1;
