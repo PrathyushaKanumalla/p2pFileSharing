@@ -230,7 +230,7 @@ public class peerProcess {
 				}
 				boolean compareFlag = true;
 				for(int i=0;i<noOfPieces;i++){
-					if(!myBitfield.get(i) || !filebitfield.get(i)){
+					if(!myBitfield.get(i)){
 						compareFlag=false;
 						break;
 					}
@@ -243,7 +243,7 @@ public class peerProcess {
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
 						boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
-							if(!neighborBitset.get(i) || !filebitfield.get(i)){
+							if(!neighborBitset.get(i)){
 								compareNCheckFlag=false;
 								break;
 							}
