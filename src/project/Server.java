@@ -146,6 +146,7 @@ public class Server extends Thread{
 //							if(in.available() >0){
 							while(in.available()<0){}
 								in.read(message);
+								System.out.println("Message type --> "+ new String(message));
 								if (message[4] == MsgType.PIECE.value) {
 									System.out.println("PIECE 2nd time here");
 									byte[] reqPieceIndex = new byte[4];

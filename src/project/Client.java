@@ -169,10 +169,11 @@ public class Client extends Thread {
 							System.out.println(getPieceIndex(pieceIndex));
 							sendPieceMsg(pieceIndex);
 							System.out.println("send piece message");
-							byte[] responseMsg = new byte[5];
+							
 							
 							while (in.available() < 0) {
 							}
+							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								neighbor.setClientState(ScanState.PIECE);
