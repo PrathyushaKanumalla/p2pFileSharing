@@ -184,7 +184,10 @@ public class peerProcess {
 			     } else {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
-			    	 Peer.getInstance().neighborsBitSet.put(peerId, null);
+			    	 BitSet bset = new BitSet();
+			    	 bset.flip(0, Peer.getInstance().noOfPieces);
+			    	
+			    	 Peer.getInstance().neighborsBitSet.put(peerId, bset);
 			     }
 			}
 			in.close();
