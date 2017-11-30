@@ -45,10 +45,10 @@ public class Client extends Thread {
 			while(true)
 			{
 				
-				if (neighbor.isUpdatePieceInfo()) {
-					/**send have message to this neighbor
+				/*if (neighbor.isUpdatePieceInfo()) {
+					*//**send have message to this neighbor
 					receive interested msg - set to false
-					update interested list**/
+					update interested list**//*
 //					Iterator<byte[]> iterator = neighbor.piecesRxved.iterator();
 //					System.out.println("RECEIVED HAVE IN CLIENT "+ neighbor.piecesRxved.size());
 //					while(iterator.hasNext()){
@@ -84,7 +84,7 @@ public class Client extends Thread {
 						neighbor.setUpdatePieceInfo(false);
 //				}
 					
-				}
+				}*/
 				switch (neighbor.getClientState()) {
 					case START: {
 						System.out.println("CLIENT== MODE-START- sent handshake msg");
@@ -275,9 +275,20 @@ public class Client extends Thread {
 	private synchronized void sendUnchokeMsg() {
 		sendMessage(msgWithoutPayLoad(MsgType.UNCHOKE));
 	}
+	
 
 	public synchronized void sendHaveMsg(byte[] pieceIndex) {
-		sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
+		try {
+			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
+			byte[] responseMsg = new byte[9];
+			in.read(responseMsg);
+			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+				Peer.getInstance().interestedInMe.add(neighbor.peerId);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private synchronized void sendHandShake() {
