@@ -147,7 +147,9 @@ public class Server extends Thread{
 //						System.out.println("SERVER:- unchoke val ");
 						if (in.available() > 0 ) {
 							byte[] message = new byte[5];
+							System.out.println("SERVER:_POSSIBLE_HAVE_BLOCK");
 							in.read(message);
+							System.out.println("SERVER:-HAVE_BLOCK_message-type - "+message[4]);
 							if (message[4] == MsgType.HAVE.value) {
 								byte[] havePieceIndex = new byte[4];
 								in.read(havePieceIndex);
