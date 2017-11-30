@@ -188,7 +188,7 @@ public class Client extends Thread {
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
 //							System.out.println(new String(pieceIndex));
-							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(pieceIndex));
+							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(pieceIndex) + " from peer id - "+neighbor.peerId);
 							//System.out.println("piece index" + new String(pieceIndex));
 							sendPieceMsg(pieceIndex);
 							//System.out.println("send piece message");
@@ -360,6 +360,7 @@ public class Client extends Thread {
 	synchronized void sendMessage(byte[] msg)
 	{
 		try{
+			System.out.println("CLIENT:- sent message to server - " + print(msg) + " to peer " +neighbor.peerId);
 //			System.out.println("final length ---> "+msg.length);
 //			System.out.println("final messge to sent --> "+ new String(msg));
 			out.write(msg);
@@ -369,6 +370,14 @@ public class Client extends Thread {
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
+	}
+
+	private String print(byte[] msg) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b : msg) {
+			sb.append(b);
+		}
+		return sb.toString();
 	}
 
 	public  byte[] getMessage(String messageType){

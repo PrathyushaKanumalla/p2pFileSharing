@@ -104,7 +104,7 @@ public class Server extends Thread{
 										neighbor.initial = false;
 									neighbor.setServerState(ScanState.UNCHOKE);
 								} else if (msg[4] == MsgType.CHOKE.value) {
-									System.out.println("SERVER:- received choke message");
+									System.out.println("SERVER:- received choke message from " + neighbor.peerId);
 									neighbor.setServerState(ScanState.CHOKE);
 								} else if (msg[4] == MsgType.HAVE.value) {
 									byte[] pieceIndex = new byte[4];
@@ -332,7 +332,7 @@ public class Server extends Thread{
 			try{
 				out.write(msg);
 				out.flush();
-				System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,new String(msg), neighbor.peerId);
+				System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,print(msg), neighbor.peerId);
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
@@ -388,5 +388,13 @@ public class Server extends Thread{
 		            (byte)(len >>> 8),
 		            (byte)len};
 	    }
+		
+		private String print(byte[] msg) {
+			StringBuilder sb = new StringBuilder();
+			for (byte b : msg) {
+				sb.append(b);
+			}
+			return sb.toString();
+		}
 	}
 }
