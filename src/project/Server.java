@@ -140,7 +140,8 @@ public class Server extends Thread{
 						byte[] pieceIndex = new byte[4];
 						int genPieceindx = genPieceIndex();
 						if(genPieceindx==-1){
-							neighbor.setServerState(Constants.ScanState.UNCHOKE);
+							neighbor.setServerState(ScanState.SERVER_LISTEN);
+							sendNotInterested();
 							break;
 						}
 						pieceIndex = createPrefix(genPieceindx);
