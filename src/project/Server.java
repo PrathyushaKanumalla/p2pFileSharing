@@ -99,7 +99,7 @@ public class Server extends Thread{
 									}
 									neighbor.initial=false;
 								} else if (msg[4] == MsgType.UNCHOKE.value) {
-									System.out.println("SERVER:- received unchoke message");
+									System.out.println("SERVER:- received unchoke message from " + neighbor.peerId);
 									if (neighbor.initial) 
 										neighbor.initial = false;
 									neighbor.setServerState(ScanState.UNCHOKE);
