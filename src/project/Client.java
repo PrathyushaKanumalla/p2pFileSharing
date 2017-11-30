@@ -41,8 +41,8 @@ public class Client extends Thread {
 			if (neighbor.peerId < Peer.getInstance().peerID) {
 				neighbor.setClientState(ScanState.START);
 			}
-
-			while(true)
+			
+			while(!Peer.getInstance().stopped)
 			{
 				if (neighbor.isUpdatePieceInfo()) {
 					/**send have message to this neighbor
@@ -195,6 +195,7 @@ public class Client extends Thread {
 					}
 					case KILL:{
 //						System.out.println("CLIENT:- KILL STATE REACHED");
+						Peer.getInstance().stopped=true;
 						interrupt();
 						break;
 					}

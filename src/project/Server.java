@@ -58,7 +58,7 @@ public class Server extends Thread{
 				if (neighbor.peerId > Peer.getInstance().peerID) {
 					neighbor.setServerState(ScanState.START);
 				}
-				while(true)
+				while(!Peer.getInstance().stopped)
 				{
 					/** if i receive have msg
 					send interested or not interested as response; 
@@ -246,6 +246,7 @@ public class Server extends Thread{
 					}
 					case KILL:{
 						System.out.println("SERVER:- KILL STATE ");
+						Peer.getInstance().stopped=true;
 						interrupt();
 						break;
 					}
