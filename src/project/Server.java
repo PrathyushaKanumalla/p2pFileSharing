@@ -107,6 +107,7 @@ public class Server extends Thread{
 									System.out.println("SERVER:- received choke message from " + neighbor.peerId);
 									neighbor.setServerState(ScanState.CHOKE);
 								} else if (msg[4] == MsgType.HAVE.value) {
+									System.out.println("SERVER:- HAVE MESSGAGE IN SERVER_LISTEN BLOCK");
 									byte[] pieceIndex = new byte[4];
 //									while(in.available()<0){}
 									in.readFully(pieceIndex);
@@ -151,6 +152,7 @@ public class Server extends Thread{
 							in.read(message);
 							System.out.println("SERVER:-HAVE_BLOCK_message-type - "+message[4]);
 							if (message[4] == MsgType.HAVE.value) {
+								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
 								byte[] havePieceIndex = new byte[4];
 								in.read(havePieceIndex);
 								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
@@ -171,7 +173,9 @@ public class Server extends Thread{
 								else
 									sendNotInterested();
 							}
-						}			
+						}	else {
+							System.out.println("SERVER:- POSSIBLE_NOT_HAVE_BLOCK");
+						}
 						
 						
 						byte[] pieceIndex = new byte[4];
@@ -247,6 +251,7 @@ public class Server extends Thread{
 								neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
 								Peer.getInstance().requestedbitField.clear(genPieceindx);
 							} else if (message[4] == MsgType.HAVE.value) {
+								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-2");
 								byte[] havePieceIndex = new byte[4];
 //								while(in.available()<0){}
 								in.read(havePieceIndex);
