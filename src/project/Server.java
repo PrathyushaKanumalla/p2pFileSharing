@@ -114,13 +114,19 @@ public class Server extends Thread{
 									System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
 									int gotThisPeerIndex = getPieceIndex(pieceIndex);
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(gotThisPeerIndex);
-									if (!Peer.getInstance().getBitField()
-											.equals(Peer.getInstance().neighborsBitSet.get(neighbor.peerId))) {
-										System.out.println("SEND interested message");
-										sendInterested();
-									} else {
-										sendNotInterested();
+									BitSet myBitfield = Peer.getInstance().getBitField();
+									BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+									boolean sendInterested = false;
+									for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
+										if(!myBitfield.get(i) && neighborBitset.get(i)){
+											sendInterested = true;
+											break;
+										}
 									}
+									if (sendInterested) 
+										sendInterested();
+									else
+										sendNotInterested();
 //									System.out.println("neighbor bitset -> "+ neighbor.peerId);
 //									for(int i=0;i<Peer.getInstance().noOfPieces;i++){
 //										System.out.println(Peer.getInstance().neighborsBitSet.get(neighbor.peerId).get(i));
@@ -140,7 +146,7 @@ public class Server extends Thread{
 //						System.out.println("SERVER:- unchoke val ");
 						byte[] pieceIndex = new byte[4];
 						int genPieceindx = genPieceIndex();
-						if(genPieceindx==-1){
+						if(genPieceindx == -1){
 							neighbor.setServerState(ScanState.SERVER_LISTEN);
 							sendNotInterested();
 							break;
@@ -170,21 +176,23 @@ public class Server extends Thread{
 								byte[] reqPieceIndex = new byte[4];
 							//	while(in.available()<0){}
 								in.read(reqPieceIndex);
-//								System.out.println(reqPieceIndex.length);
 								int reqPieceInd = getPieceIndex(reqPieceIndex);
+								System.out.println("SERVER:- read piece index - " + reqPieceInd);
 //								System.out.println("REQ INDEX -> "+ reqPieceInd);
 								//while(in.available()<0){}
 								if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 									byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
-									
+									System.out.println("SERVER - " + piece.length);
+									System.out.println("SERVER:- reached here");
 									in.readFully(piece);
+									System.out.println(piece.length);
 									System.out.println("SERVER:- Piece " + reqPieceInd + "read from " + neighbor.peerId );
 //									System.out.println("for not LAST ONE -> "+ new String(piece));
 //									System.out.println("Piece Len-> "+ piece.length);
 									Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 								} else {
 									byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-									
+									System.out.println("SERVER:- reached here");
 									in.readFully(piece);
 									System.out.println("SERVER:- Piece " + reqPieceInd + "read from " + neighbor.peerId );
 //									System.out.println("last index val");
@@ -211,13 +219,19 @@ public class Server extends Thread{
 //								while(in.available()<0){}
 								in.read(havePieceIndex);
 								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								if (!Peer.getInstance().getBitField()
-										.equals(Peer.getInstance().neighborsBitSet.get(neighbor.peerId))) {
-									System.out.println("SEND interested message");
-									sendInterested();
-								} else {
-									sendNotInterested();
+								BitSet myBitfield = Peer.getInstance().getBitField();
+								BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+								boolean sendInterested = false;
+								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
+									if(!myBitfield.get(i) && neighborBitset.get(i)){
+										sendInterested = true;
+										break;
+									}
 								}
+								if (sendInterested) 
+									sendInterested();
+								else
+									sendNotInterested();
 //								System.out.println("HAVE PIECE INDEX ---> "+ getPieceIndex(havePieceIndex));
 //								System.out.println("peer id for have message ---> "+ neighbor.peerId);
 //								System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
