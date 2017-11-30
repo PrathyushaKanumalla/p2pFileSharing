@@ -297,7 +297,7 @@ public class Client extends Thread {
 	}
 
 	private synchronized void sendBitField(){
-		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().bitField.toByteArray()));
+		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().getBitField().toByteArray()));
 	}
 	
 	private synchronized byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
