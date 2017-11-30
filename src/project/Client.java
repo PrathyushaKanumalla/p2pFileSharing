@@ -42,38 +42,46 @@ public class Client extends Thread {
 				neighbor.setClientState(ScanState.START);
 			}
 			
-			while(!Peer.getInstance().stopped)
+			while(true)
 			{
 				if (neighbor.isUpdatePieceInfo()) {
 					/**send have message to this neighbor
 					receive interested msg - set to false
 					update interested list**/
-					Iterator<byte[]> iterator = neighbor.piecesRxved.iterator();
-					while(iterator.hasNext()){
-						byte[] tempPIndx = iterator.next();
-						sendHaveMsg(tempPIndx);
-						byte[] responseMsg = new byte[9];
-						in.read(responseMsg);
-						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-							Peer.getInstance().interestedInMe.add(neighbor.peerId);
-						} 
-						iterator.remove();
-					}
-//					
-//					for (byte[] pieceIndex : neighbor.piecesRxved) {
-//						sendHaveMsg(pieceIndex);
+//					Iterator<byte[]> iterator = neighbor.piecesRxved.iterator();
+//					System.out.println("RECEIVED HAVE IN CLIENT "+ neighbor.piecesRxved.size());
+//					while(iterator.hasNext()){
+//						byte[] tempPIndx = iterator.next();
+//						System.out.println("have peice index here in client -> "+getPieceIndex(tempPIndx));
+//						sendHaveMsg(tempPIndx);
 //						byte[] responseMsg = new byte[9];
 //						in.read(responseMsg);
 //						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 //							Peer.getInstance().interestedInMe.add(neighbor.peerId);
 //						} 
-//						neighbor.piecesRxved.remove(pieceIndex);
+//						iterator.remove();
 //					}
+					
+					for (int i=0;i<neighbor.piecesRxved.size();i++) {
+						byte[] pieceIndex = neighbor.piecesRxved.get(i);
+						if(pieceIndex.length >2){		
+							sendHaveMsg(pieceIndex);
+							byte[] responseMsg = new byte[9];
+							in.read(responseMsg);
+							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+								Peer.getInstance().interestedInMe.add(neighbor.peerId);
+							} 
+	//						neighbor.piecesRxved.remove(pieceIndex);
+							
+							neighbor.piecesRxved.add(i, new byte[0]);
+						}
+					}
 					
 					
 					System.out.println("CLIENT:- Have message sent");
 					if (neighbor.piecesRxved.isEmpty())
-						neighbor.setUpdatePieceInfo(false);;
+						neighbor.setUpdatePieceInfo(false);
+					
 				}
 				switch (neighbor.getClientState()) {
 					case START: {

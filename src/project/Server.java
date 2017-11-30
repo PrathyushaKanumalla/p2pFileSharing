@@ -58,7 +58,7 @@ public class Server extends Thread{
 				if (neighbor.peerId > Peer.getInstance().peerID) {
 					neighbor.setServerState(ScanState.START);
 				}
-				while(!Peer.getInstance().stopped)
+				while(true)
 				{
 					/** if i receive have msg
 					send interested or not interested as response; 
@@ -192,7 +192,9 @@ public class Server extends Thread{
 									for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
 										neighbor.setUpdatePieceInfo(true);
 										neighbor.piecesRxved.add(reqPieceIndex);
+										System.out.println("sending have updare "+ reqPieceIndex);
 									}
+									
 									System.out.println(reqPieceInd + "---> to update bitfield after receive");
 									Peer.getInstance().bitField.set(reqPieceInd);
 									neighbor.setServerState(Constants.ScanState.UNCHOKE);
@@ -203,9 +205,12 @@ public class Server extends Thread{
 									Peer.getInstance().requestedbitField.clear(genPieceindx);
 								} else if (message[4] == MsgType.HAVE.value) {
 									byte[] havePieceIndex = new byte[4];
-//									while(in.available()<0){}
+									while(in.available()<0){}
 									in.read(havePieceIndex);
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+									System.out.println("HAVE PIECE INDEX ---> "+ getPieceIndex(havePieceIndex));
+									System.out.println("peer id for have message ---> "+ neighbor.peerId);
+									System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
 								}
 //							}
 						} else {
@@ -245,7 +250,7 @@ public class Server extends Thread{
 						break;
 					}
 					case KILL:{
-						System.out.println("SERVER:- KILL STATE ");
+//						System.out.println("SERVER:- KILL STATE ");
 						Peer.getInstance().stopped=true;
 						interrupt();
 						break;
