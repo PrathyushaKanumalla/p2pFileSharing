@@ -364,7 +364,7 @@ public class peerProcess {
 						}
 					}
 					peerVsDownrate = MapSortByValue.sortByValue(peerVsDownrate);
-					if(peerList!=null){
+					if(peerList.size()>0){
 						System.out.println("peer list is not null");
 
 						Iterator<Integer> iterator = peerList.iterator();
