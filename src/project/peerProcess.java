@@ -406,15 +406,16 @@ public class peerProcess {
 							initialFlow= false;
 						}
 						else{
+							Iterator<Integer> itr = peerVsDownrate.keySet().iterator();
 							System.out.println("other flow");
 							List<Integer> tempList = new ArrayList<Integer>();
 //							System.out.println("iterator val "+ iterator.next());
 //							System.out.println("iterator val "+ iterator.hasNext());
 //							System.out.println("count val "+ count);
 //							System.out.println("k val "+ k);
-							while(count<k && iterator.hasNext()){
+							while(count<k && itr.hasNext()){
 //								System.out.println("INSIDE count ->"+count);
-								int prefPeer = iterator.next();
+								int prefPeer = itr.next();
 //								System.out.println("1 ->"+ prefPeer);
 								tempList.add(prefPeer);
 //								System.out.println("2");
@@ -422,6 +423,8 @@ public class peerProcess {
 									int idx = unchokeList.indexOf(prefPeer);
 									unchokeList.remove(idx);
 //									System.out.println("**");
+								} else {
+									Peer.getInstance().neighbors.get(prefPeer).setClientState(ScanState.UNCHOKE);
 								}
 								System.out.println("3");
 								count++;
@@ -437,11 +440,11 @@ public class peerProcess {
 							unchokeList.clear();
 							unchokeList = tempList;
 //							System.out.println("TEMP LIST SIZE -> "+ unchokeList.size());
-							for(int i=0;i<unchokeList.size();i++){
+							/*for(int i=0;i<unchokeList.size();i++){
 								System.out.println("********PEER "+unchokeList.get(i));
 								RemotePeerInfo prefPeer = Peer.getInstance().neighbors.get(unchokeList.get(i));
 //								prefPeer.setClientState(ScanState.UNCHOKE);
-							}
+							}*/
 						}
 					}
 				}
