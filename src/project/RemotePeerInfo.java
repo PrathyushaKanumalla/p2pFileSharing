@@ -37,11 +37,11 @@ public class RemotePeerInfo {
 		peerPort = pPort;
 	}
 	
-	public synchronized ScanState getClientState() {
+	public  ScanState getClientState() {
 		return clientState;
 	}
 
-	public synchronized void setClientState(ScanState clientState) {
+	public  void setClientState(ScanState clientState) {
 		this.clientState = clientState;
 	}
 
@@ -53,19 +53,19 @@ public class RemotePeerInfo {
 		this.serverState = serverState;
 	}
 	
-	public synchronized boolean isUpdatePieceInfo() {
+	public  boolean isUpdatePieceInfo() {
 		return updatePieceInfo;
 	}
 
-	public synchronized void setUpdatePieceInfo(boolean updatePieceInfo) {
+	public  void setUpdatePieceInfo(boolean updatePieceInfo) {
 		this.updatePieceInfo = updatePieceInfo;
 	}
 	
-	public synchronized List<byte[]> getPiecesRxved() {
+	public  List<byte[]> getPiecesRxved() {
 		return piecesRxved;
 	}
 
-	public synchronized void setPiecesRxved(List<byte[]> piecesRxved) {
+	public  void setPiecesRxved(List<byte[]> piecesRxved) {
 		this.piecesRxved = piecesRxved;
 	}
 }

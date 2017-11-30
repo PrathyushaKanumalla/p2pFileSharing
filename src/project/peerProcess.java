@@ -59,7 +59,7 @@ public class peerProcess {
 			noOfPieces = fileSize/pieceSize;
 			int excess = fileSize - pieceSize * noOfPieces;
 			Peer.getInstance().excessPieceSize = excess;
-			System.out.println("excess size- "+excess);
+//			System.out.println("excess size- "+excess);
 			noOfPieces+=1;
 		}
 		Peer.getInstance().noOfPieces = noOfPieces;
@@ -96,6 +96,7 @@ public class peerProcess {
 				int p =Integer.parseInt(Peer.getInstance().configProps.get("UnchokingInterval"));
 				int m = Integer.parseInt(Peer.getInstance().configProps.get("OptimisticUnchokingInterval"));
 				
+//				System.out.println("p->"+p+"k-> "+k);
 				
 				setPeerNeighbors(currPeerId);
 				
@@ -151,13 +152,13 @@ public class peerProcess {
 			    	 Peer.getInstance().setBitField(new BitSet(Peer.getInstance().noOfPieces));
 			    	 if (tokens[3].equals("1")) {
 			    		 Peer.getInstance().hasCompletefile=true;
-			    		 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
+//			    		 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
 //			    		 System.out.println(Peer.getInstance().noOfPieces);
 				    	 Peer.getInstance().getBitField().flip(0, Peer.getInstance().noOfPieces);
-				    	 for(int i=0;i<Peer.getInstance().noOfPieces;i++){
-								System.out.println(Peer.getInstance().getBitField().get(i));
-							}
-				    	 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
+//				    	 for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+//								System.out.println(Peer.getInstance().getBitField().get(i));
+//							}
+//				    	 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
 				    	 String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
 				    			 + Peer.getInstance().configProps.get("FileName");
 				    	 
@@ -179,11 +180,11 @@ public class peerProcess {
 			    		 
 //			    		 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    		 Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
-			    		 System.out.println("pieces info");
-			    		 for(int i=0;i<Peer.getInstance().pieces.length;i++){
-			    			 System.out.println(i);
-			    			 System.out.println(Peer.getInstance().pieces[i]);
-			    		 }
+//			    		 System.out.println("pieces info");
+//			    		 for(int i=0;i<Peer.getInstance().pieces.length;i++){
+//			    			 System.out.println(i);
+//			    			 System.out.println(Peer.getInstance().pieces[i]);
+//			    		 }
 			    		 fis.close();
 				     }
 			     } else {
@@ -234,11 +235,11 @@ public class peerProcess {
 				BitSet myBitfield = Peer.getInstance().getBitField();
 				BitSet filebitfield = Peer.getInstance().fileBitfield;
 				int noOfPieces = Peer.getInstance().noOfPieces;
-				for(int i=0;i<noOfPieces;i++){
-					System.out.println("***");
-					System.out.println(myBitfield.get(i));
-					System.out.println(filebitfield.get(i));
-				}
+//				for(int i=0;i<noOfPieces;i++){
+//					System.out.println("***");
+//					System.out.println(myBitfield.get(i));
+//					System.out.println(filebitfield.get(i));
+//				}
 				boolean compareFlag = true;
 				for(int i=0;i<noOfPieces;i++){
 					if(!myBitfield.get(i)){
@@ -247,14 +248,14 @@ public class peerProcess {
 					}
 				}
 				if(compareFlag){
-					System.out.println("Peer bitset and file bit set are equal");
+//					System.out.println("Peer bitset and file bit set are equal");
 					boolean shutdown = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
 //						boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
-							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i));
+//							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i));
 							if(!neighborBitset.get(i) ){
 //								compareNCheckFlag=false;
 								shutdown=false;
@@ -290,9 +291,9 @@ public class peerProcess {
 							e.printStackTrace();
 						}
 						
-						for (int index = 0; index < Peer.getInstance().pieces.length - 1; index++) {
-							
-						}
+//						for (int index = 0; index < Peer.getInstance().pieces.length - 1; index++) {
+//							
+//						}
 						shutdownscheduler.shutdown();
 						optimisticallyscheduler.shutdown();
 						determinekscheduler.shutdown();
@@ -301,7 +302,7 @@ public class peerProcess {
 				}
 			}
 		};
-		shutdownscheduler.scheduleAtFixedRate(checkShutdownChecker, 3, 3, SECONDS);
+		shutdownscheduler.scheduleAtFixedRate(checkShutdownChecker, 10, 10, SECONDS);
 		
 	}
 	
@@ -366,8 +367,10 @@ public class peerProcess {
 
 					List<Integer> peerList = new ArrayList<>(); 
 					peerList = Peer.getInstance().interestedInMe;
-					
-					
+//					System.out.println("BEFORE");
+//					for(int i=0;i<peerList.size();i++){
+//						System.out.println(peerList.get(i));
+//					}
 					
 					Map<Integer, Double> peerVsDownrate = new HashMap<Integer, Double>();
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -376,8 +379,12 @@ public class peerProcess {
 						}
 					}
 					peerVsDownrate = MapSortByValue.sortByValue(peerVsDownrate);
+//					System.out.println("AFTER");
+//					for(int i=0;i<peerList.size();i++){
+//						System.out.println(peerList.get(i));
+//					}
 					if(peerList.size()>0){
-						System.out.println("peer list is not null");
+//						System.out.println("peer list is not null");
 
 						Iterator<Integer> iterator = peerList.iterator();
 						int count =0;
@@ -394,20 +401,33 @@ public class peerProcess {
 								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
 								prefPeerInfo.setClientState(ScanState.UNCHOKE);
 								count++;
-								System.out.println("unchoke set");
+//								System.out.println("unchoke set");
 							}
 							initialFlow= false;
 						}
 						else{
+							System.out.println("other flow");
 							List<Integer> tempList = new ArrayList<Integer>();
+//							System.out.println("iterator val "+ iterator.next());
+//							System.out.println("iterator val "+ iterator.hasNext());
+//							System.out.println("count val "+ count);
+//							System.out.println("k val "+ k);
 							while(count<k && iterator.hasNext()){
+//								System.out.println("INSIDE count ->"+count);
 								int prefPeer = iterator.next();
+//								System.out.println("1 ->"+ prefPeer);
 								tempList.add(prefPeer);
-								if(unchokeList.contains(prefPeer)){
-									unchokeList.remove(prefPeer);
+//								System.out.println("2");
+								if(!unchokeList.isEmpty() && unchokeList.contains(prefPeer)){
+									int idx = unchokeList.indexOf(prefPeer);
+									unchokeList.remove(idx);
+//									System.out.println("**");
 								}
+								System.out.println("3");
 								count++;
 							}
+//							System.out.println("TEMP LIST SIZE -> "+ tempList.size());
+//							System.out.println("TEMP LIST SIZE -> "+ unchokeList.size());
 							for(int i=0;i<unchokeList.size();i++){
 								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(unchokeList.get(i));
 								System.out.println("CHOKED HERE *******");
@@ -416,7 +436,9 @@ public class peerProcess {
 							
 							unchokeList.clear();
 							unchokeList = tempList;
+//							System.out.println("TEMP LIST SIZE -> "+ unchokeList.size());
 							for(int i=0;i<unchokeList.size();i++){
+								System.out.println("********PEER "+unchokeList.get(i));
 								RemotePeerInfo prefPeer = Peer.getInstance().neighbors.get(unchokeList.get(i));
 								prefPeer.setClientState(ScanState.UNCHOKE);
 							}
@@ -425,7 +447,6 @@ public class peerProcess {
 				}
             }
 		};
-//		final ScheduledFuture<?> kNeighborDeterminerHandle = scheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);
 		determinekscheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);
 	}
 

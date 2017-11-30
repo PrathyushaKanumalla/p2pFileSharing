@@ -110,10 +110,10 @@ public class Server extends Thread{
 									System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
 									
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
-									System.out.println("neighbor bitset -> "+ neighbor.peerId);
-									for(int i=0;i<Peer.getInstance().noOfPieces;i++){
-										System.out.println(Peer.getInstance().neighborsBitSet.get(neighbor.peerId).get(i));
-									}
+//									System.out.println("neighbor bitset -> "+ neighbor.peerId);
+//									for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+//										System.out.println(Peer.getInstance().neighborsBitSet.get(neighbor.peerId).get(i));
+//									}
 								}
 							}
 							break;
@@ -134,9 +134,9 @@ public class Server extends Thread{
 							break;
 						}
 						pieceIndex = createPrefix(genPieceindx);
-						System.out.println("SERVER:- pieceindex val "+ new String(pieceIndex));
+//						System.out.println("SERVER:- pieceindex val "+ new String(pieceIndex));
 						if (pieceIndex != null) {
-							System.out.println("SERVER:- pieceindex req "+ genPieceindx);
+//							System.out.println("SERVER:- pieceindex req "+ genPieceindx);
 							sendRequestMessage(pieceIndex);
 //							System.out.println("SERVER:- sent pieceindex req");
 							/**listen for a piece msg;
@@ -150,90 +150,63 @@ public class Server extends Thread{
 //							}
 //							if(in.available() >0){
 							while(in.available()<0){}
-								in.read(message);
-								System.out.println("MESSAGE LENGTH"+message.length);
-								System.out.println("Message type --> "+ new String(message));
-								if (message[4] == MsgType.PIECE.value) {
-									System.out.println("PIECE 2nd time here");
-									byte[] reqPieceIndex = new byte[4];
-								//	while(in.available()<0){}
-									in.read(reqPieceIndex);
-									System.out.println(reqPieceIndex.length);
-									int reqPieceInd = getPieceIndex(reqPieceIndex);
-									System.out.println("REQ INDEX -> "+ reqPieceInd);
-									//not sure about this
-//									genPieceindx= reqPieceInd;
-									//while(in.available()<0){}
-									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
-										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
-										
-										//int readlength = in.read(piece,0,Integer.parseInt(Peer.getInstance().configProps.get("PieceSize")));
-//										int  size=piece.length;
-//										int start=0;
-//										int readlength=0;
-										in.readFully(piece);
-											
-//										do {
-//											byte[] tempToStore = new byte[1000];
-//											readlength = in.read(tempToStore);
-//											System.arraycopy(tempToStore, 0, piece, start, tempToStore.length);
-//											System.out.println("start val here - "+start);
-//											System.out.println("Piece is "+new String(piece));
-//											start += tempToStore.length;
-//										}while(start< size);
-//										System.out.println("final read length --> "+start);
-										System.out.println("for not LAST ONE -> "+ new String(piece));
-										System.out.println("Piece Len-> "+ piece.length);
-										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
-									} else {
-										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-										
-										in.readFully(piece);
-										System.out.println("last index val");
-										System.out.println("for LAST ONE -> "+ piece.length);
-										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
-									}
-									//update all neighbors
-									for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
-										
+							in.read(message);
+//							System.out.println("MESSAGE LENGTH"+message.length);
+//							System.out.println("Message type --> "+ new String(message));
+							if (message[4] == MsgType.PIECE.value) {
+//								System.out.println("PIECE 2nd time here");
+								byte[] reqPieceIndex = new byte[4];
+							//	while(in.available()<0){}
+								in.read(reqPieceIndex);
+//								System.out.println(reqPieceIndex.length);
+								int reqPieceInd = getPieceIndex(reqPieceIndex);
+//								System.out.println("REQ INDEX -> "+ reqPieceInd);
+								//while(in.available()<0){}
+								if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
+									byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
+									
+									in.readFully(piece);
+//									System.out.println("for not LAST ONE -> "+ new String(piece));
+//									System.out.println("Piece Len-> "+ piece.length);
+									Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
+								} else {
+									byte[] piece = new byte[Peer.getInstance().excessPieceSize];
+									
+									in.readFully(piece);
+//									System.out.println("last index val");
+//									System.out.println("for LAST ONE -> "+ piece.length);
+									Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
+								}
+								//update all neighbors
+								for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
-										Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);
-										System.out.println("sending have updare "+ reqPieceIndex);
-									}
-									
-									
-									
-//									wait(1000);
-									System.out.println(reqPieceInd + "---> to update bitfield after receive");
-									Peer.getInstance().getBitField().set(reqPieceInd);
-									neighbor.setServerState(Constants.ScanState.UNCHOKE);
-									
-								} else if (message[4] == MsgType.CHOKE.value) {
-									System.out.println("SERVER:- choke sent val ");
-									neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
-									Peer.getInstance().requestedbitField.clear(genPieceindx);
-								} else if (message[4] == MsgType.HAVE.value) {
-									byte[] havePieceIndex = new byte[4];
-									while(in.available()<0){}
-									in.read(havePieceIndex);
-									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-									System.out.println("HAVE PIECE INDEX ---> "+ getPieceIndex(havePieceIndex));
-									System.out.println("peer id for have message ---> "+ neighbor.peerId);
-									System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+									Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);
+//									System.out.println("sending have updare "+ reqPieceIndex);
 								}
+//								System.out.println(reqPieceInd + "---> to update bitfield after receive");
+								Peer.getInstance().getBitField().set(reqPieceInd);
+								neighbor.setServerState(Constants.ScanState.UNCHOKE);
+								
+							} else if (message[4] == MsgType.CHOKE.value) {
+								System.out.println("SERVER:- choke sent val ");
+								neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
+								Peer.getInstance().requestedbitField.clear(genPieceindx);
+							} else if (message[4] == MsgType.HAVE.value) {
+								byte[] havePieceIndex = new byte[4];
+//								while(in.available()<0){}
+								in.read(havePieceIndex);
+								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+//								System.out.println("HAVE PIECE INDEX ---> "+ getPieceIndex(havePieceIndex));
+//								System.out.println("peer id for have message ---> "+ neighbor.peerId);
+//								System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+							}
 //							}
 						} else {
 							System.out.println("SERVER:- unchke not interested val ");
 							sendNotInterested();
 							neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
 						}
-//						} else if (msg[4] == MsgType.HAVE.value) {
-//							System.out.println("SERVER:- have val in choke state val ");
-//							byte[] pieceIndex = new byte[4];
-//							in.read(pieceIndex);
-//							Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
-//						}
 						break;
 					}
 					case START: {
@@ -289,7 +262,7 @@ public class Server extends Thread{
 			}
 		}
 
-		private synchronized int genPieceIndex() {
+		private  int genPieceIndex() {
 			BitSet myBitfield = Peer.getInstance().getBitField();
 			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			int resultPieceIndex=-1;
@@ -304,17 +277,17 @@ public class Server extends Thread{
 			return resultPieceIndex;
 		}
 
-		private synchronized void sendRequestMessage(byte[] pieceIndex) {
+		private  void sendRequestMessage(byte[] pieceIndex) {
 			sendMessage(msgWithPayLoad(MsgType.REQUEST, pieceIndex));
 		}
 
-		private synchronized void sendHandShake() {
+		private  void sendHandShake() {
 			String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
 			sendMessage(handShake.getBytes());
 		}
 
 		//send a message to the output stream
-		public synchronized void sendMessage(byte[] msg)
+		public  void sendMessage(byte[] msg)
 		{
 			try{
 				out.write(msg);
@@ -327,15 +300,15 @@ public class Server extends Thread{
 		}
 
 		
-		private synchronized void sendInterested(){
+		private  void sendInterested(){
 			sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
 		}
 		
-		private synchronized void sendNotInterested(){
+		private  void sendNotInterested(){
 			sendMessage(msgWithoutPayLoad(MsgType.NOT_INTERESTED));
 		}
 		
-		private synchronized byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+		private  byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
 			/*if (payLoad != null) {
 				byte[] result = new byte[payLoad.length];
 		        System.arraycopy(field, 0, result, 0, field.length);
@@ -350,7 +323,7 @@ public class Server extends Thread{
 			return message;
 		}
 		
-		private synchronized int getPieceIndex(byte[] pieceIndex) {
+		private  int getPieceIndex(byte[] pieceIndex) {
 			int integerValue = 0;
 	        for (int index = 0; index < 4; index++) {
 	            int shift = (4 - 1 - index) * 8;
@@ -359,20 +332,14 @@ public class Server extends Thread{
 	        return integerValue;
 		}
 
-		private synchronized byte[] msgWithoutPayLoad(MsgType msgType) {
+		private  byte[] msgWithoutPayLoad(MsgType msgType) {
 			byte[] message = new byte[5];
 			System.arraycopy(createPrefix(1), 0, message, 0, 4);
 			message[4] = msgType.value;
 			return message;
 		}
 		
-		public synchronized byte[] createPrefix(int len) {
-//			byte[] prefix = new byte[4];
-//			prefix[0] = (byte) ((len & 0xFF000000) >> 24);
-//			prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
-//			prefix[2] = (byte) ((len & 0x0000FF00) >> 8);
-//			prefix[3] = (byte) (len & 0x000000FF);
-//	        return prefix;
+		public  byte[] createPrefix(int len) {
 			return new byte[] {
 		            (byte)(len >>> 24),
 		            (byte)(len >>> 16),

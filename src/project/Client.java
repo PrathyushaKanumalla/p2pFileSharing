@@ -107,7 +107,7 @@ public class Client extends Thread {
 					case DONE_HAND_SHAKE:{
 						System.out.println("CLIENT:- DONE HAND SHAKE STATE REACHED");
 						if (Peer.getInstance().hasCompleteFile()) {
-							System.out.println("have complete file");
+//							System.out.println("have complete file");
 							sendBitField();
 							neighbor.setClientState(ScanState.SENT_BIT_FIELD);
 						} else {
@@ -123,7 +123,7 @@ public class Client extends Thread {
 							in.read(responseMsg);
 							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
 							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-								System.out.println("got interested message");
+//								System.out.println("got interested message");
 								Peer.getInstance().interestedInMe.add(neighbor.peerId);
 							} // if not interested do nothing
 							neighbor.setClientState(ScanState.UPLOAD_START);
@@ -149,7 +149,7 @@ public class Client extends Thread {
 							System.out.println("CLIENT:- RXVE REQUEST STATE REACHED");
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
-							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+//							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								System.out.println("CLIENT:- REQUST VAL GOT STATE ");
 								neighbor.setClientState(ScanState.PIECE);
@@ -176,7 +176,7 @@ public class Client extends Thread {
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
 //							System.out.println(new String(pieceIndex));
-							//System.out.println(getPieceIndex(pieceIndex));
+							System.out.println("&&&&&&&&&&&&" +getPieceIndex(pieceIndex));
 							//System.out.println("piece index" + new String(pieceIndex));
 							sendPieceMsg(pieceIndex);
 							//System.out.println("send piece message");
@@ -204,7 +204,7 @@ public class Client extends Thread {
 						break;
 					}
 					case KILL:{
-//						System.out.println("CLIENT:- KILL STATE REACHED");
+						System.out.println("CLIENT:- KILL STATE REACHED");
 						Peer.getInstance().stopped=true;
 						interrupt();
 						break;
@@ -217,6 +217,7 @@ public class Client extends Thread {
 							message = (String)in.readObject();
 							//show the message to the user
 							System.out.printf("CLIENT:- Received the message: <%s>\n", message);*/
+//						System.out.println("CLIENT: DEFAULT "+neighbor.getClientState());
 						break;
 					}
 				}
@@ -247,11 +248,11 @@ public class Client extends Thread {
 		}
 	}
 
-	private synchronized void sendChokeMsg() {
+	private  void sendChokeMsg() {
 		sendMessage(msgWithoutPayLoad(MsgType.CHOKE));
 	}
 
-	private synchronized void sendPieceMsg(byte[] pieceIndex) {
+	private  void sendPieceMsg(byte[] pieceIndex) {
 		byte[] piece = Peer.getInstance().pieces[getPieceIndex(pieceIndex)].pieceInfo;
 		byte[] result = new byte[piece.length+4];
 		//System.out.println(new String(pieceIndex));
@@ -259,11 +260,11 @@ public class Client extends Thread {
 	//	System.out.println("before -->" +new String(result));
 		System.arraycopy(piece, 0, result, 4, piece.length);
 		//System.out.println("after -->" +new String(result));
-		System.out.println("sent length->>> "+piece.length);
+//		System.out.println("sent length->>> "+piece.length);
 		sendMessage(msgWithPayLoad(MsgType.PIECE, result));		
 	}
 
-	private synchronized int getPieceIndex(byte[] pieceIndex) {
+	private  int getPieceIndex(byte[] pieceIndex) {
 		int integerValue = 0;
         for (int index = 0; index < 4; index++) {
             int shift = (4 - 1 - index) * 8;
@@ -272,35 +273,36 @@ public class Client extends Thread {
         return integerValue;
 	}
 
-	private synchronized void sendUnchokeMsg() {
+	private  void sendUnchokeMsg() {
 		sendMessage(msgWithoutPayLoad(MsgType.UNCHOKE));
 	}
 	
 
-	public synchronized void sendHaveMsg(byte[] pieceIndex) {
-		try {
+	public  void sendHaveMsg(byte[] pieceIndex) {
+//		try {
 			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
-			byte[] responseMsg = new byte[9];
-			in.read(responseMsg);
-			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-				Peer.getInstance().interestedInMe.add(neighbor.peerId);
-			}
-		} catch (IOException e) {
+//			byte[] responseMsg = new byte[9];
+//			while(in.available()<0){}
+//			in.read(responseMsg);
+//			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+//				Peer.getInstance().interestedInMe.add(neighbor.peerId);
+//			}
+//		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//			e.printStackTrace();
+//		}
 	}
 
-	private synchronized void sendHandShake() {
+	private  void sendHandShake() {
 		String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
 		sendMessage(handShake.getBytes());
 	}
 
-	private synchronized void sendBitField(){
+	private  void sendBitField(){
 		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().getBitField().toByteArray()));
 	}
 	
-	private synchronized byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+	private  byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
 		/*if (payLoad != null) {
 			byte[] result = new byte[payLoad.length];
 	        System.arraycopy(field, 0, result, 0, field.length);
@@ -316,14 +318,14 @@ public class Client extends Thread {
 		return message;
 	}
 
-	private synchronized byte[] msgWithoutPayLoad(MsgType msgType) {
+	private  byte[] msgWithoutPayLoad(MsgType msgType) {
 		byte[] message = new byte[5];
 		System.arraycopy(createPrefix(1), 0, message, 0, 4);
 		message[4] = msgType.value;
 		return message;
 	}
 	
-	public synchronized byte[] createPrefix(int len) {
+	public  byte[] createPrefix(int len) {
 		byte[] prefix = new byte[4];
 		prefix[0] = (byte) ((len & 0xFF000000) >> 24);
 		prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
@@ -332,11 +334,11 @@ public class Client extends Thread {
         return prefix;
     }
 
-	synchronized void  sendMessage(byte[] msg)
+	 void  sendMessage(byte[] msg)
 	{
 		try{
-			System.out.println("final length ---> "+msg.length);
-			System.out.println("final messge to sent --> "+ new String(msg));
+//			System.out.println("final length ---> "+msg.length);
+//			System.out.println("final messge to sent --> "+ new String(msg));
 			out.write(msg);
 			out.flush();
 			//System.out.printf("CLIENT:- Message<"+msg+"> sent to %s:%s\n", neighbor.peerAddress, neighbor.peerPort);
@@ -346,7 +348,7 @@ public class Client extends Thread {
 		}
 	}
 
-	public synchronized byte[] getMessage(String messageType){
+	public  byte[] getMessage(String messageType){
 		byte[] res = messageType.getBytes();
 		int length =messageType.length();
 		//		byte[] temp = ByteBuffer.allocate(4).putInt(length).array();
