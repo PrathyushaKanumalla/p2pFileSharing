@@ -154,6 +154,8 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
+						while (in.available() <= 0) {
+						}
 						if(in.available() >0){
 							System.out.println("CLIENT:- RXVE REQUEST STATE REACHED");
 							byte[] responseMsg = new byte[5];
