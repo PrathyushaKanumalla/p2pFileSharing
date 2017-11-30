@@ -288,7 +288,7 @@ public class Client extends Thread {
 		try {
 			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
 			byte[] responseMsg = new byte[5];
-			while(in.available()<0){}
+			while(in.available()<=0){}
 			System.out.println("CLIENT:- input buffer has " + in.available());
 			in.read(responseMsg);
 			System.out.println("CLIENT:- received this type - " + responseMsg[4]);

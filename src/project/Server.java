@@ -339,6 +339,7 @@ public class Server extends Thread{
 
 		
 		private  void sendInterested(){
+			System.out.println("SERVER:- sending interested msg to peer " + neighbor.peerId);
 			sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
 		}
 		
