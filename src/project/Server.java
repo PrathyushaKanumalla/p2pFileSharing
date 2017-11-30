@@ -5,7 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
+import java.util.Random;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -267,16 +270,17 @@ public class Server extends Thread{
 		private  int genPieceIndex() {
 			BitSet myBitfield = Peer.getInstance().getBitField();
 			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
-			int resultPieceIndex=-1;
-			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+			List<Integer> possibleRequests = new ArrayList<>();
+			for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
 				if(!myBitfield.get(i) && neighborBitset.get(i) && !Peer.getInstance().requestedbitField.get(i)){
-					Peer.getInstance().requestedbitField.set(i);
-					resultPieceIndex=i;
-					break;
+					possibleRequests.add(i);
 				}
 			}
-			
-			return resultPieceIndex;
+			Random rand = new Random();
+			int randomIndex = rand.nextInt(possibleRequests.size());
+			System.out.println("Random Index generated - " + randomIndex);
+			Peer.getInstance().requestedbitField.set(randomIndex);
+			return (randomIndex == 0) ? -1: randomIndex;
 		}
 
 		private  void sendRequestMessage(byte[] pieceIndex) {
