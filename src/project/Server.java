@@ -145,6 +145,33 @@ public class Server extends Thread{
 //						in.read(msg);
 //						if (msg[4] == MsgType.UNCHOKE.value) {
 //						System.out.println("SERVER:- unchoke val ");
+						if (in.available() > 0 ) {
+							byte[] message = new byte[5];
+							in.read(message);
+							if (message[4] == MsgType.HAVE.value) {
+								byte[] havePieceIndex = new byte[4];
+								in.read(havePieceIndex);
+								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
+								+ " from peer id "+ neighbor.peerId);
+								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+								BitSet myBitfield = Peer.getInstance().getBitField();
+								BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+								boolean sendInterested = false;
+								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
+									if(!myBitfield.get(i) && neighborBitset.get(i)){
+										sendInterested = true;
+										break;
+									}
+								}
+								if (sendInterested) 
+									sendInterested();
+								else
+									sendNotInterested();
+							}
+						}			
+						
+						
 						byte[] pieceIndex = new byte[4];
 						int genPieceindx = genPieceIndex();
 						if(genPieceindx == -1){
@@ -219,7 +246,7 @@ public class Server extends Thread{
 								byte[] havePieceIndex = new byte[4];
 //								while(in.available()<0){}
 								in.read(havePieceIndex);
-								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(pieceIndex) 
+								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
 								+ " from peer id "+ neighbor.peerId);
 								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
 								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
