@@ -33,6 +33,7 @@ public class Peer {
 	public Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
 	public boolean hasCompletefile = false;
 	public boolean stopped= false;
+	public Map<Integer, Client> neighborThreads = Collections.synchronizedMap(new HashMap<>());
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
 		String message = new String(handShakeMsg);

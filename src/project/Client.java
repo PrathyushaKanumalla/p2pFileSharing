@@ -44,6 +44,7 @@ public class Client extends Thread {
 			
 			while(true)
 			{
+				
 				if (neighbor.isUpdatePieceInfo()) {
 					/**send have message to this neighbor
 					receive interested msg - set to false
@@ -61,7 +62,7 @@ public class Client extends Thread {
 //						} 
 //						iterator.remove();
 //					}
-					
+//					synchronized(this) {
 					for (int i=0;i<neighbor.getPiecesRxved().size();i++) {
 						byte[] pieceIndex = neighbor.getPiecesRxved().get(i);
 						if(pieceIndex.length >2){		
@@ -71,7 +72,7 @@ public class Client extends Thread {
 							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 								Peer.getInstance().interestedInMe.add(neighbor.peerId);
 							} 
-							neighbor.getPiecesRxved().remove(pieceIndex);
+//							neighbor.getPiecesRxved().remove(pieceIndex);
 							
 							//neighbor.piecesRxved.add(i, new byte[0]);
 						}
@@ -81,6 +82,7 @@ public class Client extends Thread {
 					System.out.println("CLIENT:- Have message sent");
 					if (neighbor.getPiecesRxved().isEmpty())
 						neighbor.setUpdatePieceInfo(false);
+//				}
 					
 				}
 				switch (neighbor.getClientState()) {
@@ -274,7 +276,7 @@ public class Client extends Thread {
 		sendMessage(msgWithoutPayLoad(MsgType.UNCHOKE));
 	}
 
-	private synchronized void sendHaveMsg(byte[] pieceIndex) {
+	public synchronized void sendHaveMsg(byte[] pieceIndex) {
 		sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
 	}
 

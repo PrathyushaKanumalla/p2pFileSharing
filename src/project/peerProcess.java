@@ -108,6 +108,7 @@ public class peerProcess {
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 					Client clientThread = new Client(neighbor.getValue());
+					Peer.getInstance().neighborThreads.put(neighbor.getKey(), clientThread);
 					clientThread.start();
 				}
 				Thread.sleep(1000);
