@@ -312,8 +312,8 @@ public class Server extends Thread{
 				return -1;
 			Random rand = new Random();
 			int randomIndex = rand.nextInt(possibleRequests.size());
-			System.out.println("SERVER:- Request index genrated random for piece - " + randomIndex);
-			Peer.getInstance().requestedbitField.set(randomIndex);
+			System.out.println("SERVER:- Request index genrated random for piece - " + possibleRequests.get(randomIndex));
+			Peer.getInstance().requestedbitField.set(possibleRequests.get(randomIndex));
 			return possibleRequests.get(randomIndex);
 		}
 
