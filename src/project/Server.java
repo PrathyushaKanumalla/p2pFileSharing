@@ -110,6 +110,10 @@ public class Server extends Thread{
 									System.out.println("neighbor bit set  ---> "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
 									
 									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(pieceIndex));
+									System.out.println("neighbor bitset -> "+ neighbor.peerId);
+									for(int i=0;i<Peer.getInstance().noOfPieces;i++){
+										System.out.println(Peer.getInstance().neighborsBitSet.get(neighbor.peerId).get(i));
+									}
 								}
 							}
 							break;

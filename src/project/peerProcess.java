@@ -28,7 +28,9 @@ import project.Constants.ScanState;
 
 
 public class peerProcess {
-	private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
+	private static ScheduledExecutorService determinekscheduler = Executors.newScheduledThreadPool(5);
+	private static ScheduledExecutorService optimisticallyscheduler = Executors.newScheduledThreadPool(5);
+	private static ScheduledExecutorService shutdownscheduler = Executors.newScheduledThreadPool(5);
 	private static boolean stateCheck = true;
 	private static boolean initialFlow = true;
 	private static List<Integer> unchokeList =  Collections.synchronizedList(new ArrayList<>());
@@ -146,6 +148,7 @@ public class peerProcess {
 			     if (peerId == currPeerId) {
 			    	 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    	 Peer.getInstance().portNum = tokens[2];
+			    	 Peer.getInstance().setBitField(new BitSet(Peer.getInstance().noOfPieces));
 			    	 if (tokens[3].equals("1")) {
 			    		 Peer.getInstance().hasCompletefile=true;
 			    		 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
@@ -186,10 +189,12 @@ public class peerProcess {
 			     } else {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
-			    	 BitSet bset = new BitSet();
-			    	 bset.flip(1, Peer.getInstance().noOfPieces);
+			    	 BitSet bset = new BitSet(Peer.getInstance().noOfPieces);
+//			    	 bset.flip(0, Peer.getInstance().noOfPieces);
 			    	
+			    	 
 			    	 Peer.getInstance().neighborsBitSet.put(peerId, bset);
+			    	 
 			     }
 			}
 			in.close();
@@ -288,12 +293,15 @@ public class peerProcess {
 						for (int index = 0; index < Peer.getInstance().pieces.length - 1; index++) {
 							
 						}
-						scheduler.shutdown();
+						shutdownscheduler.shutdown();
+						optimisticallyscheduler.shutdown();
+						determinekscheduler.shutdown();
+						
 					}
 				}
 			}
 		};
-		scheduler.scheduleAtFixedRate(checkShutdownChecker, 3, 3, SECONDS);
+		shutdownscheduler.scheduleAtFixedRate(checkShutdownChecker, 3, 3, SECONDS);
 		
 	}
 	
@@ -333,12 +341,13 @@ public class peerProcess {
 				}
 			}
 		};
-		scheduler.scheduleAtFixedRate(determineOUnchokedPeer, m, m, SECONDS);
+		optimisticallyscheduler.scheduleAtFixedRate(determineOUnchokedPeer, m, m, SECONDS);
 	}
 	
-	public static void determineKPreferred(final int k, final int p) throws IOException{
+	public static void determineKPreferred( int k,  int p) throws IOException{
 		final Runnable kNeighborDeterminer = new Runnable() {
             public void run() {
+            	System.out.println("determine scheduler start");
 				if(stateCheck){
 					boolean isFlag = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -401,16 +410,23 @@ public class peerProcess {
 							}
 							for(int i=0;i<unchokeList.size();i++){
 								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(unchokeList.get(i));
+								System.out.println("CHOKED HERE *******");
 								prefPeerInfo.setClientState(ScanState.CHOKE);
 							}
+							
 							unchokeList.clear();
 							unchokeList = tempList;
+							for(int i=0;i<unchokeList.size();i++){
+								RemotePeerInfo prefPeer = Peer.getInstance().neighbors.get(unchokeList.get(i));
+								prefPeer.setClientState(ScanState.UNCHOKE);
+							}
 						}
 					}
 				}
             }
 		};
-		final ScheduledFuture<?> kNeighborDeterminerHandle = scheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);
+//		final ScheduledFuture<?> kNeighborDeterminerHandle = scheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);
+		determinekscheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);
 	}
 
 }
