@@ -290,11 +290,13 @@ public class Server extends Thread{
 					possibleRequests.add(i);
 				}
 			}
+			if (possibleRequests.isEmpty())
+				return -1;
 			Random rand = new Random();
 			int randomIndex = rand.nextInt(possibleRequests.size());
 			System.out.println("Random Index generated - " + randomIndex);
 			Peer.getInstance().requestedbitField.set(randomIndex);
-			return (randomIndex == 0) ? -1: randomIndex;
+			return randomIndex;
 		}
 
 		private  void sendRequestMessage(byte[] pieceIndex) {
