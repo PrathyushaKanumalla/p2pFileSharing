@@ -42,7 +42,7 @@ public class Client extends Thread {
 				neighbor.setClientState(ScanState.START);
 			}
 			
-			while(true)
+			while(!Peer.getInstance().stopped)
 			{
 				
 				/*if (neighbor.isUpdatePieceInfo()) {

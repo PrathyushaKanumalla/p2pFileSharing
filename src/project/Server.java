@@ -58,7 +58,7 @@ public class Server extends Thread{
 				if (neighbor.peerId > Peer.getInstance().peerID) {
 					neighbor.setServerState(ScanState.START);
 				}
-				while(true)
+				while(!Peer.getInstance().stopped)
 				{
 					/** if i receive have msg
 					send interested or not interested as response; 
@@ -166,6 +166,7 @@ public class Server extends Thread{
 									byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 									
 									in.readFully(piece);
+									System.out.println("Piece read from"+neighbor.peerId );
 //									System.out.println("for not LAST ONE -> "+ new String(piece));
 //									System.out.println("Piece Len-> "+ piece.length);
 									Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
@@ -173,6 +174,7 @@ public class Server extends Thread{
 									byte[] piece = new byte[Peer.getInstance().excessPieceSize];
 									
 									in.readFully(piece);
+									System.out.println("Piece read from"+neighbor.peerId );
 //									System.out.println("last index val");
 //									System.out.println("for LAST ONE -> "+ piece.length);
 									Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
