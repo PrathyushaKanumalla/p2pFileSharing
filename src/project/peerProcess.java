@@ -231,7 +231,7 @@ public class peerProcess {
 	public static void shutdownChecker(){
 		final Runnable checkShutdownChecker = new Runnable(){
 			public void run(){
-				System.out.println("Shutdown scheduler started");
+				//System.out.println("Shutdown scheduler started");
 				BitSet myBitfield = Peer.getInstance().getBitField();
 				BitSet filebitfield = Peer.getInstance().fileBitfield;
 				int noOfPieces = Peer.getInstance().noOfPieces;
@@ -348,7 +348,7 @@ public class peerProcess {
 	public static void determineKPreferred( int k,  int p) throws IOException{
 		final Runnable kNeighborDeterminer = new Runnable() {
             public void run() {
-            	System.out.println("determine scheduler start");
+            	//System.out.println("determine scheduler start");
 				if(stateCheck){
 					boolean isFlag = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -363,7 +363,7 @@ public class peerProcess {
 					}
 				}
 				else{
-					System.out.println("determine logic started");
+					//System.out.println("determine logic started");
 
 					List<Integer> peerList = new ArrayList<>(); 
 					peerList = Peer.getInstance().interestedInMe;
@@ -389,13 +389,13 @@ public class peerProcess {
 						Iterator<Integer> iterator = peerList.iterator();
 						int count =0;
 						if(initialFlow){
-							System.out.println("initial flow started");
+							//System.out.println("initial flow started");
 //							System.out.println("iterator val "+ iterator.next());
 //							System.out.println("iterator val "+ iterator.hasNext());
 //							System.out.println("count val "+ count);
 //							System.out.println("k val "+ k);
 							while(count<k && iterator.hasNext()){
-								System.out.println("while loop started");
+								//System.out.println("while loop started");
 								int prefPeer = iterator.next();
 								unchokeList.add(prefPeer);
 								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
@@ -407,7 +407,7 @@ public class peerProcess {
 						}
 						else{
 							Iterator<Integer> itr = peerVsDownrate.keySet().iterator();
-							System.out.println("other flow");
+							//System.out.println("other flow");
 							List<Integer> tempList = new ArrayList<Integer>();
 //							System.out.println("iterator val "+ iterator.next());
 //							System.out.println("iterator val "+ iterator.hasNext());
@@ -426,14 +426,14 @@ public class peerProcess {
 								} else {
 									Peer.getInstance().neighbors.get(prefPeer).setClientState(ScanState.UNCHOKE);
 								}
-								System.out.println("3");
+								//System.out.println("3");
 								count++;
 							}
 //							System.out.println("TEMP LIST SIZE -> "+ tempList.size());
 //							System.out.println("TEMP LIST SIZE -> "+ unchokeList.size());
 							for(int i=0;i<unchokeList.size();i++){
 								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(unchokeList.get(i));
-								System.out.println("CHOKED HERE *******");
+								//System.out.println("CHOKED HERE *******");
 								prefPeerInfo.setClientState(ScanState.CHOKE);
 							}
 							

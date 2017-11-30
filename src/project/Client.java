@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Iterator;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -182,7 +181,7 @@ public class Client extends Thread {
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
 //							System.out.println(new String(pieceIndex));
-							System.out.println("&&&&&&&&&&&&" +getPieceIndex(pieceIndex));
+							System.out.println("CLIENT:- got this request for piece index " +getPieceIndex(pieceIndex));
 							//System.out.println("piece index" + new String(pieceIndex));
 							sendPieceMsg(pieceIndex);
 							//System.out.println("send piece message");
