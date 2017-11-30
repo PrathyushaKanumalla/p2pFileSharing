@@ -295,7 +295,7 @@ public class Client extends Thread {
 	}
 	
 
-	public  void sendHaveMsg(byte[] pieceIndex) {
+	public synchronized void sendHaveMsg(byte[] pieceIndex) {
 		try {
 			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
 			byte[] responseMsg = new byte[5];
@@ -357,7 +357,7 @@ public class Client extends Thread {
         return prefix;
     }
 
-	 void  sendMessage(byte[] msg)
+	synchronized void sendMessage(byte[] msg)
 	{
 		try{
 //			System.out.println("final length ---> "+msg.length);

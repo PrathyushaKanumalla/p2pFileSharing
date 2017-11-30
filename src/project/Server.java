@@ -201,6 +201,7 @@ public class Server extends Thread{
 								}
 								Peer.getInstance().getBitField().set(reqPieceInd);
 								//update all neighbors
+								System.out.println("SERVER:- My bit field " + Peer.getInstance().getBitField());
 								for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
