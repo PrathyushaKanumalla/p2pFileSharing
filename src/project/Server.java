@@ -129,11 +129,11 @@ public class Server extends Thread{
 							break;
 						}
 						pieceIndex = createPrefix(genPieceindx);
-//						System.out.println("SERVER:- pieceindex val ");
+						System.out.println("SERVER:- pieceindex val "+ new String(pieceIndex));
 						if (pieceIndex != null) {
 							System.out.println("SERVER:- pieceindex req "+ genPieceindx);
 							sendRequestMessage(pieceIndex);
-							System.out.println("SERVER:- sent pieceindex req");
+//							System.out.println("SERVER:- sent pieceindex req");
 							/**listen for a piece msg;
 							if piece -> update bit field
 							->then update  updatePieceInfo in peer;
@@ -146,29 +146,46 @@ public class Server extends Thread{
 //							if(in.available() >0){
 							while(in.available()<0){}
 								in.read(message);
+								System.out.println("MESSAGE LENGTH"+message.length);
 								System.out.println("Message type --> "+ new String(message));
 								if (message[4] == MsgType.PIECE.value) {
 									System.out.println("PIECE 2nd time here");
 									byte[] reqPieceIndex = new byte[4];
-									while(in.available()<0){}
+								//	while(in.available()<0){}
 									in.read(reqPieceIndex);
+									System.out.println(reqPieceIndex.length);
 									int reqPieceInd = getPieceIndex(reqPieceIndex);
 									System.out.println("REQ INDEX -> "+ reqPieceInd);
 									//not sure about this
 //									genPieceindx= reqPieceInd;
-									while(in.available()<0){}
+									//while(in.available()<0){}
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
 										
-										in.read(piece);
+										//int readlength = in.read(piece,0,Integer.parseInt(Peer.getInstance().configProps.get("PieceSize")));
+//										int  size=piece.length;
+//										int start=0;
+//										int readlength=0;
+										in.readFully(piece);
+											
+//										do {
+//											byte[] tempToStore = new byte[1000];
+//											readlength = in.read(tempToStore);
+//											System.arraycopy(tempToStore, 0, piece, start, tempToStore.length);
+//											System.out.println("start val here - "+start);
+//											System.out.println("Piece is "+new String(piece));
+//											start += tempToStore.length;
+//										}while(start< size);
+//										System.out.println("final read length --> "+start);
 										System.out.println("for not LAST ONE -> "+ new String(piece));
+										System.out.println("Piece Len-> "+ piece.length);
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									} else {
 										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
 										
-										in.read(piece);
+										in.readFully(piece);
 										System.out.println("last index val");
-										System.out.println("for LAST ONE -> "+ new String(piece));
+										System.out.println("for LAST ONE -> "+ piece.length);
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									}
 									//update all neighbors
@@ -271,17 +288,17 @@ public class Server extends Thread{
 			return resultPieceIndex;
 		}
 
-		private void sendRequestMessage(byte[] pieceIndex) {
+		private synchronized void sendRequestMessage(byte[] pieceIndex) {
 			sendMessage(msgWithPayLoad(MsgType.REQUEST, pieceIndex));
 		}
 
-		private void sendHandShake() {
+		private synchronized void sendHandShake() {
 			String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
 			sendMessage(handShake.getBytes());
 		}
 
 		//send a message to the output stream
-		public void sendMessage(byte[] msg)
+		public synchronized void sendMessage(byte[] msg)
 		{
 			try{
 				out.write(msg);
@@ -294,15 +311,15 @@ public class Server extends Thread{
 		}
 
 		
-		private void sendInterested(){
+		private synchronized void sendInterested(){
 			sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
 		}
 		
-		private void sendNotInterested(){
+		private synchronized void sendNotInterested(){
 			sendMessage(msgWithoutPayLoad(MsgType.NOT_INTERESTED));
 		}
 		
-		private byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+		private synchronized byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
 			/*if (payLoad != null) {
 				byte[] result = new byte[payLoad.length];
 		        System.arraycopy(field, 0, result, 0, field.length);
@@ -317,7 +334,7 @@ public class Server extends Thread{
 			return message;
 		}
 		
-		private int getPieceIndex(byte[] pieceIndex) {
+		private synchronized int getPieceIndex(byte[] pieceIndex) {
 			int integerValue = 0;
 	        for (int index = 0; index < 4; index++) {
 	            int shift = (4 - 1 - index) * 8;
@@ -326,20 +343,25 @@ public class Server extends Thread{
 	        return integerValue;
 		}
 
-		private byte[] msgWithoutPayLoad(MsgType msgType) {
+		private synchronized byte[] msgWithoutPayLoad(MsgType msgType) {
 			byte[] message = new byte[5];
 			System.arraycopy(createPrefix(1), 0, message, 0, 4);
 			message[4] = msgType.value;
 			return message;
 		}
 		
-		public byte[] createPrefix(int len) {
-			byte[] prefix = new byte[4];
-			prefix[0] = (byte) ((len & 0xFF000000) >> 24);
-			prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
-			prefix[2] = (byte) ((len & 0x0000FF00) >> 8);
-			prefix[3] = (byte) (len & 0x000000FF);
-	        return prefix;
+		public synchronized byte[] createPrefix(int len) {
+//			byte[] prefix = new byte[4];
+//			prefix[0] = (byte) ((len & 0xFF000000) >> 24);
+//			prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
+//			prefix[2] = (byte) ((len & 0x0000FF00) >> 8);
+//			prefix[3] = (byte) (len & 0x000000FF);
+//	        return prefix;
+			return new byte[] {
+		            (byte)(len >>> 24),
+		            (byte)(len >>> 16),
+		            (byte)(len >>> 8),
+		            (byte)len};
 	    }
 	}
 }

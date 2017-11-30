@@ -185,7 +185,7 @@ public class peerProcess {
 			    	 Peer.getInstance().neighbors.put(peerId, 
 				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
 			    	 BitSet bset = new BitSet();
-			    	 bset.flip(0, Peer.getInstance().noOfPieces);
+			    	 bset.flip(1, Peer.getInstance().noOfPieces);
 			    	
 			    	 Peer.getInstance().neighborsBitSet.put(peerId, bset);
 			     }
@@ -245,18 +245,20 @@ public class peerProcess {
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
-						boolean compareNCheckFlag = true;
+						//boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
+							System.out.println("here neighbor val -> "+ neighborBitset.get(i));
 							if(!neighborBitset.get(i)){
-								compareNCheckFlag=false;
+							//	compareNCheckFlag=false;
+								shutdown=false;
 								break;
 							}
 						}
 						
-						if(compareNCheckFlag){
-							shutdown= false;
-							break;
-						}
+//						if(compareNCheckFlag){
+//							shutdown= false;
+//							break;
+//						}
 					}
 					if(shutdown){
 						for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -265,8 +267,7 @@ public class peerProcess {
 							info.setServerState(ScanState.KILL);
 						}
 						try {
-							String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
-									+ Peer.getInstance().configProps.get("FileName");
+							String fileName =  Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
 							FileOutputStream fos = new FileOutputStream(dateFile);
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
