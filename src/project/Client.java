@@ -287,7 +287,7 @@ public class Client extends Thread {
 	public  void sendHaveMsg(byte[] pieceIndex) {
 		try {
 			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
-			byte[] responseMsg = new byte[9];
+			byte[] responseMsg = new byte[5];
 			while(in.available()<0){}
 			in.read(responseMsg);
 			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
