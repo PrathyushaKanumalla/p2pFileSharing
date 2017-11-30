@@ -355,7 +355,10 @@ public class peerProcess {
 				else{
 					System.out.println("determine logic started");
 
-					List<Integer> peerList = Peer.getInstance().interestedInMe;
+					List<Integer> peerList = new ArrayList<>(); 
+					peerList = Peer.getInstance().interestedInMe;
+					
+					
 					
 					Map<Integer, Double> peerVsDownrate = new HashMap<Integer, Double>();
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {

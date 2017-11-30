@@ -89,6 +89,7 @@ public class Server extends Thread{
 									in.read(bitField);
 									Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
 									if (!Peer.getInstance().bitField.equals(bitField)) {
+										System.out.println("SEND interested message");
 										sendInterested();
 									} else {
 										sendNotInterested();
@@ -233,8 +234,8 @@ public class Server extends Thread{
 					}
 					case START: {
 						byte[] handShakeMsg = new byte[32];
-						System.out.println("SERVER:- server waiting to read");
-						System.out.println("SERVER:- STARTE STATE ");
+//						System.out.println("SERVER:- server waiting to read");
+//						System.out.println("SERVER:- STARTE STATE ");
 						if(in.available()>0){
 						in.read(handShakeMsg);
 							if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
