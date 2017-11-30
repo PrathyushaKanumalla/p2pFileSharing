@@ -263,11 +263,7 @@ public class peerProcess {
 					}
 					if(shutdown){
 						
-						for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
-							RemotePeerInfo info = neighbor.getValue();
-							info.setClientState(ScanState.KILL);
-							info.setServerState(ScanState.KILL);
-						}
+
 						try {
 							String fileName =  Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
@@ -275,8 +271,14 @@ public class peerProcess {
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
 								fos.write(piece.pieceInfo);
 							}
+							
 				            fos.flush();
 				            fos.close();
+				            for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+								RemotePeerInfo info = neighbor.getValue();
+								info.setClientState(ScanState.KILL);
+								info.setServerState(ScanState.KILL);
+							}
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
