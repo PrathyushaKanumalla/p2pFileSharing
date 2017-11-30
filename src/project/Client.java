@@ -132,7 +132,7 @@ public class Client extends Thread {
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
 								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
 								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-									Peer.getInstance().interestedInMe.remove(neighbor.peerId);
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 							}
 							neighbor.setClientState(ScanState.UPLOAD_START);
@@ -165,7 +165,7 @@ public class Client extends Thread {
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
 								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
 								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-									Peer.getInstance().interestedInMe.remove(neighbor.peerId);
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
 							}
@@ -204,7 +204,7 @@ public class Client extends Thread {
 							}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
 								System.out.println("CLIENT:- got not interested message from peer " + neighbor.peerId);
 								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-									Peer.getInstance().interestedInMe.remove(neighbor.peerId);
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
 							}
@@ -307,7 +307,7 @@ public class Client extends Thread {
 			} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
 				System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
 				if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-					Peer.getInstance().interestedInMe.remove(neighbor.peerId);
+					Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 				}
 			}
 		} catch (IOException e) {
