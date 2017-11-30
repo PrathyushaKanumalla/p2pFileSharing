@@ -26,12 +26,18 @@ public class Client extends Thread {
 		try{
 			//create a socket to connect to the server
 			System.out.println("*The Client is running*");
+			System.out.println("TEST 1");
+			System.out.println(neighbor.peerAddress);
+			System.out.println(new Integer(neighbor.peerPort));
 			requestSocket = new Socket(neighbor.peerAddress, new Integer(neighbor.peerPort));
+			System.out.println("TEST 2");
 			System.out.printf("*My Client Connected to %s in port %s*", neighbor.peerAddress, neighbor.peerPort);
 			//initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
+//			System.out.println("TEST 1");
 			in = new ObjectInputStream(requestSocket.getInputStream());
+//			System.out.println("TEST2");
 			//sending handshake message
 
 			//handShake = "handshakeSent";
