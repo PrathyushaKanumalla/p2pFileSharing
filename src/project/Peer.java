@@ -20,7 +20,7 @@ public class Peer {
 	}
 
 	public int peerID;
-	public BitSet bitField = new BitSet();
+	private BitSet bitField = new BitSet();
 	public BitSet requestedbitField = new BitSet();
 	public BitSet fileBitfield= new BitSet();
 	public int noOfPieces;
@@ -42,6 +42,14 @@ public class Peer {
 			return true;
 		}
 		return false;
+	}
+	
+	public synchronized BitSet getBitField() {
+		return bitField;
+	}
+
+	public synchronized void setBitField(BitSet bitField) {
+		this.bitField = bitField;
 	}
 
 	public boolean hasCompleteFile() {

@@ -148,13 +148,13 @@ public class peerProcess {
 			    	 Peer.getInstance().portNum = tokens[2];
 			    	 if (tokens[3].equals("1")) {
 			    		 Peer.getInstance().hasCompletefile=true;
-			    		 System.out.println("my bitfield-> "+Peer.getInstance().bitField.toString());
+			    		 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
 //			    		 System.out.println(Peer.getInstance().noOfPieces);
-				    	 Peer.getInstance().bitField.flip(0, Peer.getInstance().noOfPieces);
+				    	 Peer.getInstance().getBitField().flip(0, Peer.getInstance().noOfPieces);
 				    	 for(int i=0;i<Peer.getInstance().noOfPieces;i++){
-								System.out.println(Peer.getInstance().bitField.get(i));
+								System.out.println(Peer.getInstance().getBitField().get(i));
 							}
-				    	 System.out.println("my bitfield-> "+Peer.getInstance().bitField.toString());
+				    	 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
 				    	 String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
 				    			 + Peer.getInstance().configProps.get("FileName");
 				    	 
@@ -226,7 +226,7 @@ public class peerProcess {
 		final Runnable checkShutdownChecker = new Runnable(){
 			public void run(){
 				System.out.println("Shutdown scheduler started");
-				BitSet myBitfield = Peer.getInstance().bitField;
+				BitSet myBitfield = Peer.getInstance().getBitField();
 				BitSet filebitfield = Peer.getInstance().fileBitfield;
 				int noOfPieces = Peer.getInstance().noOfPieces;
 				for(int i=0;i<noOfPieces;i++){
