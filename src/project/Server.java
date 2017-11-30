@@ -191,7 +191,7 @@ public class Server extends Thread{
 									//update all neighbors
 									for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
 										neighbor.setUpdatePieceInfo(true);
-										neighbor.piecesRxved.add(reqPieceIndex);
+										neighbor.getPiecesRxved().add(reqPieceIndex);
 										System.out.println("sending have updare "+ reqPieceIndex);
 									}
 									

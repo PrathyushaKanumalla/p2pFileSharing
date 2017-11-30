@@ -26,7 +26,7 @@ public class RemotePeerInfo {
 	private ScanState serverState =  ScanState.DEFAULT;
 	private boolean updatePieceInfo = false;
 	public boolean initial=true; 
-	public List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
+	private List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
 	public boolean isOptimisticallyChosen;
 	
 	public Double downRate;
@@ -59,5 +59,13 @@ public class RemotePeerInfo {
 
 	public synchronized void setUpdatePieceInfo(boolean updatePieceInfo) {
 		this.updatePieceInfo = updatePieceInfo;
+	}
+	
+	public synchronized List<byte[]> getPiecesRxved() {
+		return piecesRxved;
+	}
+
+	public synchronized void setPiecesRxved(List<byte[]> piecesRxved) {
+		this.piecesRxved = piecesRxved;
 	}
 }
