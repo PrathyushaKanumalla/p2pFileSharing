@@ -440,7 +440,7 @@ public class peerProcess {
 							for(int i=0;i<unchokeList.size();i++){
 								System.out.println("********PEER "+unchokeList.get(i));
 								RemotePeerInfo prefPeer = Peer.getInstance().neighbors.get(unchokeList.get(i));
-								prefPeer.setClientState(ScanState.UNCHOKE);
+//								prefPeer.setClientState(ScanState.UNCHOKE);
 							}
 						}
 					}
