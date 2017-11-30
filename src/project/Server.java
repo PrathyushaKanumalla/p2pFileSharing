@@ -331,7 +331,7 @@ public class Server extends Thread{
 			try{
 				out.write(msg);
 				out.flush();
-				System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,msg, neighbor.peerId);
+				System.out.printf("SERVER:- Sent message:<%s> to Client %d\n" ,new String(msg), neighbor.peerId);
 			}
 			catch(IOException ioException){
 				ioException.printStackTrace();
