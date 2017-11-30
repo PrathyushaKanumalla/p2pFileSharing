@@ -88,7 +88,7 @@ public class Server extends Thread{
 //									while(in.available()<0){}
 									in.read(bitField);
 									Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
-									if (!Peer.getInstance().bitField.equals(bitField)) {
+									if (!Peer.getInstance().getBitField().equals(bitField)) {
 										System.out.println("SEND interested message");
 										sendInterested();
 									} else {
@@ -202,7 +202,7 @@ public class Server extends Thread{
 									
 //									wait(1000);
 									System.out.println(reqPieceInd + "---> to update bitfield after receive");
-									Peer.getInstance().bitField.set(reqPieceInd);
+									Peer.getInstance().getBitField().set(reqPieceInd);
 									neighbor.setServerState(Constants.ScanState.UNCHOKE);
 									
 								} else if (message[4] == MsgType.CHOKE.value) {
@@ -286,7 +286,7 @@ public class Server extends Thread{
 		}
 
 		private synchronized int genPieceIndex() {
-			BitSet myBitfield = Peer.getInstance().bitField;
+			BitSet myBitfield = Peer.getInstance().getBitField();
 			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			int resultPieceIndex=-1;
 			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
