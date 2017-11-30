@@ -188,7 +188,7 @@ public class Client extends Thread {
 							//System.out.println("send piece message");
 							
 							
-							while (in.available() < 0) {
+							while (in.available() <= 0) {
 							}
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
