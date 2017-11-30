@@ -244,8 +244,7 @@ public class Server extends Thread{
 								System.out.println("SERVER:- Received Choke message from peer " + neighbor.peerId);
 								neighbor.setServerState(Constants.ScanState.SERVER_LISTEN);
 								Peer.getInstance().requestedbitField.clear(genPieceindx);
-							} 
-							if (message[4] == MsgType.HAVE.value) {
+							} else if (message[4] == MsgType.HAVE.value) {
 								byte[] havePieceIndex = new byte[4];
 //								while(in.available()<0){}
 								in.read(havePieceIndex);
