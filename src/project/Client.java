@@ -285,18 +285,18 @@ public class Client extends Thread {
 	
 
 	public  void sendHaveMsg(byte[] pieceIndex) {
-//		try {
+		try {
 			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
-//			byte[] responseMsg = new byte[9];
-//			while(in.available()<0){}
-//			in.read(responseMsg);
-//			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-//				Peer.getInstance().interestedInMe.add(neighbor.peerId);
-//			}
-//		} catch (IOException e) {
+			byte[] responseMsg = new byte[9];
+			while(in.available()<0){}
+			in.read(responseMsg);
+			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+				Peer.getInstance().interestedInMe.add(neighbor.peerId);
+			}
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+			e.printStackTrace();
+		}
 	}
 
 	private  void sendHandShake() {
