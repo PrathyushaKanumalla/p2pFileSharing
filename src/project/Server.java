@@ -232,7 +232,9 @@ public class Server extends Thread{
 								for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
+									System.out.println("sending have message to -> "+ neighbor.peerId);
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);
+									System.out.println("done  have message to -> "+ neighbor.peerId);
 //									System.out.println("sending have updare "+ reqPieceIndex);
 								}
 //								System.out.println(reqPieceInd + "---> to update bitfield after receive");
