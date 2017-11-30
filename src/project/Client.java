@@ -332,7 +332,7 @@ public class Client extends Thread {
         return prefix;
     }
 
-	void  sendMessage(byte[] msg)
+	synchronized void  sendMessage(byte[] msg)
 	{
 		try{
 			System.out.println("final length ---> "+msg.length);
