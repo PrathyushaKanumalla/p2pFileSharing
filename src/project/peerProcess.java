@@ -57,6 +57,7 @@ public class peerProcess {
 			noOfPieces = fileSize/pieceSize;
 			int excess = fileSize - pieceSize * noOfPieces;
 			Peer.getInstance().excessPieceSize = excess;
+			System.out.println("excess size- "+excess);
 			noOfPieces+=1;
 		}
 		Peer.getInstance().noOfPieces = noOfPieces;
@@ -245,22 +246,23 @@ public class peerProcess {
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
-						//boolean compareNCheckFlag = true;
+//						boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
-							System.out.println("here neighbor val -> "+ neighborBitset.get(i));
-							if(!neighborBitset.get(i)){
-							//	compareNCheckFlag=false;
+							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i));
+							if(!neighborBitset.get(i) ){
+//								compareNCheckFlag=false;
 								shutdown=false;
 								break;
 							}
 						}
 						
 //						if(compareNCheckFlag){
-//							shutdown= false;
+//							shutdown= true;
 //							break;
 //						}
 					}
 					if(shutdown){
+						
 						for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 							RemotePeerInfo info = neighbor.getValue();
 							info.setClientState(ScanState.KILL);
