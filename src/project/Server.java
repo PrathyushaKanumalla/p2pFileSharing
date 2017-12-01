@@ -245,6 +245,8 @@ public class Server extends Thread{
 									//ScanState prevState = neighbor.getClientState();
 									//neighbor.getPiecesRxved().add(reqPieceIndex);
 									//neighbor.setClientState(ScanState.HAVE);
+									while (Peer.getInstance().neighborThreads.get(neighbor.peerId).pause) {
+									}
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).havePiece = reqPieceIndex;
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).pause = true;
 									//sendHaveMsg();
