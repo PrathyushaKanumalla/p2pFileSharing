@@ -41,7 +41,7 @@ public class Server extends Thread{
 	 * A handler thread class.  Handlers are spawned from the listening
 	 * loop and are responsible for dealing with a single client's requests.
 	 */
-	private static class Handler extends Thread {
+	private class Handler extends Thread {
 		private Socket connection;
 		private ObjectInputStream in;	//stream read from the socket
 		private ObjectOutputStream out;    //stream write to the socket
