@@ -296,10 +296,11 @@ public class Client extends Thread {
 								}
 						}
 //							System.out.println(new String(pieceIndex));
+						if (getPieceIndex(globalPieceIndex) == -1)
+							break;
 							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(globalPieceIndex) + " from peer id - "+neighbor.peerId);
 							//System.out.println("piece index" + new String(pieceIndex));
-							if (getPieceIndex(globalPieceIndex) == -1)
-								break;
+
 							sendPieceMsg(globalPieceIndex);
 							globalPieceIndex = createPrefix(-1);
 							//System.out.println("send piece message");
