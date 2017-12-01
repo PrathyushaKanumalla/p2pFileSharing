@@ -430,7 +430,7 @@ public class Client extends Thread {
 	synchronized void sendMessage(byte[] msg)
 	{
 		try{
-			System.out.println("CLIENT:- sent message to server - " + print(msg) + " to peer " +neighbor.peerId);
+			System.out.println("CLIENT:- sent message to server -  to peer " +neighbor.peerId);
 //			System.out.println("final length ---> "+msg.length);
 //			System.out.println("final messge to sent --> "+ new String(msg));
 			out.write(msg);
