@@ -179,7 +179,7 @@ public class Client extends Thread {
 						break;
 					}
 					case UPLOAD_START: {
-						if(in.available() >0){
+						if(in.available() > 0){
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
@@ -229,6 +229,8 @@ public class Client extends Thread {
 									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 									}
+									neighbor.setClientState(ScanState.UPLOAD_START);
+									break;
 								}
 						}
 						sendUnchokeMsg();
@@ -242,38 +244,11 @@ public class Client extends Thread {
 						send peice msg
 						change state to PIECE**/
 						
-						while (in.available() <= 0) {
-						}
 						if(in.available() >0){
 							System.out.println("CLIENT:- RXVE REQUEST STATE REACHED");
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 //							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
-							if (responseMsg[4] == MsgType.HAVE.value) {
-								System.out.println("CLIENT:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
-								byte[] havePieceIndex = new byte[4];
-								in.read(havePieceIndex);
-								System.out.println("CLIENT:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
-								+ " from peer id "+ neighbor.peerId);
-								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("CLIENT:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
-								BitSet myBitfield = Peer.getInstance().getBitField();
-								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
-								boolean sendInterested = false;
-								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
-									if(!myBitfield.get(i) && neighborBitset.get(i)){
-										sendInterested = true;
-										break;
-									}
-								}
-								if (sendInterested) 
-									sendInterested();
-								else
-									sendNotInterested();
-								while (in.available() <= 0) {
-								}
-							}
-							if(in.available() >0){
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- received request message from peer " + neighbor.peerId);
@@ -284,11 +259,11 @@ public class Client extends Thread {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
+								break;
 							} else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 										System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
 										Peer.getInstance().interestedInMe.add(neighbor.peerId);
-									} 
-							}
+							} 
 						}
 						break;
 						
@@ -315,44 +290,20 @@ public class Client extends Thread {
 									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 									}
+									neighbor.setClientState(ScanState.UPLOAD_START);
+									break;
 								}
 						}
 //							System.out.println(new String(pieceIndex));
 							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(globalPieceIndex) + " from peer id - "+neighbor.peerId);
 							//System.out.println("piece index" + new String(pieceIndex));
 							sendPieceMsg(globalPieceIndex);
+							globalPieceIndex = new byte[4];
 							//System.out.println("send piece message");
 //							globalPieceIndex = createPrefix(-1);
 							
-							while (in.available() <= 0) {
-							}
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
-							if (responseMsg[4] == MsgType.HAVE.value) {
-								System.out.println("CLIENT:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
-								byte[] havePieceIndex = new byte[4];
-								in.read(havePieceIndex);
-								System.out.println("CLIENT:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
-								+ " from peer id "+ neighbor.peerId);
-								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("CLIENT:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
-								BitSet myBitfield = Peer.getInstance().getBitField();
-								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
-								boolean sendInterested = false;
-								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
-									if(!myBitfield.get(i) && neighborBitset.get(i)){
-										sendInterested = true;
-										break;
-									}
-								}
-								if (sendInterested) 
-									sendInterested();
-								else
-									sendNotInterested();
-								while (in.available() <= 0) {
-								}
-							} 
-							
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- Got a request msg from peer "+ neighbor.peerId);
@@ -363,11 +314,12 @@ public class Client extends Thread {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
+								break;
 							}else if (responseMsg[4] == MsgType.INTERESTED.value) {
 										System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
 										if (!Peer.getInstance().interestedInMe.contains(neighbor.peerId))
 											Peer.getInstance().interestedInMe.add(neighbor.peerId);
-									}
+							}
 						break;
 					}
 					case CHOKE: {
