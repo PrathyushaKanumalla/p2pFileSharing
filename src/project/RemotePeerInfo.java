@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import project.Constants.ScanState;
 
@@ -27,6 +28,7 @@ public class RemotePeerInfo {
 	private boolean updatePieceInfo = false;
 	public boolean initial=true; 
 	private List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
+	ConcurrentHashMap<Integer, byte[]> prxd = new ConcurrentHashMap<Integer, byte[]>();
 	public boolean isOptimisticallyChosen;
 	
 	public Double downRate =0.0;

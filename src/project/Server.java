@@ -186,7 +186,8 @@ public class Server extends Thread{
 										//Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);
 										if (!neighbor.isUpdatePieceInfo())
 											neighbor.setUpdatePieceInfo(true);
-										neighbor.getPiecesRxved().add(reqPieceIndex);
+//										neighbor.getPiecesRxved().add(reqPieceIndex);
+										neighbor.prxd.put(reqPieceInd, reqPieceIndex);
 										System.out.println("SERVER:- done  have message " + reqPieceInd + "to -> "+ neighbor.peerId);
 									}
 //									System.out.println(reqPieceInd + "---> to update bitfield after receive");

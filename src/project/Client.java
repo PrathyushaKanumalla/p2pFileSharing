@@ -121,19 +121,22 @@ public class Client extends Thread {
 				if (neighbor.isUpdatePieceInfo()) {
 //					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
 //					List<byte[]> tempList = new ArrayList<>();
-					Iterator<byte[]> iterator = neighbor.getPiecesRxved().iterator();
-					while(iterator.hasNext()){
-						byte[] tempPIndx = iterator.next();
-						System.out.println("have peice index here in client -> "+getPieceIndex(tempPIndx));
-						sendHaveMsg(tempPIndx);
-//						byte[] responseMsg = new byte[9];
-//						in.read(responseMsg);
-//						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-//							Peer.getInstance().interestedInMe.add(neighbor.peerId);
-//						} 
-						iterator.remove();
+//					Iterator<byte[]> iterator = neighbor.getPiecesRxved().iterator();
+//					while(iterator.hasNext()){
+//						byte[] tempPIndx = iterator.next();
+//						System.out.println("have peice index here in client -> "+getPieceIndex(tempPIndx));
+//						sendHaveMsg(tempPIndx);
+////						byte[] responseMsg = new byte[9];
+////						in.read(responseMsg);
+////						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+////							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+////						} 
+//						iterator.remove();
+//					}
+					for(int id: neighbor.prxd.keySet()){
+						sendHaveMsg(neighbor.prxd.get(id));
+						neighbor.prxd.remove(id);
 					}
-					
 					
 //					for (byte[]  piece: piecesRxved) {
 //						sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
@@ -142,7 +145,7 @@ public class Client extends Thread {
 //					for (byte[] bs : tempList) {
 //						piecesRxved.remove(neighbor.getPiecesRxved().indexOf(bs));
 //					}
-					if (neighbor.getPiecesRxved().isEmpty())
+					if (neighbor.prxd.isEmpty())
 						neighbor.setUpdatePieceInfo(false);
 				}
 				switch (getNeighbor().getClientState()) {
