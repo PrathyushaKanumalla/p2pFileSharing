@@ -34,6 +34,8 @@ public class Client extends Thread {
 			System.out.println(getNeighbor().peerAddress);
 			System.out.println(new Integer(getNeighbor().peerPort));
 			requestSocket = new Socket(getNeighbor().peerAddress, new Integer(getNeighbor().peerPort));
+			if (neighbor.getClientState().equals(ScanState.START))
+				Log.addLog(String.format("Peer %d makes a connection to Peer %d", Peer.getInstance().peerID, neighbor.peerId));
 			System.out.printf("*My Client Connected to %s in port %s*", getNeighbor().peerAddress, getNeighbor().peerPort);
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
@@ -87,8 +89,12 @@ public class Client extends Thread {
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 								System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
+								Log.addLog(String.format("Peer %d received the 'interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
 								Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+								Log.addLog(String.format("Peer %d received the 'not interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
 								System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
 								if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));
@@ -104,8 +110,12 @@ public class Client extends Thread {
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 								System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
+								Log.addLog(String.format("Peer %d received the 'interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
 								Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+								Log.addLog(String.format("Peer %d received the 'not interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
 								System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
 								if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));
@@ -125,8 +135,12 @@ public class Client extends Thread {
 							in.read(responseMsg);
 							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 									System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
+									Log.addLog(String.format("Peer %d received the 'interested' message from %d", 
+											Peer.getInstance().peerID, neighbor.peerId));
 									Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
 								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+									Log.addLog(String.format("Peer %d received the 'not interested' message from %d", 
+											Peer.getInstance().peerID, neighbor.peerId));
 									System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
 									if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));
@@ -153,14 +167,18 @@ public class Client extends Thread {
 								System.out.println("CLIENT:- received request message from peer " + getNeighbor().peerId);
 								sendPieceMsg(globalPieceIndex);
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+								Log.addLog(String.format("Peer %d received the 'not interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
 								System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
 								if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));
 								}
 								break;
 							} else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
-										System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
-										Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
+								Log.addLog(String.format("Peer %d received the 'interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
+								System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
+								Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
 							} 
 						}
 						break;
@@ -174,13 +192,17 @@ public class Client extends Thread {
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
-									System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
-									Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
-								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
-									System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
-									if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
-										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));
-									}
+								 Log.addLog(String.format("Peer %d received the 'interested' message from %d", 
+											Peer.getInstance().peerID, neighbor.peerId));
+								 System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
+								Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
+							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+								Log.addLog(String.format("Peer %d received the 'not interested' message from %d", 
+										Peer.getInstance().peerID, neighbor.peerId));
+								System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
+								if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));
+							}
 								}
 						}
 						System.out.println("CLIENT:- CHOKE STATE REACHED");
@@ -197,7 +219,11 @@ public class Client extends Thread {
 							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 									System.out.println("CLIENT:- received interested message from peer " + getNeighbor().peerId);
 									Peer.getInstance().interestedInMe.add(getNeighbor().peerId);
+									Log.addLog(String.format("Peer %d received the 'interested' message from %d", 
+											Peer.getInstance().peerID, neighbor.peerId));
 								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
+									Log.addLog(String.format("Peer %d received the 'not interested' message from %d", 
+											Peer.getInstance().peerID, neighbor.peerId));
 									System.out.println("CLIENT:- received not interested message from peer " + getNeighbor().peerId);
 									if (Peer.getInstance().interestedInMe.contains(getNeighbor().peerId)) {
 										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(getNeighbor().peerId));

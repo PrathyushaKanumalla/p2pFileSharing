@@ -215,6 +215,7 @@ public class peerProcess {
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
 								fos.write(piece.pieceInfo);
 							}
+							Log.addLog(String.format("Peer %s has downloaded the complete file", Peer.getInstance().peerID));
 							fos.flush();
 							fos.close();
 							for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -248,6 +249,7 @@ public class peerProcess {
 					int peer = chokeList.remove(randIndex);
 					if (peer != previouslyOptimisticallyPeer) {
 						System.out.println("new peer is selected to unchoke -> "+peer);
+						Log.addLog(String.format("Peer %s has the optimistically unchoked neighbor %d", peer));
 						RemotePeerInfo peerInfo = Peer.getInstance().neighbors.get(peer);
 						peerInfo.isOptimisticallyChosen=true;
 						peerInfo.setClientState(ScanState.UNCHOKE);
@@ -347,6 +349,7 @@ public class peerProcess {
 
 							unchokeList.clear();
 							unchokeList = tempList;
+							Log.addLog(String.format("Peer %s has the preferred neighbors ", unchokeList));
 						}
 					}
 				}

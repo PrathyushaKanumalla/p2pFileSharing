@@ -60,15 +60,15 @@ public class Server extends Thread{
 				in = new ObjectInputStream(connection.getInputStream());
 				this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
 				System.out.print(" with neighbor " + neighbor.peerId);
+				if (neighbor.getServerState().equals(ScanState.START))
+					Log.addLog(String.format("Peer %d is connected from Peer %d", Peer.getInstance().peerID, neighbor.peerId));
 				if (neighbor == null) {
 					System.out.println("neighbor is null");
 				}
-				//else {
 				while (!Peer.getInstance().stopped) {
 					/** if i receive have msg
 					send interested or not interested as response; 
 					 **/
-					//show the message to the user
 					switch (neighbor.getServerState()) {
 						case DONE_HAND_SHAKE: {
 							//go to SERVER_LISTEN
@@ -124,6 +124,8 @@ public class Server extends Thread{
 									int gotThisPeerIndex = getPieceIndex(pieceIndex);
 									Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(gotThisPeerIndex);
 									System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
+									Log.addLog(String.format("Peer %d received the 'have' message from %d for the piece %d", 
+											Peer.getInstance().peerID, neighbor.peerId, gotThisPeerIndex));
 									BitSet myBitfield = Peer.getInstance().getBitField();
 									BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
 									boolean sendInterested = false;
@@ -158,6 +160,8 @@ public class Server extends Thread{
 												" from peer " + neighbor.peerId );
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									}
+									Log.addLog(String.format("Peer %d has downloaded the piece %d from %d", 
+											Peer.getInstance().peerID, reqPieceInd, neighbor.peerId));
 									if (neighbor.startTime.containsKey(neighbor.peerId)) {
 										Long endTime = System.currentTimeMillis();
 										Long downtime = endTime - neighbor.startTime.get(neighbor.peerId);
