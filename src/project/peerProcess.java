@@ -153,7 +153,7 @@ public class peerProcess {
 			while((row = in.readLine()) != null) {
 				 String[] tokens = row.split("\\s+");
 				 Integer peerId = new Integer(tokens[0]);
-				 Peer.getInstance().downloadTime.put(peerId, (long) 0);
+				 Peer.getInstance().downloadTime.put(peerId, (double) 0);
 			     if (peerId == currPeerId) {
 			    	 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    	 Peer.getInstance().portNum = tokens[2];
@@ -387,10 +387,10 @@ public class peerProcess {
 //						System.out.println(peerList.get(i));
 //					}
 					
-					Map<Integer, Long> peerVsDownrate = new HashMap<Integer, Long>();
+					Map<Integer, Double> peerVsDownrate = new HashMap<Integer, Double>();
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						if(peerList.contains(neighbor.getKey())){
-							Long dwnldTime = Peer.getInstance().downloadTime.get(neighbor.getKey());
+							double dwnldTime = Peer.getInstance().downloadTime.get(neighbor.getKey());
 							System.out.println("The download rate of the peer is - " + dwnldTime + " for peer - " + neighbor.getKey());
 							peerVsDownrate.put(neighbor.getKey(), dwnldTime);
 						}

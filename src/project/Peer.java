@@ -36,7 +36,7 @@ public class Peer {
 	public boolean hasCompletefile = false;
 	public boolean stopped= false;
 	public Map<Integer, Client> neighborThreads = Collections.synchronizedMap(new HashMap<>());
-	ConcurrentHashMap<Integer,Long> downloadTime = new ConcurrentHashMap<Integer, Long>();
+	ConcurrentHashMap<Integer,Double> downloadTime = new ConcurrentHashMap<Integer, Double>();
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
 		String message = new String(handShakeMsg);

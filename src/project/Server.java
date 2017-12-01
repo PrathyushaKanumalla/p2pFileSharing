@@ -188,7 +188,7 @@ public class Server extends Thread{
 										System.out.println("downtime here **** -> "+downtime);
 										System.out.println("pieceSize here **** -> "+pieceSize);
 										System.out.println("download rate is **** -> "+ (long)(pieceSize/downtime));
-										Peer.getInstance().downloadTime.put(neighbor.peerId, (long)(pieceSize)/downtime);
+										Peer.getInstance().downloadTime.put(neighbor.peerId, (double)(pieceSize)/downtime);
 									}
 									pieceSize = 0;
 									Peer.getInstance().getBitField().set(reqPieceInd);
