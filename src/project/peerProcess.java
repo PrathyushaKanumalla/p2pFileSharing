@@ -251,7 +251,7 @@ public class peerProcess {
 					int peer = chokeList.remove(randIndex);
 					if (peer != previouslyOptimisticallyPeer) {
 						System.out.println("new peer is selected to unchoke -> "+peer);
-						Log.addLog(String.format("Peer %d has the optimistically unchoked neighbor %d", peer));
+						Log.addLog(String.format("Peer %d has the optimistically unchoked neighbor %d", Peer.getInstance().peerID, peer));
 						RemotePeerInfo peerInfo = Peer.getInstance().neighbors.get(peer);
 						peerInfo.isOptimisticallyChosen=true;
 						peerInfo.setClientState(ScanState.UNCHOKE);
@@ -309,7 +309,7 @@ public class peerProcess {
 						if (initialFlow){
 							while (iterator.hasNext()){
 								int prefPeer = iterator.next();
-								if (count <k){
+								if (count < k){
 									unchokeList.add(prefPeer);
 									RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
 									if (prefPeerInfo.alreadyChoked) {
