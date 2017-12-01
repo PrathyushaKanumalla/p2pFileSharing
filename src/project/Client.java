@@ -126,11 +126,11 @@ public class Client extends Thread {
 						byte[] tempPIndx = iterator.next();
 						System.out.println("have peice index here in client -> "+getPieceIndex(tempPIndx));
 						sendHaveMsg(tempPIndx);
-						byte[] responseMsg = new byte[9];
-						in.read(responseMsg);
-						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-							Peer.getInstance().interestedInMe.add(neighbor.peerId);
-						} 
+//						byte[] responseMsg = new byte[9];
+//						in.read(responseMsg);
+//						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+//							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+//						} 
 						iterator.remove();
 					}
 					
