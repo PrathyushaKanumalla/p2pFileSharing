@@ -34,6 +34,7 @@ public class peerProcess {
 	private static boolean stateCheck = true;
 	private static boolean initialFlow = true;
 	private static List<Integer> unchokeList =  Collections.synchronizedList(new ArrayList<>());
+	private static List<Integer> chokeList =  Collections.synchronizedList(new ArrayList<>());
 			
 	public static void setCommonConfig() throws IOException
 	{
@@ -123,7 +124,7 @@ public class peerProcess {
 				}
 				Thread.sleep(1000);
 				determineKPreferred(k,p);
-//				determineOptimisticallyUnchokedPeer(m);
+				determineOptimisticallyUnchokedPeer(m);
 				shutdownChecker();
 			} catch (NumberFormatException e) {
 		        System.err.println("Argument " + args[0] + " must be an integer.");
@@ -326,22 +327,24 @@ public class peerProcess {
 	public static void determineOptimisticallyUnchokedPeer(int m){
 		final Runnable determineOUnchokedPeer = new Runnable(){
 			public void run(){
-				List<Integer> chokeList = new ArrayList<Integer>();
-				for(int i=0;i<Peer.getInstance().interestedInMe.size();i++){
-					if(!unchokeList.contains(Peer.getInstance().interestedInMe.get(i))){
-						chokeList.add(Peer.getInstance().interestedInMe.get(i));
-					}
-				}
+//				List<Integer> chokeList = new ArrayList<Integer>();
+//				for(int i=0;i<Peer.getInstance().interestedInMe.size();i++){
+//					if(!unchokeList.isEmpty() && !unchokeList.contains(Peer.getInstance().interestedInMe.get(i))){
+//						chokeList.add(Peer.getInstance().interestedInMe.get(i));
+//					}
+//				}
 				int size = chokeList.size();
 				if(size!=0){
 					int randIndex = ThreadLocalRandom.current().nextInt(0, size);
                     int peer = chokeList.remove(randIndex);
                     //no need to check for null
                     if(peer!=previouslyOptimisticallyPeer){
+                    	System.out.println("new peer is selected to unchoke -> "+peer);
                     	RemotePeerInfo peerInfo = Peer.getInstance().neighbors.get(peer);
                     	peerInfo.isOptimisticallyChosen=true;
                     	peerInfo.setClientState(ScanState.UNCHOKE);
                     	if(previouslyOptimisticallyPeer!=0){
+                    		System.out.println("sending choke to previously choked -> "+ previouslyOptimisticallyPeer);
                     		RemotePeerInfo tempInfo = Peer.getInstance().neighbors.get(previouslyOptimisticallyPeer);
                     		tempInfo.isOptimisticallyChosen=false;
                     		tempInfo.setClientState(ScanState.CHOKE);
@@ -350,6 +353,7 @@ public class peerProcess {
                     }
 				}
 				else if(previouslyOptimisticallyPeer!=0){
+					System.out.println("in else block sending choke to previously choked -> "+ previouslyOptimisticallyPeer);
 					RemotePeerInfo tempInfo = Peer.getInstance().neighbors.get(previouslyOptimisticallyPeer);
 					tempInfo.isOptimisticallyChosen=false;
 					tempInfo.setClientState(ScanState.CHOKE);
@@ -411,14 +415,33 @@ public class peerProcess {
 //							System.out.println("iterator val "+ iterator.hasNext());
 //							System.out.println("count val "+ count);
 //							System.out.println("k val "+ k);
-							while(count<k && iterator.hasNext()){
-								//System.out.println("while loop started");
+							while( iterator.hasNext()){
 								int prefPeer = iterator.next();
-								unchokeList.add(prefPeer);
-								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
-								prefPeerInfo.setClientState(ScanState.UNCHOKE);
+								if(count <k){
+									//System.out.println("while loop started");
+									
+									unchokeList.add(prefPeer);
+									
+									RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
+									if(prefPeerInfo.alreadyChoked){
+										prefPeerInfo.alreadyChoked = false;
+										if(!prefPeerInfo.isOptimisticallyChosen){
+											prefPeerInfo.setClientState(ScanState.UNCHOKE);
+										}
+									}
+									
+	//								System.out.println("unchoke set");
+									}
+								else{
+									chokeList.add(prefPeer);
+									RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
+									if(!prefPeerInfo.alreadyChoked){
+										if(!prefPeerInfo.isOptimisticallyChosen){
+											prefPeerInfo.setClientState(ScanState.CHOKE);
+										}
+									}
+								}
 								count++;
-//								System.out.println("unchoke set");
 							}
 							initialFlow= false;
 						}

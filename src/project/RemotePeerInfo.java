@@ -29,8 +29,9 @@ public class RemotePeerInfo {
 	public boolean initial=true; 
 	private List<byte[]> piecesRxved = Collections.synchronizedList(new ArrayList<>());
 	ConcurrentHashMap<Integer, byte[]> prxd = new ConcurrentHashMap<Integer, byte[]>();
-	public boolean isOptimisticallyChosen;
+	public boolean isOptimisticallyChosen = false;
 	ConcurrentHashMap<Integer, Long> startTime = new ConcurrentHashMap<Integer, Long>();
+	public boolean alreadyChoked = true;
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;
