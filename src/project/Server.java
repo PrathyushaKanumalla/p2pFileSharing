@@ -250,6 +250,8 @@ public class Server extends Thread{
 									}
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).setHavePiece(reqPieceIndex);
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).setPause(true);
+									while (!Peer.getInstance().neighborThreads.get(neighbor.peerId).isPause()) {
+									}
 									//sendHaveMsg();
 									System.out.println("done  have message to -> "+ neighbor.peerId);
 									//neighbor.setClientState(prevState);

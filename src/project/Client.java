@@ -178,7 +178,7 @@ public class Client extends Thread {
 					}
 					case UPLOAD_START: {
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(havePiece);
+							sendHaveMsg(getHavePiece());
 						}
 						break;
 					}
@@ -188,7 +188,7 @@ public class Client extends Thread {
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(havePiece);
+							sendHaveMsg(getHavePiece());
 						} else {
 						sendUnchokeMsg();
 						neighbor.setClientState(ScanState.RXVE_REQUEST);
@@ -202,7 +202,7 @@ public class Client extends Thread {
 						send peice msg
 						change state to PIECE**/
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(havePiece);
+							sendHaveMsg(getHavePiece());
 						} else {
 						while (in.available() <= 0) {
 						}
@@ -239,7 +239,7 @@ public class Client extends Thread {
 //						}
 							//System.out.println("here");
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(havePiece);
+							sendHaveMsg(getHavePiece());
 						} else {
 //							System.out.println(new String(pieceIndex));
 							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(globalPieceIndex) + " from peer id - "+neighbor.peerId);
@@ -272,7 +272,7 @@ public class Client extends Thread {
 						expect nothing.
 						change to UPLOCAD_START**/
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(havePiece);
+							sendHaveMsg(getHavePiece());
 						} else {
 						System.out.println("CLIENT:- CHOKE STATE REACHED");
 						sendChokeMsg();
@@ -281,8 +281,8 @@ public class Client extends Thread {
 						break;
 					}
 					case KILL:{
-						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(havePiece);
+						if (isPause()) {
+							sendHaveMsg(getHavePiece());
 						} else {
 						System.out.println("CLIENT:- KILL STATE REACHED");
 						Peer.getInstance().stopped=true;
