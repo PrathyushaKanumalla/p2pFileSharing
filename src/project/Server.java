@@ -185,6 +185,8 @@ public class Server extends Thread{
 									if (neighbor.startTime.containsKey(neighbor.peerId)) {
 										Long endTime = System.currentTimeMillis();
 										Long downtime = endTime - neighbor.startTime.get(neighbor.peerId);
+										System.out.println("downtime here **** -> "+downtime);
+										System.out.println("pieceSize here **** -> "+pieceSize);
 										Peer.getInstance().downloadTime.put(neighbor.peerId, (pieceSize)/downtime);
 									}
 									pieceSize = 0;
