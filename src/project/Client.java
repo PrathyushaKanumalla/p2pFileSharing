@@ -54,6 +54,7 @@ public class Client extends Thread {
 			out.flush();
 //			System.out.println("TEST 1");
 			in = new ObjectInputStream(requestSocket.getInputStream());
+			byte[] globalPieceIndex = new byte[4];
 //			System.out.println("TEST2");
 			//sending handshake message
 
@@ -160,7 +161,7 @@ public class Client extends Thread {
 						/**if bit field message sent wait for interested/not interested msg*/
 //						System.out.println("CLIENT:- STATE SENT BIT FIELD");
 						if(in.available() >0){
-							byte[] responseMsg = new byte[10];
+							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 								System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
@@ -211,6 +212,7 @@ public class Client extends Thread {
 							in.read(responseMsg);
 //							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
 							if (responseMsg[4] == MsgType.REQUEST.value) {
+								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- received request message from peer " + neighbor.peerId);
 								neighbor.setClientState(ScanState.PIECE);
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
@@ -239,20 +241,19 @@ public class Client extends Thread {
 						if (pause) {
 							sendHaveMsg(havePiece);
 						} else {
-							byte[] pieceIndex = new byte[4];
-							in.read(pieceIndex);
 //							System.out.println(new String(pieceIndex));
-							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(pieceIndex) + " from peer id - "+neighbor.peerId);
+							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(globalPieceIndex) + " from peer id - "+neighbor.peerId);
 							//System.out.println("piece index" + new String(pieceIndex));
-							sendPieceMsg(pieceIndex);
+							sendPieceMsg(globalPieceIndex);
 							//System.out.println("send piece message");
-							
+							globalPieceIndex = new byte[4];
 							
 							while (in.available() <= 0) {
 							}
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.REQUEST.value) {
+								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- Got a request msg from peer "+ neighbor.peerId);
 								neighbor.setClientState(ScanState.PIECE);
 							}  else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
