@@ -80,7 +80,6 @@ public class peerProcess {
 				System.out.printf("*Peer %d started successfully*", currPeerId);
 				/** Step 1: Initiate Logs */
 				Log.setUpSingleTonLog(currPeerId);
-				Log.addLog("Success!!");
 				/** Step 2: Set up Config Information
 				//insert variable as key and store its value....*/
 				setCommonConfig();
@@ -147,7 +146,6 @@ public class peerProcess {
 						String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
 								+ Peer.getInstance().configProps.get("FileName");
 
-						fileName = Peer.getInstance().configProps.get("FileName");
 						FileInputStream fis = new FileInputStream(new File(fileName));
 
 						for (int i = 0; i < Peer.getInstance().noOfPieces-1; i ++) {
@@ -209,8 +207,11 @@ public class peerProcess {
 					/**Save Files before shut down */
 					if(shutdown){
 						try {
-							String fileName =  "./peer_" + Peer.getInstance().peerID + 
-									File.separator + Peer.getInstance().configProps.get("FileName");
+							String path =  "./peer_" + Peer.getInstance().peerID ;
+							File directoryFolder = new File(path);
+							if (!directoryFolder.exists())
+								directoryFolder.mkdir();
+							String fileName = path + File.separator + Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
 							FileOutputStream fos = new FileOutputStream(dateFile);
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
