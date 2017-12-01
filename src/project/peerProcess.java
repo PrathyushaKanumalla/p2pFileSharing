@@ -198,6 +198,7 @@ public class peerProcess {
 			    	 
 			     }
 			}
+			System.out.println("PEER PROCESS - My bit field " + Peer.getInstance().getBitField());
 			in.close();
 		}
 		catch (Exception e) {
