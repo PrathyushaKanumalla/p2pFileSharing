@@ -228,6 +228,23 @@ public class Client extends Thread {
 						interrupt();
 						break;
 					}
+					case HAVE: {
+						for (byte[]  piece: neighbor.getPiecesRxved()) {
+							sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
+							byte[] responseMsg = new byte[5];
+							while(in.available()<=0){}
+							in.read(responseMsg);
+							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+								System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+								Peer.getInstance().interestedInMe.add(neighbor.peerId);
+							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+								}
+							}
+						}
+					}
 					default: {
 						/*Send the sentence to the server
 							String message = "default_behavior_pratServer";

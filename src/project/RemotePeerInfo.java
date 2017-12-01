@@ -37,11 +37,11 @@ public class RemotePeerInfo {
 		peerPort = pPort;
 	}
 	
-	public  ScanState getClientState() {
+	public synchronized ScanState getClientState() {
 		return clientState;
 	}
 
-	public  void setClientState(ScanState clientState) {
+	public synchronized void setClientState(ScanState clientState) {
 		this.clientState = clientState;
 	}
 
