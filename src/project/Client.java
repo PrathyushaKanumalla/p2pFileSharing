@@ -214,6 +214,14 @@ public class Client extends Thread {
 									sendInterested();
 								else
 									sendNotInterested();
+							} else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+								System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+								Peer.getInstance().interestedInMe.add(neighbor.peerId);
+							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+								}
 							}
 						}
 						break;
@@ -223,6 +231,19 @@ public class Client extends Thread {
 						/**if this neighbor is selected as preferred neighbor
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
+						if (in.available() > 0) {
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+									Peer.getInstance().interestedInMe.add(neighbor.peerId);
+								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+									System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+									}
+								}
+						}
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(getHavePiece());
 						} else {
@@ -282,7 +303,10 @@ public class Client extends Thread {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
-							}
+							} else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+										System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+										Peer.getInstance().interestedInMe.add(neighbor.peerId);
+									} 
 							}
 						}
 						}
@@ -300,6 +324,19 @@ public class Client extends Thread {
 //						while (in.available() < 0) {
 //						}
 							//System.out.println("here");
+						if (in.available() > 0) {
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+									Peer.getInstance().interestedInMe.add(neighbor.peerId);
+								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+									System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+									}
+								}
+						}
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(getHavePiece());
 						} else {
@@ -349,7 +386,10 @@ public class Client extends Thread {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
-							}
+							}else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+										System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+										Peer.getInstance().interestedInMe.add(neighbor.peerId);
+									}
 						}
 //						}
 						break;
@@ -358,6 +398,19 @@ public class Client extends Thread {
 						/**if pref neighbors changed -> state to choke in the scheduler
 						expect nothing.
 						change to UPLOCAD_START**/
+						if (in.available() > 0) {
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+									Peer.getInstance().interestedInMe.add(neighbor.peerId);
+								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+									System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+									}
+								}
+						}
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(getHavePiece());
 						} else {
@@ -368,6 +421,19 @@ public class Client extends Thread {
 						break;
 					}
 					case KILL:{
+						if (in.available() > 0) {
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+							 if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+									Peer.getInstance().interestedInMe.add(neighbor.peerId);
+								} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+									System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+									}
+								}
+						}
 						if (isPause()) {
 							sendHaveMsg(getHavePiece());
 						} else {
@@ -475,9 +541,9 @@ public class Client extends Thread {
 	
 
 	public synchronized void sendHaveMsg(byte[] pieceIndex) {
-		try {
+		//try {
 			sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
-			byte[] responseMsg = new byte[5];
+			/*byte[] responseMsg = new byte[5];
 			while(in.available()<=0){}
 			in.read(responseMsg);
 			if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
@@ -488,13 +554,13 @@ public class Client extends Thread {
 				if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 					Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 				}
-			}
-		} catch (IOException e) {
+			}*/
+		/*} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			setPause(false);
-		}
+		}*/
 	}
 
 	private synchronized void sendHandShake() {

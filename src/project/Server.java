@@ -247,6 +247,7 @@ public class Server extends Thread{
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
 									System.out.println("SERVER:- sending have message " + reqPieceInd + " to -> "+ neighbor.peerId);
+									Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(pieceIndex);
 									//ScanState prevState = neighbor.getClientState();
 									//neighbor.getPiecesRxved().add(reqPieceIndex);
 									//neighbor.setClientState(ScanState.HAVE);
@@ -258,7 +259,7 @@ public class Server extends Thread{
 									}*/
 									
 									
-									sendHaveMsg(reqPieceIndex);
+									//sendHaveMsg(reqPieceIndex);
 									
 									System.out.println("SERVER:- done  have message " + reqPieceInd + "to -> "+ neighbor.peerId);
 									//neighbor.setClientState(prevState);
@@ -357,7 +358,7 @@ public class Server extends Thread{
 			}
 			}
 		
-		public synchronized void sendHaveMsg(byte[] pieceIndex) {
+		/*public synchronized void sendHaveMsg(byte[] pieceIndex) {
 			try {
 				sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
 				byte[] responseMsg = new byte[5];
@@ -376,7 +377,7 @@ public class Server extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-		}
+		}*/
 		
 
 		private synchronized int genPieceIndex() {
