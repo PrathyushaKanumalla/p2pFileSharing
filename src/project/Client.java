@@ -67,6 +67,7 @@ public class Client extends Thread {
 //			System.out.println("TEST 1");
 			in = new ObjectInputStream(requestSocket.getInputStream());
 			byte[] globalPieceIndex = new byte[4];
+			createPrefix(-1);
 //			System.out.println("TEST2");
 			//sending handshake message
 
