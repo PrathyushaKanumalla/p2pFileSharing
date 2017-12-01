@@ -119,8 +119,8 @@ public class Client extends Thread {
 					
 				}*/
 				if (neighbor.isUpdatePieceInfo()) {
-					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
-					List<byte[]> tempList = new ArrayList<>();
+//					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
+//					List<byte[]> tempList = new ArrayList<>();
 					Iterator<byte[]> iterator = neighbor.getPiecesRxved().iterator();
 					while(iterator.hasNext()){
 						byte[] tempPIndx = iterator.next();
