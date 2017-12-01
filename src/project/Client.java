@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.BitSet;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -51,11 +52,11 @@ public class Client extends Thread {
 		try{
 			//create a socket to connect to the server
 			System.out.println("*The Client is running*");
-			System.out.println("TEST 1");
+			//System.out.println("TEST 1");
 			System.out.println(getNeighbor().peerAddress);
 			System.out.println(new Integer(getNeighbor().peerPort));
 			requestSocket = new Socket(getNeighbor().peerAddress, new Integer(getNeighbor().peerPort));
-			System.out.println("TEST 2");
+			//System.out.println("TEST 2");
 			System.out.printf("*My Client Connected to %s in port %s*", getNeighbor().peerAddress, getNeighbor().peerPort);
 			//initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -188,6 +189,33 @@ public class Client extends Thread {
 						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(getHavePiece());
 						}
+						if (in.available() > 0) {
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+//							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+							if (responseMsg[4] == MsgType.HAVE.value) {
+								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
+								byte[] havePieceIndex = new byte[4];
+								in.read(havePieceIndex);
+								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
+								+ " from peer id "+ neighbor.peerId);
+								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
+								BitSet myBitfield = Peer.getInstance().getBitField();
+								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
+								boolean sendInterested = false;
+								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
+									if(!myBitfield.get(i) && neighborBitset.get(i)){
+										sendInterested = true;
+										break;
+									}
+								}
+								if (sendInterested) 
+									sendInterested();
+								else
+									sendNotInterested();
+							}
+						}
 						break;
 					}
 					case UNCHOKE: {
@@ -219,6 +247,31 @@ public class Client extends Thread {
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 //							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
+							if (responseMsg[4] == MsgType.HAVE.value) {
+								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
+								byte[] havePieceIndex = new byte[4];
+								in.read(havePieceIndex);
+								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
+								+ " from peer id "+ neighbor.peerId);
+								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
+								BitSet myBitfield = Peer.getInstance().getBitField();
+								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
+								boolean sendInterested = false;
+								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
+									if(!myBitfield.get(i) && neighborBitset.get(i)){
+										sendInterested = true;
+										break;
+									}
+								}
+								if (sendInterested) 
+									sendInterested();
+								else
+									sendNotInterested();
+								while (in.available() <= 0) {
+								}
+							}
+							if(in.available() >0){
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- received request message from peer " + neighbor.peerId);
@@ -229,6 +282,7 @@ public class Client extends Thread {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
+							}
 							}
 						}
 						}
@@ -260,6 +314,31 @@ public class Client extends Thread {
 							}
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
+							if (responseMsg[4] == MsgType.HAVE.value) {
+								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
+								byte[] havePieceIndex = new byte[4];
+								in.read(havePieceIndex);
+								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
+								+ " from peer id "+ neighbor.peerId);
+								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
+								BitSet myBitfield = Peer.getInstance().getBitField();
+								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
+								boolean sendInterested = false;
+								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
+									if(!myBitfield.get(i) && neighborBitset.get(i)){
+										sendInterested = true;
+										break;
+									}
+								}
+								if (sendInterested) 
+									sendInterested();
+								else
+									sendNotInterested();
+								while (in.available() <= 0) {
+								}
+							} 
+							
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- Got a request msg from peer "+ neighbor.peerId);
@@ -357,6 +436,16 @@ public class Client extends Thread {
 
 	private synchronized void sendChokeMsg() {
 		sendMessage(msgWithoutPayLoad(MsgType.CHOKE));
+	}
+	
+	private synchronized void sendInterested(){
+		System.out.println("SERVER:- SENT interested msg to peer " + neighbor.peerId);
+		sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
+	}
+	
+	private synchronized void sendNotInterested(){
+		System.out.println("SERVER:- SENT not interested msg to peer " + neighbor.peerId);
+		sendMessage(msgWithoutPayLoad(MsgType.NOT_INTERESTED));
 	}
 
 	private synchronized void sendPieceMsg(byte[] pieceIndex) {

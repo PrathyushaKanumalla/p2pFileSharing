@@ -22,9 +22,10 @@ public class Server extends Thread{
 		try {
 			listener = new ServerSocket(Integer.parseInt(Peer.getInstance().portNum));
 			//for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
+			while (true) {
 				new Handler(listener.accept()).start();
 				//System.out.println("*My Server Connected to "  + clientPeerId + " *");
-			//}
+			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}  finally {
@@ -53,21 +54,23 @@ public class Server extends Thread{
 
 		public void run() {
 			try{
+				System.out.print("*In handler ");
 				//initialize Input and Output streams
 				out = new ObjectOutputStream(connection.getOutputStream());
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
-				
+				this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
+				System.out.print(" with neighbor " + neighbor.peerId);
+				if (neighbor == null) {
+					System.out.println("neighbor is null");
+				}
+				else {
 				while(!Peer.getInstance().stopped)
 				{
 					/** if i receive have msg
 					send interested or not interested as response; 
 					 **/
 					//show the message to the user
-					this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
-					if (neighbor == null) {
-						System.out.println("neighbor is null");
-					} else {
 					switch (neighbor.getServerState()) {
 					case DONE_HAND_SHAKE: {
 						//go to SERVER_LISTEN
@@ -242,7 +245,7 @@ public class Server extends Thread{
 									//neighbor.setUpdatePieceInfo(true);
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
-									System.out.println("sending have message to -> "+ neighbor.peerId);
+									System.out.println("SERVER:- sending have message " + reqPieceInd + " to -> "+ neighbor.peerId);
 									//ScanState prevState = neighbor.getClientState();
 									//neighbor.getPiecesRxved().add(reqPieceIndex);
 									//neighbor.setClientState(ScanState.HAVE);
@@ -250,10 +253,10 @@ public class Server extends Thread{
 									}
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).setHavePiece(reqPieceIndex);
 									Peer.getInstance().neighborThreads.get(neighbor.peerId).setPause(true);
-									while (!Peer.getInstance().neighborThreads.get(neighbor.peerId).isPause()) {
-									}
+									/*while (Peer.getInstance().neighborThreads.get(neighbor.peerId).isPause()) {
+									}*/
 									//sendHaveMsg();
-									System.out.println("done  have message to -> "+ neighbor.peerId);
+									System.out.println("SERVER:- done  have message " + reqPieceInd + "to -> "+ neighbor.peerId);
 									//neighbor.setClientState(prevState);
 //									System.out.println("sending have updare "+ reqPieceIndex);
 								}
@@ -320,7 +323,7 @@ public class Server extends Thread{
 						break;
 					}
 					case KILL:{
-//						System.out.println("SERVER:- KILL STATE ");
+						System.out.println("SERVER:- KILL STATE ");
 						Peer.getInstance().stopped=true;
 						interrupt();
 						break;
