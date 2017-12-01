@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
 import project.Constants.ScanState;
@@ -35,49 +34,44 @@ public class peerProcess {
 	private static boolean initialFlow = true;
 	private static List<Integer> unchokeList =  Collections.synchronizedList(new ArrayList<>());
 	private static List<Integer> chokeList =  Collections.synchronizedList(new ArrayList<>());
-			
+
 	public static void setCommonConfig() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(Constants.COMMONCFG));
 		String configLine = null;
-		
+
 		while ((configLine = br.readLine()) != null) {
 			String[] split = configLine.split(" ");
 			Peer.getInstance().configProps.put(split[0], split[1]);
-//			String test = Peer.getInstance().configProps.get("FileSize");
-//			int val = Integer.parseInt(test);
-			
 		}
 		int fileSize = Integer.parseInt(Peer.getInstance().configProps.get("FileSize"));
 		int pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
-		
+
 		int noOfPieces=0;
-		
-		if(fileSize % pieceSize ==0){
+
+		if (fileSize % pieceSize ==0) {
 			noOfPieces = fileSize/pieceSize;
-		}
-		else{
+		} else {
 			noOfPieces = fileSize/pieceSize;
 			int excess = fileSize - pieceSize * noOfPieces;
 			Peer.getInstance().excessPieceSize = excess;
-//			System.out.println("excess size- "+excess);
 			noOfPieces+=1;
 		}
 		Peer.getInstance().noOfPieces = noOfPieces;
 		int i;
-		for(i=0;i<Peer.getInstance().noOfPieces -1 ;i++){
+		for (i = 0; i < Peer.getInstance().noOfPieces -1 ;i++){
 			Peer.getInstance().fileBitfield.set(i);
 		}
 		int tempPieces = Peer.getInstance().excessPieceSize;
-		while(tempPieces>0){
+		while (tempPieces > 0){
 			Peer.getInstance().fileBitfield.set(i);
 			i++;
 			tempPieces--;
 		}
 		br.close();
 	}
-	
-	
+
+
 	public static void main(String[] args) throws IOException, InterruptedException {
 		int currPeerId;
 		if (args.length > 0) {
@@ -87,20 +81,18 @@ public class peerProcess {
 				// Step 1: Initiate Logs
 				Log.setUpSingleTonLog(currPeerId);
 				Log.addLog("Success!!");
-				
 				// Step 2: Set up Config Information
+				//insert variable as key and store its value....
+				//commonInf.put(split[0], split[1]);
 				setCommonConfig();
-					//insert variable as key and store its value....
-					//commonInf.put(split[0], split[1]);				
-				// Step 3: Set up Peer Information
+
 				int k = Integer.parseInt(Peer.getInstance().configProps.get("NumberOfPreferredNeighbors"));
 				int p =Integer.parseInt(Peer.getInstance().configProps.get("UnchokingInterval"));
 				int m = Integer.parseInt(Peer.getInstance().configProps.get("OptimisticUnchokingInterval"));
-				
-//				System.out.println("p->"+p+"k-> "+k);
-				
+
+				// Step 3: Set up Peer Information
 				setPeerNeighbors(currPeerId);
-				
+
 				// Step 4: initiate download-connections (create a server)
 				// and evaluate pieces in it. -- in a method
 				// if the download is done -- stop all the threads of download
@@ -129,9 +121,9 @@ public class peerProcess {
 				determineOptimisticallyUnchokedPeer(m);
 				shutdownChecker();
 			} catch (NumberFormatException e) {
-		        System.err.println("Argument " + args[0] + " must be an integer.");
-		        System.exit(1);
-		    }
+				System.err.println("Argument " + args[0] + " must be an integer.");
+				System.exit(1);
+			}
 		} else {
 			System.err.println("Please provide peer ID attribute to start");
 			System.exit(1);
@@ -143,151 +135,101 @@ public class peerProcess {
 		String row = null;
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));
-			//Peer.getInstance().bitField = new BitSet(Peer.getInstance().noOfPieces);
-			
-//			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
-//				Peer.getInstance().bitField.clear(i);
-//			}
-			//Peer.getInstance().bitField.clear(0, Peer.getInstance().noOfPieces);
-//			System.out.println("my bitfield-> "+Peer.getInstance().bitField.toString());
-//			for(int i=0;i<Peer.getInstance().noOfPieces;i++){
-//				System.out.println(Peer.getInstance().bitField.get(i));
-//			}
-			while((row = in.readLine()) != null) {
-				 String[] tokens = row.split("\\s+");
-				 Integer peerId = new Integer(tokens[0]);
-				 Peer.getInstance().downloadTime.put(peerId, (double) 0);
-			     if (peerId == currPeerId) {
-			    	 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
-			    	 Peer.getInstance().portNum = tokens[2];
-			    	 Peer.getInstance().setBitField(new BitSet(Peer.getInstance().noOfPieces));
-			    	 if (tokens[3].equals("1")) {
-			    		 Peer.getInstance().hasCompletefile=true;
-//			    		 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
-//			    		 System.out.println(Peer.getInstance().noOfPieces);
-				    	 Peer.getInstance().getBitField().flip(0, Peer.getInstance().noOfPieces);
-//				    	 for(int i=0;i<Peer.getInstance().noOfPieces;i++){
-//								System.out.println(Peer.getInstance().getBitField().get(i));
-//							}
-//				    	 System.out.println("my bitfield-> "+Peer.getInstance().getBitField().toString());
-				    	 String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
-				    			 + Peer.getInstance().configProps.get("FileName");
-				    	 
-				    	 fileName = Peer.getInstance().configProps.get("FileName");
-				    	 FileInputStream fis = new FileInputStream(new File(fileName));
-				    	 
-				    	 for (int i = 0; i < Peer.getInstance().noOfPieces-1; i ++) {
-				    		 byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
-				    		 fis.read(piece, 0, Integer.parseInt(Peer.getInstance().configProps.get("PieceSize")));
-//				    		 System.out.println("i val-> "+ i);
-//				    		 System.out.println(new String(piece));
-				    		 Peer.getInstance().pieces[i] = new Receivedpieces(piece);
-				    	 }
-				    	 byte[] piece = new byte[Peer.getInstance().excessPieceSize];
-			    		 fis.read(piece, 0, Peer.getInstance().excessPieceSize);
-			    		 
-//			    		 System.out.println("here");
-//			    		 System.out.println(new String(piece));
-			    		 
-//			    		 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
-			    		 Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
-//			    		 System.out.println("pieces info");
-//			    		 for(int i=0;i<Peer.getInstance().pieces.length;i++){
-//			    			 System.out.println(i);
-//			    			 System.out.println(Peer.getInstance().pieces[i]);
-//			    		 }
-			    		 fis.close();
-				     }
-			     } else {
-			    	 Peer.getInstance().neighbors.put(peerId, 
-				    		 new RemotePeerInfo(peerId, tokens[1], tokens[2]));
-			    	 BitSet bset = new BitSet(Peer.getInstance().noOfPieces);
-//			    	 bset.flip(0, Peer.getInstance().noOfPieces);
-			    	
-			    	 
-			    	 Peer.getInstance().getNeighborsBitSet().put(peerId, bset);
-			    	 
-			     }
+			while ((row = in.readLine()) != null) {
+				String[] tokens = row.split("\\s+");
+				Integer peerId = new Integer(tokens[0]);
+				Peer.getInstance().downloadTime.put(peerId, (double) 0);
+				if (peerId == currPeerId) {
+					Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
+					Peer.getInstance().portNum = tokens[2];
+					Peer.getInstance().setBitField(new BitSet(Peer.getInstance().noOfPieces));
+					if (tokens[3].equals("1")) {
+						Peer.getInstance().hasCompletefile=true;
+						Peer.getInstance().getBitField().flip(0, Peer.getInstance().noOfPieces);
+						String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
+								+ Peer.getInstance().configProps.get("FileName");
+
+						fileName = Peer.getInstance().configProps.get("FileName");
+						FileInputStream fis = new FileInputStream(new File(fileName));
+
+						for (int i = 0; i < Peer.getInstance().noOfPieces-1; i ++) {
+							byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
+							fis.read(piece, 0, Integer.parseInt(Peer.getInstance().configProps.get("PieceSize")));
+							Peer.getInstance().pieces[i] = new Receivedpieces(piece);
+						}
+						byte[] piece = new byte[Peer.getInstance().excessPieceSize];
+						fis.read(piece, 0, Peer.getInstance().excessPieceSize);
+						Peer.getInstance().pieces[Peer.getInstance().noOfPieces-1] = new Receivedpieces(piece);
+						fis.close();
+					}
+				} else {
+					Peer.getInstance().neighbors.put(peerId, 
+							new RemotePeerInfo(peerId, tokens[1], tokens[2]));
+					BitSet bset = new BitSet(Peer.getInstance().noOfPieces);
+					Peer.getInstance().getNeighborsBitSet().put(peerId, bset);
+
+				}
 			}
 			System.out.println("PEER PROCESS - My bit field " + Peer.getInstance().getBitField());
 			in.close();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-//			System.err.println(e.getMessage());
 		}
 	}
-	
+
 	//Currently not needed but we may need in future, otherwise delete/comment the below method 
 	public static int countLines(String filename) throws IOException {
-	    InputStream is = new BufferedInputStream(new FileInputStream(filename));
-	    try {
-	        byte[] c = new byte[1024];
-	        int count = 0;
-	        int readChars = 0;
-	        boolean empty = true;
-	        while ((readChars = is.read(c)) != -1) {
-	            empty = false;
-	            for (int i = 0; i < readChars; ++i) {
-	                if (c[i] == '\n') {
-	                    ++count;
-	                }
-	            }
-	        }
-	        return (count == 0 && !empty) ? 1 : count;
-	    } finally {
-	        is.close();
-	    }
+		InputStream is = new BufferedInputStream(new FileInputStream(filename));
+		try {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean empty = true;
+			while ((readChars = is.read(c)) != -1) {
+				empty = false;
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n') {
+						++count;
+					}
+				}
+			}
+			return (count == 0 && !empty) ? 1 : count;
+		} finally {
+			is.close();
+		}
 	}
-	
+
 	public static void shutdownChecker(){
 		final Runnable checkShutdownChecker = new Runnable(){
 			public void run(){
-				//System.out.println("Shutdown scheduler started");
 				BitSet myBitfield = Peer.getInstance().getBitField();
-				BitSet filebitfield = Peer.getInstance().fileBitfield;
 				int noOfPieces = Peer.getInstance().noOfPieces;
-//				for(int i=0;i<noOfPieces;i++){
-//					System.out.println("***");
-//					System.out.println(myBitfield.get(i));
-//					System.out.println(filebitfield.get(i));
-//				}
 				boolean compareFlag = true;
-				for(int i=0;i<noOfPieces;i++){
-					if(!myBitfield.get(i)){
+				for (int i = 0; i < noOfPieces;i++){
+					if (!myBitfield.get(i)) {
 						compareFlag=false;
 						break;
 					}
 				}
-				if(compareFlag){
-//					System.out.println("Peer bitset and file bit set are equal");
+				if (compareFlag){
 					boolean shutdown = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(peerNeighborId);
-						if (Peer.getInstance().neighborThreads.get(neighbor.getKey()) != null && 
-								Peer.getInstance().neighborThreads.get(neighbor.getKey()).isPause()) {
+						if (neighbor.getValue().isUpdatePieceInfo()) {
 							shutdown=false;
 							break;
 						}
-//						boolean compareNCheckFlag = true;
-						for(int i=0;i<noOfPieces;i++){
+						for (int i = 0 ; i < noOfPieces;i++) {
 							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i) + "index -> "+i + "neighbor id "+neighbor.getKey());
-							if(!neighborBitset.get(i) ){
-//								compareNCheckFlag=false;
+							if (!neighborBitset.get(i)) {
 								shutdown=false;
 								break;
 							}
 						}
-						
-//						if(compareNCheckFlag){
-//							shutdown= true;
-//							break;
-//						}
 					}
 					if(shutdown){
-						
-
 						try {
 							String fileName =  Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
@@ -295,66 +237,51 @@ public class peerProcess {
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
 								fos.write(piece.pieceInfo);
 							}
-							
-				            fos.flush();
-				            fos.close();
-				            for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
+							fos.flush();
+							fos.close();
+							for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 								RemotePeerInfo info = neighbor.getValue();
 								System.out.println("PEERPROCESS - killing the peer " + info.peerId);
 								info.setClientState(ScanState.KILL);
 								info.setServerState(ScanState.KILL);
 							}
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						
-//						for (int index = 0; index < Peer.getInstance().pieces.length - 1; index++) {
-//							
-//						}
 						shutdownscheduler.shutdown();
 						optimisticallyscheduler.shutdown();
 						determinekscheduler.shutdown();
-						
 					}
 				}
 			}
 		};
 		shutdownscheduler.scheduleAtFixedRate(checkShutdownChecker, 10, 10, SECONDS);
-		
+
 	}
-	
+
 	public static int previouslyOptimisticallyPeer;
-	
+
 	public static void determineOptimisticallyUnchokedPeer(int m){
 		final Runnable determineOUnchokedPeer = new Runnable(){
 			public void run(){
-//				List<Integer> chokeList = new ArrayList<Integer>();
-//				for(int i=0;i<Peer.getInstance().interestedInMe.size();i++){
-//					if(!unchokeList.isEmpty() && !unchokeList.contains(Peer.getInstance().interestedInMe.get(i))){
-//						chokeList.add(Peer.getInstance().interestedInMe.get(i));
-//					}
-//				}
 				int size = chokeList.size();
-				if(size!=0){
+				if (size != 0) {
 					int randIndex = ThreadLocalRandom.current().nextInt(0, size);
-                    int peer = chokeList.remove(randIndex);
-                    //no need to check for null
-                    if(peer!=previouslyOptimisticallyPeer){
-                    	System.out.println("new peer is selected to unchoke -> "+peer);
-                    	RemotePeerInfo peerInfo = Peer.getInstance().neighbors.get(peer);
-                    	peerInfo.isOptimisticallyChosen=true;
-                    	peerInfo.setClientState(ScanState.UNCHOKE);
-                    	if(previouslyOptimisticallyPeer!=0){
-                    		System.out.println("sending choke to previously choked -> "+ previouslyOptimisticallyPeer);
-                    		RemotePeerInfo tempInfo = Peer.getInstance().neighbors.get(previouslyOptimisticallyPeer);
-                    		tempInfo.isOptimisticallyChosen=false;
-                    		tempInfo.setClientState(ScanState.CHOKE);
-                    	}
-                    	previouslyOptimisticallyPeer = peer;
-                    }
-				}
-				else if(previouslyOptimisticallyPeer!=0){
+					int peer = chokeList.remove(randIndex);
+					if (peer != previouslyOptimisticallyPeer) {
+						System.out.println("new peer is selected to unchoke -> "+peer);
+						RemotePeerInfo peerInfo = Peer.getInstance().neighbors.get(peer);
+						peerInfo.isOptimisticallyChosen=true;
+						peerInfo.setClientState(ScanState.UNCHOKE);
+						if (previouslyOptimisticallyPeer != 0){
+							System.out.println("sending choke to previously choked -> "+ previouslyOptimisticallyPeer);
+							RemotePeerInfo tempInfo = Peer.getInstance().neighbors.get(previouslyOptimisticallyPeer);
+							tempInfo.isOptimisticallyChosen=false;
+							tempInfo.setClientState(ScanState.CHOKE);
+						}
+						previouslyOptimisticallyPeer = peer;
+					}
+				} else if(previouslyOptimisticallyPeer != 0) {
 					System.out.println("in else block sending choke to previously choked -> "+ previouslyOptimisticallyPeer);
 					RemotePeerInfo tempInfo = Peer.getInstance().neighbors.get(previouslyOptimisticallyPeer);
 					tempInfo.isOptimisticallyChosen=false;
@@ -365,11 +292,10 @@ public class peerProcess {
 		};
 		optimisticallyscheduler.scheduleAtFixedRate(determineOUnchokedPeer, m, m, SECONDS);
 	}
-	
+
 	public static void determineKPreferred( int k,  int p) throws IOException{
 		final Runnable kNeighborDeterminer = new Runnable() {
-            public void run() {
-            	//System.out.println("determine scheduler start");
+			public void run() {
 				if(stateCheck){
 					boolean isFlag = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -378,67 +304,43 @@ public class peerProcess {
 							isFlag = false;
 						}
 					}
-					if(isFlag){
+					if (isFlag) {
 						System.out.println("All clients are in UPLOAD START state");
 						stateCheck=false;
 					}
 				}
 				else{
-					//System.out.println("determine logic started");
-
 					List<Integer> peerList = new ArrayList<>(); 
 					peerList = Peer.getInstance().interestedInMe;
-//					System.out.println("BEFORE");
-//					for(int i=0;i<peerList.size();i++){
-//						System.out.println(peerList.get(i));
-//					}
-					
 					Map<Integer, Double> peerVsDownrate = new HashMap<Integer, Double>();
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
-						if(peerList.contains(neighbor.getKey())){
+						if (peerList.contains(neighbor.getKey())) {
 							double dwnldTime = Peer.getInstance().downloadTime.get(neighbor.getKey());
 							System.out.println("The download rate of the peer is - " + dwnldTime + " for peer - " + neighbor.getKey());
 							peerVsDownrate.put(neighbor.getKey(), dwnldTime);
 						}
 					}
 					peerVsDownrate = MapSortByValue.sortByValue(peerVsDownrate);
-//					System.out.println("AFTER");
-//					for(int i=0;i<peerList.size();i++){
-//						System.out.println(peerList.get(i));
-//					}
-					if(peerList.size()>0){
-//						System.out.println("peer list is not null");
-
+					if (peerList.size() > 0) {
 						Iterator<Integer> iterator = peerList.iterator();
 						int count =0;
-						if(initialFlow){
-							//System.out.println("initial flow started");
-//							System.out.println("iterator val "+ iterator.next());
-//							System.out.println("iterator val "+ iterator.hasNext());
-//							System.out.println("count val "+ count);
-//							System.out.println("k val "+ k);
-							while( iterator.hasNext()){
+						if (initialFlow){
+							while (iterator.hasNext()){
 								int prefPeer = iterator.next();
-								if(count <k){
-									//System.out.println("while loop started");
-									
+								if (count <k){
 									unchokeList.add(prefPeer);
-									
 									RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
-									if(prefPeerInfo.alreadyChoked){
+									if (prefPeerInfo.alreadyChoked) {
 										prefPeerInfo.alreadyChoked = false;
-										if(!prefPeerInfo.isOptimisticallyChosen){
+										if (!prefPeerInfo.isOptimisticallyChosen) {
 											prefPeerInfo.setClientState(ScanState.UNCHOKE);
 										}
 									}
-									
-	//								System.out.println("unchoke set");
-									}
-								else{
+								} else {
 									chokeList.add(prefPeer);
 									RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(prefPeer);
-									if(!prefPeerInfo.alreadyChoked){
-										if(!prefPeerInfo.isOptimisticallyChosen){
+									if (!prefPeerInfo.alreadyChoked) {
+										if (!prefPeerInfo.isOptimisticallyChosen){
 											prefPeerInfo.setClientState(ScanState.CHOKE);
 										}
 									}
@@ -446,51 +348,31 @@ public class peerProcess {
 								count++;
 							}
 							initialFlow= false;
-						}
-						else{
+						} else {
 							Iterator<Integer> itr = peerVsDownrate.keySet().iterator();
-							//System.out.println("other flow");
 							List<Integer> tempList = new ArrayList<Integer>();
-//							System.out.println("iterator val "+ iterator.next());
-//							System.out.println("iterator val "+ iterator.hasNext());
-//							System.out.println("count val "+ count);
-//							System.out.println("k val "+ k);
-							while(count<k && itr.hasNext()){
-//								System.out.println("INSIDE count ->"+count);
+							while (count<k && itr.hasNext()) {
 								int prefPeer = itr.next();
-//								System.out.println("1 ->"+ prefPeer);
 								tempList.add(prefPeer);
-//								System.out.println("2");
-								if(!unchokeList.isEmpty() && unchokeList.contains(prefPeer)){
+								if (!unchokeList.isEmpty() && unchokeList.contains(prefPeer)) {
 									int idx = unchokeList.indexOf(prefPeer);
 									unchokeList.remove(idx);
-//									System.out.println("**");
 								} else {
 									Peer.getInstance().neighbors.get(prefPeer).setClientState(ScanState.UNCHOKE);
 								}
-								//System.out.println("3");
 								count++;
 							}
-//							System.out.println("TEMP LIST SIZE -> "+ tempList.size());
-//							System.out.println("TEMP LIST SIZE -> "+ unchokeList.size());
-							for(int i=0;i<unchokeList.size();i++){
+							for (int i=0;i<unchokeList.size();i++) {
 								RemotePeerInfo prefPeerInfo = Peer.getInstance().neighbors.get(unchokeList.get(i));
-								//System.out.println("CHOKED HERE *******");
 								prefPeerInfo.setClientState(ScanState.CHOKE);
 							}
-							
+
 							unchokeList.clear();
 							unchokeList = tempList;
-//							System.out.println("TEMP LIST SIZE -> "+ unchokeList.size());
-							/*for(int i=0;i<unchokeList.size();i++){
-								System.out.println("********PEER "+unchokeList.get(i));
-								RemotePeerInfo prefPeer = Peer.getInstance().neighbors.get(unchokeList.get(i));
-//								prefPeer.setClientState(ScanState.UNCHOKE);
-							}*/
 						}
 					}
 				}
-            }
+			}
 		};
 		determinekscheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);
 	}
