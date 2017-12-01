@@ -63,7 +63,7 @@ public class Client extends Thread {
 			out.flush();
 //			System.out.println("TEST 1");
 			in = new ObjectInputStream(requestSocket.getInputStream());
-			byte[] globalPieceIndex = createPrefix(-1);
+			byte[] globalPieceIndex = new byte[4];
 //			System.out.println("TEST2");
 			//sending handshake message
 
@@ -345,7 +345,7 @@ public class Client extends Thread {
 							//System.out.println("piece index" + new String(pieceIndex));
 							sendPieceMsg(globalPieceIndex);
 							//System.out.println("send piece message");
-							globalPieceIndex = createPrefix(-1);
+//							globalPieceIndex = createPrefix(-1);
 							
 							while (in.available() <= 0) {
 							}
@@ -421,6 +421,9 @@ public class Client extends Thread {
 						break;
 					}
 					case KILL:{
+						System.out.println("in kill state client "+neighbor.peerId);
+						System.out.println("ispause state "+isPause());
+						System.out.println("in.availbale "+in.available());
 						if (in.available() > 0) {
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
