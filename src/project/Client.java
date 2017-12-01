@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.List;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -16,6 +15,8 @@ public class Client extends Thread {
 	ObjectOutputStream out;         //stream write to the socket
 	ObjectInputStream in;          //stream read from the socket
 	RemotePeerInfo neighbor;
+	boolean pause = false;
+	byte[] havePiece = new byte[4];
 
 	public Client(RemotePeerInfo value) {
 		this.neighbor = value;
@@ -161,13 +162,23 @@ public class Client extends Thread {
 						}
 						break;
 					}
+					case UPLOAD_START: {
+						if (pause) {
+							sendHaveMsg(havePiece);
+						}
+						break;
+					}
 					case UNCHOKE: {
 						System.out.println("CLIENT:- UNCHOKE STATE REACHED");
 						/**if this neighbor is selected as preferred neighbor
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
+						if (pause) {
+							sendHaveMsg(havePiece);
+						} else {
 						sendUnchokeMsg();
 						neighbor.setClientState(ScanState.RXVE_REQUEST);
+						}
 						break;
 					}
 					case RXVE_REQUEST: {
@@ -176,6 +187,9 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
+						if (pause) {
+							sendHaveMsg(havePiece);
+						} else {
 						while (in.available() <= 0) {
 						}
 						if(in.available() >0){
@@ -194,7 +208,7 @@ public class Client extends Thread {
 								neighbor.setClientState(ScanState.UPLOAD_START);
 							}
 						}
-						
+						}
 						break;
 						
 					}
@@ -209,6 +223,9 @@ public class Client extends Thread {
 //						while (in.available() < 0) {
 //						}
 							//System.out.println("here");
+						if (pause) {
+							sendHaveMsg(havePiece);
+						} else {
 							byte[] pieceIndex = new byte[4];
 							in.read(pieceIndex);
 //							System.out.println(new String(pieceIndex));
@@ -232,6 +249,7 @@ public class Client extends Thread {
 								}
 								neighbor.setClientState(ScanState.UPLOAD_START);
 							}
+						}
 //						}
 						break;
 					}
@@ -239,18 +257,26 @@ public class Client extends Thread {
 						/**if pref neighbors changed -> state to choke in the scheduler
 						expect nothing.
 						change to UPLOCAD_START**/
+						if (pause) {
+							sendHaveMsg(havePiece);
+						} else {
 						System.out.println("CLIENT:- CHOKE STATE REACHED");
 						sendChokeMsg();
 						neighbor.setClientState(ScanState.UPLOAD_START);
+						}
 						break;
 					}
 					case KILL:{
+						if (pause) {
+							sendHaveMsg(havePiece);
+						} else {
 						System.out.println("CLIENT:- KILL STATE REACHED");
 						Peer.getInstance().stopped=true;
 						interrupt();
+						}
 						break;
 					}
-					case HAVE: {
+					/*case HAVE: {
 						for (byte[]  piece: neighbor.getPiecesRxved()) {
 							sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
 							byte[] responseMsg = new byte[5];
@@ -267,7 +293,7 @@ public class Client extends Thread {
 							}
 							neighbor.getPiecesRxved().remove(neighbor.getPiecesRxved().indexOf(piece));
 						}
-					}
+					}*/
 					default: {
 						/*Send the sentence to the server
 							String message = "default_behavior_pratServer";
@@ -355,6 +381,8 @@ public class Client extends Thread {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			pause = false;
 		}
 	}
 

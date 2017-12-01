@@ -241,12 +241,14 @@ public class Server extends Thread{
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
 									System.out.println("sending have message to -> "+ neighbor.peerId);
-									ScanState prevState = neighbor.getClientState();
-									neighbor.getPiecesRxved().add(reqPieceIndex);
-									neighbor.setClientState(ScanState.HAVE);
-									Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);
+									//ScanState prevState = neighbor.getClientState();
+									//neighbor.getPiecesRxved().add(reqPieceIndex);
+									//neighbor.setClientState(ScanState.HAVE);
+									Peer.getInstance().neighborThreads.get(neighbor.peerId).havePiece = reqPieceIndex;
+									Peer.getInstance().neighborThreads.get(neighbor.peerId).pause = true;
+									//sendHaveMsg();
 									System.out.println("done  have message to -> "+ neighbor.peerId);
-									neighbor.setClientState(prevState);
+									//neighbor.setClientState(prevState);
 //									System.out.println("sending have updare "+ reqPieceIndex);
 								}
 //								System.out.println(reqPieceInd + "---> to update bitfield after receive");
