@@ -120,7 +120,9 @@ public class peerProcess {
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 					Client clientThread = new Client(neighbor.getValue());
 					Peer.getInstance().neighborThreads.put(neighbor.getKey(), clientThread);
-					clientThread.start();
+					if (neighbor.getKey() < Peer.getInstance().peerID) {
+						clientThread.start();
+					}
 				}
 				Thread.sleep(1000);
 				determineKPreferred(k,p);

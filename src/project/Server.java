@@ -404,6 +404,7 @@ public class Server extends Thread{
 						System.out.println("SERVER:- RCVED HAND SHAKE STATE ----sent hand shake message to " + neighbor.peerId);
 						neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
 						neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
+						Peer.getInstance().neighborThreads.get(neighbor.peerId).start();
 						break;
 					}
 					case KILL:{
