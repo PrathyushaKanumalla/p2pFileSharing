@@ -262,7 +262,8 @@ public class peerProcess {
 						int peerNeighborId = neighbor.getKey();
 						BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(peerNeighborId);
 						if (Peer.getInstance().neighborThreads.get(neighbor.getKey()) != null && 
-								!Peer.getInstance().neighborThreads.get(neighbor.getKey()).isPause()) {
+								Peer.getInstance().neighborThreads.get(neighbor.getKey()).isPause()) {
+							shutdown=false;
 							break;
 						}
 //						boolean compareNCheckFlag = true;

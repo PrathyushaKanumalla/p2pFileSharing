@@ -250,13 +250,16 @@ public class Server extends Thread{
 									//ScanState prevState = neighbor.getClientState();
 									//neighbor.getPiecesRxved().add(reqPieceIndex);
 									//neighbor.setClientState(ScanState.HAVE);
-									while (Peer.getInstance().neighborThreads.get(neighbor.peerId).isPause()) {
-									}
-									Peer.getInstance().neighborThreads.get(neighbor.peerId).setHavePiece(reqPieceIndex);
-									Peer.getInstance().neighborThreads.get(neighbor.peerId).setPause(true);
 									/*while (Peer.getInstance().neighborThreads.get(neighbor.peerId).isPause()) {
 									}*/
-									//sendHaveMsg();
+									/*Peer.getInstance().neighborThreads.get(neighbor.peerId).setHavePiece(reqPieceIndex);
+									Peer.getInstance().neighborThreads.get(neighbor.peerId).setPause(true);*/
+									/*while (Peer.getInstance().neighborThreads.get(neighbor.peerId).isPause()) {
+									}*/
+									
+									
+									sendHaveMsg(reqPieceIndex);
+									
 									System.out.println("SERVER:- done  have message " + reqPieceInd + "to -> "+ neighbor.peerId);
 									//neighbor.setClientState(prevState);
 //									System.out.println("sending have updare "+ reqPieceIndex);
@@ -353,6 +356,27 @@ public class Server extends Thread{
 				}
 			}
 			}
+		
+		public synchronized void sendHaveMsg(byte[] pieceIndex) {
+			try {
+				sendMessage(msgWithPayLoad(MsgType.HAVE, pieceIndex));
+				byte[] responseMsg = new byte[5];
+				while(in.available()<=0){}
+				in.read(responseMsg);
+				if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+					System.out.println("SERVER:- received interested message from peer " + neighbor.peerId);
+					Peer.getInstance().interestedInMe.add(neighbor.peerId);
+				} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+					System.out.println("SERVER:- received not interested message from peer " + neighbor.peerId);
+					if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+						Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		}
 		
 
 		private synchronized int genPieceIndex() {
