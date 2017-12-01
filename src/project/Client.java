@@ -61,8 +61,7 @@ public class Client extends Thread {
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
-			byte[] globalPieceIndex = new byte[4];
-			createPrefix(-1);
+			byte[] globalPieceIndex = createPrefix(-1);
 			
 			while(!Peer.getInstance().stopped)
 			{
@@ -183,7 +182,7 @@ public class Client extends Thread {
 							if (responseMsg[4] == MsgType.REQUEST.value) {
 								in.read(globalPieceIndex);
 								System.out.println("CLIENT:- received request message from peer " + neighbor.peerId);
-								neighbor.setClientState(ScanState.PIECE);
+								sendPieceMsg(globalPieceIndex);
 							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value) {
 								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
 								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
