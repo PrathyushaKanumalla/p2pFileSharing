@@ -236,14 +236,16 @@ public class Server extends Thread{
 								//update all neighbors
 								System.out.println("SERVER:- My bit field " + Peer.getInstance().getBitField());
 								for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
+									neighbor.getPiecesRxved().add(reqPieceIndex);
+									neighbor.setUpdatePieceInfo(true);
 //										neighbor.getPiecesRxved().add(reqPieceIndex);
 //										neighbor.setUpdatePieceInfo(true);
-									System.out.println("sending have message to -> "+ neighbor.peerId);
+									/*System.out.println("sending have message to -> "+ neighbor.peerId);
 									ScanState prevState = Peer.getInstance().neighbors.get(neighbor.peerId).getClientState();
 									Peer.getInstance().neighbors.get(neighbor.peerId).getPiecesRxved().add(reqPieceIndex);
 									Peer.getInstance().neighbors.get(neighbor.peerId).setClientState(ScanState.HAVE);
-									/*Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);*/
-									System.out.println("done  have message to -> "+ neighbor.peerId);
+									Peer.getInstance().neighborThreads.get(neighbor.peerId).sendHaveMsg(reqPieceIndex);
+									System.out.println("done  have message to -> "+ neighbor.peerId);*/
 //									System.out.println("sending have updare "+ reqPieceIndex);
 								}
 //								System.out.println(reqPieceInd + "---> to update bitfield after receive");
