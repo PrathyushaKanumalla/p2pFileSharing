@@ -60,7 +60,7 @@ public class Peer {
 	}
 
 	public synchronized RemotePeerInfo search(InetAddress inetAddress, int port) {
-		System.out.println(System.currentTimeMillis() + " received this Inet address - "+inetAddress.getHostAddress());
+		//System.out.println(System.currentTimeMillis() + " received this Inet address - "+inetAddress.getHostAddress());
 		for (RemotePeerInfo neighbor : neighbors.values()) {
 			if (neighbor.peerAddress.equals(inetAddress.getHostAddress())) {
 				return neighbor;

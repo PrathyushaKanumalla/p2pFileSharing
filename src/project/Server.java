@@ -349,7 +349,7 @@ public class Server extends Thread{
 			}
 		
 
-		private  int genPieceIndex() {
+		private synchronized int genPieceIndex() {
 			BitSet myBitfield = Peer.getInstance().getBitField();
 			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			List<Integer> possibleRequests = new ArrayList<>();
@@ -367,17 +367,17 @@ public class Server extends Thread{
 			return possibleRequests.get(randomIndex);
 		}
 
-		private  void sendRequestMessage(byte[] pieceIndex) {
+		private synchronized void sendRequestMessage(byte[] pieceIndex) {
 			sendMessage(msgWithPayLoad(MsgType.REQUEST, pieceIndex));
 		}
 
-		private  void sendHandShake() {
+		private synchronized void sendHandShake() {
 			String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
 			sendMessage(handShake.getBytes());
 		}
 
 		//send a message to the output stream
-		public  void sendMessage(byte[] msg)
+		public synchronized void sendMessage(byte[] msg)
 		{
 			try{
 				out.write(msg);
@@ -390,17 +390,17 @@ public class Server extends Thread{
 		}
 
 		
-		private  void sendInterested(){
+		private synchronized void sendInterested(){
 			System.out.println("SERVER:- SENT interested msg to peer " + neighbor.peerId);
 			sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
 		}
 		
-		private  void sendNotInterested(){
+		private synchronized void sendNotInterested(){
 			System.out.println("SERVER:- SENT not interested msg to peer " + neighbor.peerId);
 			sendMessage(msgWithoutPayLoad(MsgType.NOT_INTERESTED));
 		}
 		
-		private  byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+		private synchronized byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
 			/*if (payLoad != null) {
 				byte[] result = new byte[payLoad.length];
 		        System.arraycopy(field, 0, result, 0, field.length);
@@ -415,7 +415,7 @@ public class Server extends Thread{
 			return message;
 		}
 		
-		private  int getPieceIndex(byte[] pieceIndex) {
+		private synchronized int getPieceIndex(byte[] pieceIndex) {
 			int integerValue = 0;
 	        for (int index = 0; index < 4; index++) {
 	            int shift = (4 - 1 - index) * 8;
@@ -424,14 +424,14 @@ public class Server extends Thread{
 	        return integerValue;
 		}
 
-		private  byte[] msgWithoutPayLoad(MsgType msgType) {
+		private synchronized byte[] msgWithoutPayLoad(MsgType msgType) {
 			byte[] message = new byte[5];
 			System.arraycopy(createPrefix(1), 0, message, 0, 4);
 			message[4] = msgType.value;
 			return message;
 		}
 		
-		public  byte[] createPrefix(int len) {
+		public synchronized byte[] createPrefix(int len) {
 			return new byte[] {
 		            (byte)(len >>> 24),
 		            (byte)(len >>> 16),
@@ -439,7 +439,7 @@ public class Server extends Thread{
 		            (byte)len};
 	    }
 		
-		private String print(byte[] msg) {
+		private synchronized String print(byte[] msg) {
 			StringBuilder sb = new StringBuilder();
 			for (byte b : msg) {
 				sb.append(b);

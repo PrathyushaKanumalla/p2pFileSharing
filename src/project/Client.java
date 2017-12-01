@@ -330,11 +330,11 @@ public class Client extends Thread {
 		}
 	}
 
-	private  void sendChokeMsg() {
+	private synchronized void sendChokeMsg() {
 		sendMessage(msgWithoutPayLoad(MsgType.CHOKE));
 	}
 
-	private  void sendPieceMsg(byte[] pieceIndex) {
+	private synchronized void sendPieceMsg(byte[] pieceIndex) {
 		byte[] piece = Peer.getInstance().pieces[getPieceIndex(pieceIndex)].pieceInfo;
 		byte[] result = new byte[piece.length+4];
 		//System.out.println(new String(pieceIndex));
@@ -346,7 +346,7 @@ public class Client extends Thread {
 		sendMessage(msgWithPayLoad(MsgType.PIECE, result));		
 	}
 
-	private  int getPieceIndex(byte[] pieceIndex) {
+	private synchronized int getPieceIndex(byte[] pieceIndex) {
 		int integerValue = 0;
         for (int index = 0; index < 4; index++) {
             int shift = (4 - 1 - index) * 8;
@@ -355,7 +355,7 @@ public class Client extends Thread {
         return integerValue;
 	}
 
-	private  void sendUnchokeMsg() {
+	private synchronized void sendUnchokeMsg() {
 		sendMessage(msgWithoutPayLoad(MsgType.UNCHOKE));
 	}
 	
@@ -383,16 +383,16 @@ public class Client extends Thread {
 		}
 	}
 
-	private  void sendHandShake() {
+	private synchronized void sendHandShake() {
 		String handShake = Constants.HANDSHAKEHEADER + Constants.ZERO_BITS + Peer.getInstance().peerID;
 		sendMessage(handShake.getBytes());
 	}
 
-	private  void sendBitField(){
+	private synchronized void sendBitField(){
 		sendMessage(msgWithPayLoad(MsgType.BITFIELD, Peer.getInstance().getBitField().toByteArray()));
 	}
 	
-	private  byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
+	private synchronized  byte[] msgWithPayLoad(MsgType msgType, byte[] payLoad) {
 		/*if (payLoad != null) {
 			byte[] result = new byte[payLoad.length];
 	        System.arraycopy(field, 0, result, 0, field.length);
@@ -408,14 +408,14 @@ public class Client extends Thread {
 		return message;
 	}
 
-	private  byte[] msgWithoutPayLoad(MsgType msgType) {
+	private synchronized  byte[] msgWithoutPayLoad(MsgType msgType) {
 		byte[] message = new byte[5];
 		System.arraycopy(createPrefix(1), 0, message, 0, 4);
 		message[4] = msgType.value;
 		return message;
 	}
 	
-	public  byte[] createPrefix(int len) {
+	public synchronized byte[] createPrefix(int len) {
 		byte[] prefix = new byte[4];
 		prefix[0] = (byte) ((len & 0xFF000000) >> 24);
 		prefix[1] = (byte) ((len & 0x00FF0000) >> 16);
@@ -439,7 +439,7 @@ public class Client extends Thread {
 		}
 	}
 
-	private String print(byte[] msg) {
+	private synchronized String print(byte[] msg) {
 		StringBuilder sb = new StringBuilder();
 		for (byte b : msg) {
 			sb.append(b);
@@ -447,7 +447,7 @@ public class Client extends Thread {
 		return sb.toString();
 	}
 
-	public  byte[] getMessage(String messageType){
+	public synchronized byte[] getMessage(String messageType){
 		byte[] res = messageType.getBytes();
 		int length =messageType.length();
 		//		byte[] temp = ByteBuffer.allocate(4).putInt(length).array();
