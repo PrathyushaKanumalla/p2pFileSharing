@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Iterator;
 import java.util.List;
 
 import project.Constants.MsgType;
@@ -120,13 +121,27 @@ public class Client extends Thread {
 				if (neighbor.isUpdatePieceInfo()) {
 					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
 					List<byte[]> tempList = new ArrayList<>();
-					for (byte[]  piece: piecesRxved) {
-						sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
-						tempList.add(piece);
+					Iterator<byte[]> iterator = neighbor.getPiecesRxved().iterator();
+					while(iterator.hasNext()){
+						byte[] tempPIndx = iterator.next();
+						System.out.println("have peice index here in client -> "+getPieceIndex(tempPIndx));
+						sendHaveMsg(tempPIndx);
+						byte[] responseMsg = new byte[9];
+						in.read(responseMsg);
+						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+							Peer.getInstance().interestedInMe.add(neighbor.peerId);
+						} 
+						iterator.remove();
 					}
-					for (byte[] bs : tempList) {
-						piecesRxved.remove(neighbor.getPiecesRxved().indexOf(bs));
-					}
+					
+					
+//					for (byte[]  piece: piecesRxved) {
+//						sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
+//						tempList.add(piece);
+//					}
+//					for (byte[] bs : tempList) {
+//						piecesRxved.remove(neighbor.getPiecesRxved().indexOf(bs));
+//					}
 					if (neighbor.getPiecesRxved().isEmpty())
 						neighbor.setUpdatePieceInfo(false);
 				}
