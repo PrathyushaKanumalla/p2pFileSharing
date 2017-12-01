@@ -31,7 +31,7 @@ public class Peer {
 	public String portNum;
 	public Receivedpieces[] pieces;
 	public int excessPieceSize = 0;
-	public Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
+	private Map<Integer, BitSet> neighborsBitSet = Collections.synchronizedMap(new HashMap<>());
 	public boolean hasCompletefile = false;
 	public boolean stopped= false;
 	public Map<Integer, Client> neighborThreads = Collections.synchronizedMap(new HashMap<>());
@@ -67,5 +67,13 @@ public class Peer {
 			}
 		}
 		return null;
+	}
+
+	public synchronized Map<Integer, BitSet> getNeighborsBitSet() {
+		return neighborsBitSet;
+	}
+
+	public synchronized void setNeighborsBitSet(Map<Integer, BitSet> neighborsBitSet) {
+		this.neighborsBitSet = neighborsBitSet;
 	}
 }

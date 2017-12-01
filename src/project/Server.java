@@ -93,7 +93,7 @@ public class Server extends Thread{
 									in.read(bitField);
 									System.out.println("SERVER:- received bit field message from " + neighbor.peerId +
 											" and bitfield is " + BitSet.valueOf(bitField));
-									Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
+									Peer.getInstance().getNeighborsBitSet().put(neighbor.peerId, BitSet.valueOf(bitField));
 									if (!Peer.getInstance().getBitField().equals(bitField)) {
 										sendInterested();
 									} else {
@@ -116,10 +116,10 @@ public class Server extends Thread{
 									System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(pieceIndex) 
 												+ " from peer id "+ neighbor.peerId);
 									int gotThisPeerIndex = getPieceIndex(pieceIndex);
-									Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(gotThisPeerIndex);
-									System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+									Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(gotThisPeerIndex);
+									System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
 									BitSet myBitfield = Peer.getInstance().getBitField();
-									BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+									BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
 									boolean sendInterested = false;
 									for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
 										if(!myBitfield.get(i) && neighborBitset.get(i)){
@@ -159,10 +159,10 @@ public class Server extends Thread{
 								in.read(havePieceIndex);
 								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
 								+ " from peer id "+ neighbor.peerId);
-								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
 								BitSet myBitfield = Peer.getInstance().getBitField();
-								BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
 								boolean sendInterested = false;
 								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
 									if(!myBitfield.get(i) && neighborBitset.get(i)){
@@ -269,10 +269,10 @@ public class Server extends Thread{
 								in.read(havePieceIndex);
 								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
 								+ " from peer id "+ neighbor.peerId);
-								Peer.getInstance().neighborsBitSet.get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().neighborsBitSet.get(neighbor.peerId));
+								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
+								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
 								BitSet myBitfield = Peer.getInstance().getBitField();
-								BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
 								boolean sendInterested = false;
 								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
 									if(!myBitfield.get(i) && neighborBitset.get(i)){
@@ -350,11 +350,10 @@ public class Server extends Thread{
 		
 
 		private synchronized int genPieceIndex() {
-			BitSet myBitfield = Peer.getInstance().getBitField();
-			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			List<Integer> possibleRequests = new ArrayList<>();
 			for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
-				if(!myBitfield.get(i) && neighborBitset.get(i) && !Peer.getInstance().requestedbitField.get(i)){
+				if(!Peer.getInstance().getBitField().get(i) && Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).get(i) 
+						&& !Peer.getInstance().requestedbitField.get(i)){
 					possibleRequests.add(i);
 				}
 			}

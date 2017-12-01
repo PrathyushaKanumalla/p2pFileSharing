@@ -201,7 +201,7 @@ public class peerProcess {
 //			    	 bset.flip(0, Peer.getInstance().noOfPieces);
 			    	
 			    	 
-			    	 Peer.getInstance().neighborsBitSet.put(peerId, bset);
+			    	 Peer.getInstance().getNeighborsBitSet().put(peerId, bset);
 			    	 
 			     }
 			}
@@ -260,7 +260,11 @@ public class peerProcess {
 					boolean shutdown = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						int peerNeighborId = neighbor.getKey();
-						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
+						BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(peerNeighborId);
+						/*if (Peer.getInstance().neighborThreads.get(neighbor.getKey()) != null && 
+								!Peer.getInstance().neighborThreads.get(neighbor.getKey()).pause) {
+							break;
+						}*/
 //						boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
 							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i) + "index -> "+i + "neighbor id "+neighbor.getKey());
