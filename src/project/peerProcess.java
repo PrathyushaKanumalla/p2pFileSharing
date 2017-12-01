@@ -255,7 +255,7 @@ public class peerProcess {
 						BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(peerNeighborId);
 //						boolean compareNCheckFlag = true;
 						for(int i=0;i<noOfPieces;i++){
-//							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i));
+							System.out.println("neighbor val -> shere -> "+neighborBitset.get(i));
 							if(!neighborBitset.get(i) ){
 //								compareNCheckFlag=false;
 								shutdown=false;
