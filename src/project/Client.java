@@ -177,7 +177,7 @@ public class Client extends Thread {
 						break;
 					}
 					case UPLOAD_START: {
-						if (pause) {
+						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(havePiece);
 						}
 						break;
@@ -187,7 +187,7 @@ public class Client extends Thread {
 						/**if this neighbor is selected as preferred neighbor
 						send unchoke msg to the neighbor
 						change state to RXVE_REQUEST**/
-						if (pause) {
+						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(havePiece);
 						} else {
 						sendUnchokeMsg();
@@ -201,7 +201,7 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
-						if (pause) {
+						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(havePiece);
 						} else {
 						while (in.available() <= 0) {
@@ -238,7 +238,7 @@ public class Client extends Thread {
 //						while (in.available() < 0) {
 //						}
 							//System.out.println("here");
-						if (pause) {
+						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(havePiece);
 						} else {
 //							System.out.println(new String(pieceIndex));
@@ -271,7 +271,7 @@ public class Client extends Thread {
 						/**if pref neighbors changed -> state to choke in the scheduler
 						expect nothing.
 						change to UPLOCAD_START**/
-						if (pause) {
+						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(havePiece);
 						} else {
 						System.out.println("CLIENT:- CHOKE STATE REACHED");
@@ -281,7 +281,7 @@ public class Client extends Thread {
 						break;
 					}
 					case KILL:{
-						if (pause) {
+						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
 							sendHaveMsg(havePiece);
 						} else {
 						System.out.println("CLIENT:- KILL STATE REACHED");
@@ -396,7 +396,7 @@ public class Client extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			pause = false;
+			setPause(false);
 		}
 	}
 
