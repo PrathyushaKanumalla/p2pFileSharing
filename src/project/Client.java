@@ -15,8 +15,24 @@ public class Client extends Thread {
 	ObjectOutputStream out;         //stream write to the socket
 	ObjectInputStream in;          //stream read from the socket
 	RemotePeerInfo neighbor;
-	boolean pause = false;
-	byte[] havePiece = new byte[4];
+	private boolean pause = false;
+	private byte[] havePiece = new byte[4];
+
+	public synchronized boolean isPause() {
+		return pause;
+	}
+
+	public synchronized void setPause(boolean pause) {
+		this.pause = pause;
+	}
+
+	public synchronized byte[] getHavePiece() {
+		return havePiece;
+	}
+
+	public synchronized void setHavePiece(byte[] havePiece) {
+		this.havePiece = havePiece;
+	}
 
 	public Client(RemotePeerInfo value) {
 		this.neighbor = value;
