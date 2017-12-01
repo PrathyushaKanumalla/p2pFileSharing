@@ -90,7 +90,8 @@ public class Server extends Thread{
 									byte[] bitField = new byte[bitFieldSize];
 //									while(in.available()<0){}
 									in.read(bitField);
-									System.out.println("SERVER:- received bit field message from " + neighbor.peerId);
+									System.out.println("SERVER:- received bit field message from " + neighbor.peerId +
+											" and bitfield is " + BitSet.valueOf(bitField));
 									Peer.getInstance().neighborsBitSet.put(neighbor.peerId, BitSet.valueOf(bitField));
 									if (!Peer.getInstance().getBitField().equals(bitField)) {
 										sendInterested();
