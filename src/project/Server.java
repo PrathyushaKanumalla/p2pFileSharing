@@ -187,6 +187,7 @@ public class Server extends Thread{
 										Long downtime = endTime - neighbor.startTime.get(neighbor.peerId);
 										System.out.println("downtime here **** -> "+downtime);
 										System.out.println("pieceSize here **** -> "+pieceSize);
+										System.out.println("download rate is **** -> "+ (long)(pieceSize/downtime));
 										Peer.getInstance().downloadTime.put(neighbor.peerId, (long)(pieceSize)/downtime);
 									}
 									pieceSize = 0;
