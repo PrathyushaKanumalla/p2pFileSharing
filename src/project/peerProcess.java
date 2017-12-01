@@ -142,7 +142,7 @@ public class peerProcess {
 					Peer.getInstance().portNum = tokens[2];
 					Peer.getInstance().setBitField(new BitSet(Peer.getInstance().noOfPieces));
 					if (tokens[3].equals("1")) {
-						Peer.getInstance().hasCompletefile=true;
+						Peer.getInstance().hasCompletefile = true;
 						Peer.getInstance().getBitField().flip(0, Peer.getInstance().noOfPieces);
 						String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
 								+ Peer.getInstance().configProps.get("FileName");
@@ -209,7 +209,8 @@ public class peerProcess {
 					/**Save Files before shut down */
 					if(shutdown){
 						try {
-							String fileName =  Peer.getInstance().configProps.get("FileName");
+							String fileName =  "./peer_" + Peer.getInstance().peerID + 
+									File.separator + Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
 							FileOutputStream fos = new FileOutputStream(dateFile);
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
