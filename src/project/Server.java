@@ -117,7 +117,7 @@ public class Server extends Thread{
 									pieceIndex = createPrefix(genPieceindx);
 									if (pieceIndex != null) {
 //										System.out.println("SERVER:- pieceindex req "+ genPieceindx);
-										neighbor.startTime.put(genPieceindx, System.currentTimeMillis());
+										neighbor.startTime.put(neighbor.peerId, System.currentTimeMillis());
 										sendRequestMessage(pieceIndex);
 										System.out.println("SERVER:- SENT this request message of piece- " +genPieceindx +" to peer id " +neighbor.peerId );
 									}
