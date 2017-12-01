@@ -185,47 +185,6 @@ public class Client extends Thread {
 						}
 						break;
 					}
-					case UPLOAD_START: {
-						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(getHavePiece());
-						}
-						if (in.available() > 0) {
-							byte[] responseMsg = new byte[5];
-							in.read(responseMsg);
-//							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
-							if (responseMsg[4] == MsgType.HAVE.value) {
-								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
-								byte[] havePieceIndex = new byte[4];
-								in.read(havePieceIndex);
-								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
-								+ " from peer id "+ neighbor.peerId);
-								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
-								BitSet myBitfield = Peer.getInstance().getBitField();
-								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
-								boolean sendInterested = false;
-								for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
-									if(!myBitfield.get(i) && neighborBitset.get(i)){
-										sendInterested = true;
-										break;
-									}
-								}
-								if (sendInterested) 
-									sendInterested();
-								else
-									sendNotInterested();
-							} else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-								System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
-								Peer.getInstance().interestedInMe.add(neighbor.peerId);
-							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
-								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
-								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
-								}
-							}
-						}
-						break;
-					}
 					case UNCHOKE: {
 						System.out.println("CLIENT:- UNCHOKE STATE REACHED");
 						/**if this neighbor is selected as preferred neighbor
@@ -244,12 +203,8 @@ public class Client extends Thread {
 									}
 								}
 						}
-						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(getHavePiece());
-						} else {
 						sendUnchokeMsg();
 						neighbor.setClientState(ScanState.RXVE_REQUEST);
-						}
 						break;
 					}
 					case RXVE_REQUEST: {
@@ -258,9 +213,7 @@ public class Client extends Thread {
 						if pref neighbors changed -> state to choke in the scheduler
 						send peice msg
 						change state to PIECE**/
-						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(getHavePiece());
-						} else {
+						
 						while (in.available() <= 0) {
 						}
 						if(in.available() >0){
@@ -309,7 +262,6 @@ public class Client extends Thread {
 									} 
 							}
 						}
-						}
 						break;
 						
 					}
@@ -337,9 +289,6 @@ public class Client extends Thread {
 									}
 								}
 						}
-						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(getHavePiece());
-						} else {
 //							System.out.println(new String(pieceIndex));
 							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(globalPieceIndex) + " from peer id - "+neighbor.peerId);
 							//System.out.println("piece index" + new String(pieceIndex));
@@ -391,8 +340,6 @@ public class Client extends Thread {
 										if (!Peer.getInstance().interestedInMe.contains(neighbor.peerId))
 											Peer.getInstance().interestedInMe.add(neighbor.peerId);
 									}
-						}
-//						}
 						break;
 					}
 					case CHOKE: {
@@ -412,13 +359,9 @@ public class Client extends Thread {
 									}
 								}
 						}
-						if (isPause() && getPieceIndex(globalPieceIndex) == -1) {
-							sendHaveMsg(getHavePiece());
-						} else {
 						System.out.println("CLIENT:- CHOKE STATE REACHED");
 						sendChokeMsg();
 						neighbor.setClientState(ScanState.UPLOAD_START);
-						}
 						break;
 					}
 					case KILL:{
@@ -438,13 +381,9 @@ public class Client extends Thread {
 									}
 								}
 						}
-						if (isPause()) {
-							sendHaveMsg(getHavePiece());
-						} else {
 						System.out.println("CLIENT:- KILL STATE REACHED");
 						Peer.getInstance().stopped=true;
 						interrupt();
-						}
 						break;
 					}
 					/*case HAVE: {
