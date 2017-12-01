@@ -23,7 +23,7 @@ public class Server extends Thread{
 			listener = new ServerSocket(Integer.parseInt(Peer.getInstance().portNum));
 			for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
 //			while (true) {
-				new Handler(listener.accept()).start();
+				new Handler(listener.accept(), Peer.getInstance().neighbors.get(clientPeerId)).start();
 				//System.out.println("*My Server Connected to "  + clientPeerId + " *");
 //			}
 			}
@@ -49,8 +49,9 @@ public class Server extends Thread{
 		private ObjectOutputStream out;    //stream write to the socket
 		private RemotePeerInfo neighbor;
 
-		public Handler(Socket connection) {
+		public Handler(Socket connection, RemotePeerInfo neighbor) {
 			this.connection = connection;
+			this.neighbor = neighbor;
 		}
 
 		public void run() {
@@ -60,12 +61,12 @@ public class Server extends Thread{
 				out = new ObjectOutputStream(connection.getOutputStream());
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
-				this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
+				/*this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
 				System.out.print(" with neighbor " + neighbor.peerId);
 				if (neighbor == null) {
 					System.out.println("neighbor is null");
-				}
-				else {
+				}*/
+				//else {
 				while(!Peer.getInstance().stopped)
 				{
 					/** if i receive have msg
@@ -336,7 +337,6 @@ public class Server extends Thread{
 					default: 
 						break;
 					}
-				}
 				}
 			}
 			catch(IOException ioException){
