@@ -283,6 +283,7 @@ public class peerProcess {
 				            fos.close();
 				            for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 								RemotePeerInfo info = neighbor.getValue();
+								System.out.println("PEERPROCESS - killing the peer " + info.peerId);
 								info.setClientState(ScanState.KILL);
 								info.setServerState(ScanState.KILL);
 							}
