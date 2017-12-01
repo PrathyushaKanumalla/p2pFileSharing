@@ -351,10 +351,10 @@ public class peerProcess {
 
 							unchokeList.clear();
 							unchokeList = tempList;
-							Log.addLog(String.format("Peer %s has the preferred neighbors %s", Peer.getInstance().peerID, unchokeList));
 						}
 					}
 				}
+				Log.addLog(String.format("Peer %s has the preferred neighbors %s", Peer.getInstance().peerID, unchokeList));
 			}
 		};
 		determinekscheduler.scheduleAtFixedRate(kNeighborDeterminer, p, p, SECONDS);

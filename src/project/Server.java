@@ -99,6 +99,7 @@ public class Server extends Thread{
 									neighbor.initial=false;
 								} else if (msg[4] == MsgType.UNCHOKE.value) {
 									System.out.println("SERVER:- received unchoke message from " + neighbor.peerId);
+									Log.addLog(String.format("Peer %s is unchoked by %s", Peer.getInstance().peerID, neighbor.peerId));
 									if (neighbor.initial) 
 										neighbor.initial = false;
 									byte[] pieceIndex = new byte[4];
@@ -114,6 +115,7 @@ public class Server extends Thread{
 										System.out.println("SERVER:- SENT this request message of piece- " +genPieceindx +" to peer id " +neighbor.peerId );
 									}
 								} else if (msg[4] == MsgType.CHOKE.value) {
+									Log.addLog(String.format("Peer %s is choked by %s", Peer.getInstance().peerID, neighbor.peerId));
 									System.out.println("SERVER:- received choke message from " + neighbor.peerId);
 								} else if (msg[4] == MsgType.HAVE.value) {
 									System.out.println("SERVER:- HAVE MESSGAGE IN SERVER_LISTEN BLOCK");
