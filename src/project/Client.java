@@ -297,8 +297,10 @@ public class Client extends Thread {
 //							System.out.println(new String(pieceIndex));
 							System.out.println("CLIENT:- GOT this request for piece index " +getPieceIndex(globalPieceIndex) + " from peer id - "+neighbor.peerId);
 							//System.out.println("piece index" + new String(pieceIndex));
+							if (getPieceIndex(globalPieceIndex) == -1)
+								break;
 							sendPieceMsg(globalPieceIndex);
-							globalPieceIndex = new byte[4];
+							globalPieceIndex = createPrefix(-1);
 							//System.out.println("send piece message");
 //							globalPieceIndex = createPrefix(-1);
 							
@@ -440,7 +442,7 @@ public class Client extends Thread {
 	private synchronized void sendPieceMsg(byte[] pieceIndex) {
 		byte[] piece = Peer.getInstance().pieces[getPieceIndex(pieceIndex)].pieceInfo;
 		byte[] result = new byte[piece.length+4];
-		//System.out.println(new String(pieceIndex));
+		//System.out.println(new String(Index));
 		System.arraycopy(pieceIndex, 0, result, 0, 4);
 	//	System.out.println("before -->" +new String(result));
 		System.arraycopy(piece, 0, result, 4, piece.length);
