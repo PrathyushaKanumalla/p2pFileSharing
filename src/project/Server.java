@@ -351,7 +351,7 @@ public class Server extends Thread{
 
 		private  int genPieceIndex() {
 			BitSet myBitfield = Peer.getInstance().getBitField();
-			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor);
+			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
 			List<Integer> possibleRequests = new ArrayList<>();
 			for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
 				if(!myBitfield.get(i) && neighborBitset.get(i) && !Peer.getInstance().requestedbitField.get(i)){
