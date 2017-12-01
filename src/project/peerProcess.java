@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import project.Constants.ScanState;
 
-
+/** Defining Schedulers, variables, choke list, unchoke list */
 public class peerProcess {
 	private static ScheduledExecutorService determinekscheduler = Executors.newScheduledThreadPool(5);
 	private static ScheduledExecutorService optimisticallyscheduler = Executors.newScheduledThreadPool(5);
@@ -34,7 +34,7 @@ public class peerProcess {
 	private static boolean initialFlow = true;
 	private static List<Integer> unchokeList =  Collections.synchronizedList(new ArrayList<>());
 	private static List<Integer> chokeList =  Collections.synchronizedList(new ArrayList<>());
-
+	/** Reading Common Configuration File to get piece information*/
 	public static void setCommonConfig() throws IOException
 	{
 		BufferedReader br = new BufferedReader(new FileReader(Constants.COMMONCFG));
@@ -78,27 +78,20 @@ public class peerProcess {
 			try {
 				currPeerId = Integer.parseInt(args[0]);
 				System.out.printf("*Peer %d started successfully*", currPeerId);
-				// Step 1: Initiate Logs
+				/** Step 1: Initiate Logs */
 				Log.setUpSingleTonLog(currPeerId);
 				Log.addLog("Success!!");
-				// Step 2: Set up Config Information
-				//insert variable as key and store its value....
-				//commonInf.put(split[0], split[1]);
+				/** Step 2: Set up Config Information
+				//insert variable as key and store its value....*/
 				setCommonConfig();
 
 				int k = Integer.parseInt(Peer.getInstance().configProps.get("NumberOfPreferredNeighbors"));
 				int p =Integer.parseInt(Peer.getInstance().configProps.get("UnchokingInterval"));
 				int m = Integer.parseInt(Peer.getInstance().configProps.get("OptimisticUnchokingInterval"));
 
-				// Step 3: Set up Peer Information
+				/** Step 3: Set up Peer Information */
 				setPeerNeighbors(currPeerId);
-
-				// Step 4: initiate download-connections (create a server)
-				// and evaluate pieces in it. -- in a method
-				// if the download is done -- stop all the threads of download
-				//syso the same.
-				// Step 5: initiate uploading-thread 
-				// ->always selects k+1 neighbors and sends data
+				/** Step 4 Start up client and server process*/
 				for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
 					if (neighbor.peerId > Peer.getInstance().peerID) {
 						neighbor.setServerState(ScanState.START);
@@ -107,8 +100,10 @@ public class peerProcess {
 						neighbor.setClientState(ScanState.START);
 					}
 				}
+				/** Step 5 Start server thread*/
 				Server serverThread = new Server();
 				serverThread.start();
+				/** Step 6 Begin clien thread*/
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 					Client clientThread = new Client(neighbor.getValue());
 					Peer.getInstance().neighborThreads.put(neighbor.getKey(), clientThread);
@@ -117,8 +112,11 @@ public class peerProcess {
 					}
 				}
 				Thread.sleep(1000);
+				/**Determine K neighbours*/
 				determineKPreferred(k,p);
+				/** Determine Optimistically Unchoked Peer **/
 				determineOptimisticallyUnchokedPeer(m);
+				/** Shutdown Scheduler */
 				shutdownChecker();
 			} catch (NumberFormatException e) {
 				System.err.println("Argument " + args[0] + " must be an integer.");
@@ -129,7 +127,7 @@ public class peerProcess {
 			System.exit(1);
 		}
 	}
-
+	/** Setup peer neighbours for each peer */
 	private static void setPeerNeighbors(int currPeerId) {
 		Peer.getInstance().peerID = currPeerId;
 		String row = null;
@@ -177,29 +175,7 @@ public class peerProcess {
 			e.printStackTrace();
 		}
 	}
-
-	//Currently not needed but we may need in future, otherwise delete/comment the below method 
-	public static int countLines(String filename) throws IOException {
-		InputStream is = new BufferedInputStream(new FileInputStream(filename));
-		try {
-			byte[] c = new byte[1024];
-			int count = 0;
-			int readChars = 0;
-			boolean empty = true;
-			while ((readChars = is.read(c)) != -1) {
-				empty = false;
-				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == '\n') {
-						++count;
-					}
-				}
-			}
-			return (count == 0 && !empty) ? 1 : count;
-		} finally {
-			is.close();
-		}
-	}
-
+	/** Shut down scheduler */
 	public static void shutdownChecker(){
 		final Runnable checkShutdownChecker = new Runnable(){
 			public void run(){
@@ -212,6 +188,7 @@ public class peerProcess {
 						break;
 					}
 				}
+				/** Compare if all peers got the message */
 				if (compareFlag){
 					boolean shutdown = true;
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
@@ -229,6 +206,7 @@ public class peerProcess {
 							}
 						}
 					}
+					/**Save Files before shut down */
 					if(shutdown){
 						try {
 							String fileName =  Peer.getInstance().configProps.get("FileName");
