@@ -14,7 +14,15 @@ public class Client extends Thread {
 	Socket requestSocket;           //socket connect to the server
 	ObjectOutputStream out;         //stream write to the socket
 	ObjectInputStream in;          //stream read from the socket
-	RemotePeerInfo neighbor;
+	private RemotePeerInfo neighbor;
+	public synchronized RemotePeerInfo getNeighbor() {
+		return neighbor;
+	}
+
+	public synchronized void setNeighbor(RemotePeerInfo neighbor) {
+		this.neighbor = neighbor;
+	}
+
 	private boolean pause = false;
 	private byte[] havePiece = new byte[4];
 
@@ -44,11 +52,11 @@ public class Client extends Thread {
 			//create a socket to connect to the server
 			System.out.println("*The Client is running*");
 			System.out.println("TEST 1");
-			System.out.println(neighbor.peerAddress);
-			System.out.println(new Integer(neighbor.peerPort));
-			requestSocket = new Socket(neighbor.peerAddress, new Integer(neighbor.peerPort));
+			System.out.println(getNeighbor().peerAddress);
+			System.out.println(new Integer(getNeighbor().peerPort));
+			requestSocket = new Socket(getNeighbor().peerAddress, new Integer(getNeighbor().peerPort));
 			System.out.println("TEST 2");
-			System.out.printf("*My Client Connected to %s in port %s*", neighbor.peerAddress, neighbor.peerPort);
+			System.out.printf("*My Client Connected to %s in port %s*", getNeighbor().peerAddress, getNeighbor().peerPort);
 			//initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
@@ -127,11 +135,11 @@ public class Client extends Thread {
 					if (neighbor.getPiecesRxved().isEmpty())
 						neighbor.setUpdatePieceInfo(false);
 				}*/
-				switch (neighbor.getClientState()) {
+				switch (getNeighbor().getClientState()) {
 					case START: {
 						System.out.println("CLIENT== MODE-START- sent handshake msg");
 						sendHandShake();
-						neighbor.setClientState(ScanState.SENT_HAND_SHAKE);
+						getNeighbor().setClientState(ScanState.SENT_HAND_SHAKE);
 						break;
 					}	
 					case SENT_HAND_SHAKE: {
@@ -139,7 +147,7 @@ public class Client extends Thread {
 						if(in.available() >0){
 							in.read(handShakeMsg);
 							if (Peer.getInstance().validateHandShakeMsg(handShakeMsg)) {
-								System.out.println("CLIENT== MODE-SENT_HAND_SHAKE - Neighbor <" + neighbor.peerId +"> validated");
+								System.out.println("CLIENT== MODE-SENT_HAND_SHAKE - Neighbor <" + getNeighbor().peerId +"> validated");
 								neighbor.setClientState(ScanState.DONE_HAND_SHAKE);
 								neighbor.setServerState(ScanState.DONE_HAND_SHAKE);
 							}

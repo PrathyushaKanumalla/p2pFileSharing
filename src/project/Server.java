@@ -21,10 +21,10 @@ public class Server extends Thread{
 
 		try {
 			listener = new ServerSocket(Integer.parseInt(Peer.getInstance().portNum));
-			for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
+			//for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
 				new Handler(listener.accept()).start();
-				System.out.println("*My Server Connected to "  + clientPeerId + " *");
-			}
+				//System.out.println("*My Server Connected to "  + clientPeerId + " *");
+			//}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}  finally {
