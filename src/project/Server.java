@@ -61,11 +61,11 @@ public class Server extends Thread{
 				out = new ObjectOutputStream(connection.getOutputStream());
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
-				/*this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
+				this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
 				System.out.print(" with neighbor " + neighbor.peerId);
 				if (neighbor == null) {
 					System.out.println("neighbor is null");
-				}*/
+				}
 				//else {
 				while(!Peer.getInstance().stopped)
 				{
