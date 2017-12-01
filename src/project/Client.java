@@ -91,7 +91,7 @@ public class Client extends Thread {
 //				}
 					
 				}*/
-				if (neighbor.isUpdatePieceInfo()) {
+				/*if (neighbor.isUpdatePieceInfo()) {
 					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
 					for (byte[]  piece: piecesRxved) {
 						sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
@@ -111,7 +111,7 @@ public class Client extends Thread {
 					}
 					if (neighbor.getPiecesRxved().isEmpty())
 						neighbor.setUpdatePieceInfo(false);
-				}
+				}*/
 				switch (neighbor.getClientState()) {
 					case START: {
 						System.out.println("CLIENT== MODE-START- sent handshake msg");
@@ -250,7 +250,7 @@ public class Client extends Thread {
 						interrupt();
 						break;
 					}
-					/*case HAVE: {
+					case HAVE: {
 						for (byte[]  piece: neighbor.getPiecesRxved()) {
 							sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
 							byte[] responseMsg = new byte[5];
@@ -265,9 +265,9 @@ public class Client extends Thread {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
 							}
-							neighbor.getPiecesRxved().remove()
+							neighbor.getPiecesRxved().remove(neighbor.getPiecesRxved().indexOf(piece));
 						}
-					}*/
+					}
 					default: {
 						/*Send the sentence to the server
 							String message = "default_behavior_pratServer";
