@@ -52,6 +52,7 @@ public class Client extends Thread {
 
 	public void run()
 	{
+		synchronized(this){
 		try{
 			//create a socket to connect to the server
 			System.out.println("*The Client is running*");
@@ -425,6 +426,7 @@ public class Client extends Thread {
 				ioException.printStackTrace();
 			}
 		}
+	}
 	}
 
 	private synchronized void sendChokeMsg() {
