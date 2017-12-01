@@ -118,13 +118,14 @@ public class Client extends Thread {
 					
 				}*/
 				if (neighbor.isUpdatePieceInfo()) {
+					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
 					List<byte[]> tempList = new ArrayList<>();
-					for (byte[]  piece: neighbor.getPiecesRxved()) {
+					for (byte[]  piece: piecesRxved) {
 						sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
 						tempList.add(piece);
 					}
 					for (byte[] bs : tempList) {
-						neighbor.getPiecesRxved().remove(neighbor.getPiecesRxved().indexOf(bs));
+						piecesRxved.remove(neighbor.getPiecesRxved().indexOf(bs));
 					}
 					if (neighbor.getPiecesRxved().isEmpty())
 						neighbor.setUpdatePieceInfo(false);
