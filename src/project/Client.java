@@ -175,6 +175,22 @@ public class Client extends Thread {
 						}
 						break;
 					}
+					case UPLOAD_START: {
+						if(in.available() >0){
+							byte[] responseMsg = new byte[5];
+							in.read(responseMsg);
+							if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+								System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
+								Peer.getInstance().interestedInMe.add(neighbor.peerId);
+							} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
+								System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
+								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
+									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
+								}
+							}
+						}
+						break;
+					}
 					case SENT_BIT_FIELD:{
 						/**if bit field message sent wait for interested/not interested msg*/
 //						System.out.println("CLIENT:- STATE SENT BIT FIELD");
