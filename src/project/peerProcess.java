@@ -106,7 +106,14 @@ public class peerProcess {
 				//syso the same.
 				// Step 5: initiate uploading-thread 
 				// ->always selects k+1 neighbors and sends data
-
+				for (RemotePeerInfo neighbor : Peer.getInstance().neighbors.values()) {
+					if (neighbor.peerId > Peer.getInstance().peerID) {
+						neighbor.setServerState(ScanState.START);
+					}
+					if (neighbor.peerId < Peer.getInstance().peerID) {
+						neighbor.setClientState(ScanState.START);
+					}
+				}
 				Server serverThread = new Server();
 				serverThread.start();
 				for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {

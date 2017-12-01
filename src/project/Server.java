@@ -22,7 +22,7 @@ public class Server extends Thread{
 		try {
 			listener = new ServerSocket(Integer.parseInt(Peer.getInstance().portNum));
 			for (Integer clientPeerId : Peer.getInstance().neighbors.keySet()) {
-				new Handler(listener.accept(),Peer.getInstance().neighbors.get(clientPeerId)).start();
+				new Handler(listener.accept()).start();
 				System.out.println("*My Server Connected to "  + clientPeerId + " *");
 			}
 		} catch (IOException e) {
@@ -47,9 +47,8 @@ public class Server extends Thread{
 		private ObjectOutputStream out;    //stream write to the socket
 		private RemotePeerInfo neighbor;
 
-		public Handler(Socket connection, RemotePeerInfo neighbor) {
+		public Handler(Socket connection) {
 			this.connection = connection;
-			this.neighbor = neighbor;
 		}
 
 		public void run() {
@@ -58,15 +57,17 @@ public class Server extends Thread{
 				out = new ObjectOutputStream(connection.getOutputStream());
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
-				if (neighbor.peerId > Peer.getInstance().peerID) {
-					neighbor.setServerState(ScanState.START);
-				}
+				
 				while(!Peer.getInstance().stopped)
 				{
 					/** if i receive have msg
 					send interested or not interested as response; 
 					 **/
 					//show the message to the user
+					this.neighbor = Peer.getInstance().search(connection.getInetAddress(), connection.getPort());
+					if (neighbor == null) {
+						System.out.println("neighbor is null");
+					} else {
 					switch (neighbor.getServerState()) {
 					case DONE_HAND_SHAKE: {
 						//go to SERVER_LISTEN
@@ -326,6 +327,7 @@ public class Server extends Thread{
 						break;
 					}
 				}
+				}
 			}
 			catch(IOException ioException){
 				System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
@@ -344,11 +346,12 @@ public class Server extends Thread{
 					System.out.printf("Disconnect with Client %d\n" , neighbor.peerId);
 				}
 			}
-		}
+			}
+		
 
 		private  int genPieceIndex() {
 			BitSet myBitfield = Peer.getInstance().getBitField();
-			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor.peerId);
+			BitSet neighborBitset = Peer.getInstance().neighborsBitSet.get(neighbor);
 			List<Integer> possibleRequests = new ArrayList<>();
 			for(int i = 0;i < Peer.getInstance().noOfPieces;i++){
 				if(!myBitfield.get(i) && neighborBitset.get(i) && !Peer.getInstance().requestedbitField.get(i)){

@@ -1,5 +1,6 @@
 package project;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -56,5 +57,15 @@ public class Peer {
 		// TODO Auto-generated method stub
 		
 		return Peer.getInstance().hasCompletefile;
+	}
+
+	public synchronized RemotePeerInfo search(InetAddress inetAddress, int port) {
+		System.out.println(System.currentTimeMillis() + " received this Inet address - "+inetAddress + " port - "+port);
+		for (RemotePeerInfo neighbor : neighbors.values()) {
+			if (neighbor.peerAddress.equals(inetAddress.getHostAddress()) && Integer.parseInt(neighbor.peerPort) == port) {
+				return neighbor;
+			}
+		}
+		return null;
 	}
 }

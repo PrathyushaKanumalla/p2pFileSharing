@@ -45,9 +45,6 @@ public class Client extends Thread {
 			//sendMessage(handShake);
 			//get Input from standard input
 			//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-			if (neighbor.peerId < Peer.getInstance().peerID) {
-				neighbor.setClientState(ScanState.START);
-			}
 			
 			while(!Peer.getInstance().stopped)
 			{
