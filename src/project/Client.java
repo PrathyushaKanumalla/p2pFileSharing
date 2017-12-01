@@ -231,7 +231,7 @@ public class Client extends Thread {
 									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 									}
-									neighbor.setClientState(ScanState.UPLOAD_START);
+									//neighbor.setClientState(ScanState.UPLOAD_START);
 									break;
 								}
 						}
@@ -260,7 +260,7 @@ public class Client extends Thread {
 								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
-								neighbor.setClientState(ScanState.UPLOAD_START);
+								//neighbor.setClientState(ScanState.UPLOAD_START);
 								break;
 							} else if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 										System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
@@ -292,7 +292,7 @@ public class Client extends Thread {
 									if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 										Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 									}
-									neighbor.setClientState(ScanState.UPLOAD_START);
+									//neighbor.setClientState(ScanState.UPLOAD_START);
 									break;
 								}
 						}
@@ -318,7 +318,7 @@ public class Client extends Thread {
 								if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
 									Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
 								}
-								neighbor.setClientState(ScanState.UPLOAD_START);
+								//neighbor.setClientState(ScanState.UPLOAD_START);
 								break;
 							}else if (responseMsg[4] == MsgType.INTERESTED.value) {
 										System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
