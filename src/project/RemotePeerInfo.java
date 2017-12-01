@@ -53,19 +53,19 @@ public class RemotePeerInfo {
 		this.serverState = serverState;
 	}
 	
-	public  boolean isUpdatePieceInfo() {
+	public synchronized boolean isUpdatePieceInfo() {
 		return updatePieceInfo;
 	}
 
-	public  void setUpdatePieceInfo(boolean updatePieceInfo) {
+	public synchronized void setUpdatePieceInfo(boolean updatePieceInfo) {
 		this.updatePieceInfo = updatePieceInfo;
 	}
 	
-	public  List<byte[]> getPiecesRxved() {
+	public synchronized List<byte[]> getPiecesRxved() {
 		return piecesRxved;
 	}
 
-	public  void setPiecesRxved(List<byte[]> piecesRxved) {
+	public synchronized void setPiecesRxved(List<byte[]> piecesRxved) {
 		this.piecesRxved = piecesRxved;
 	}
 }

@@ -6,7 +6,9 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
 import project.Constants.MsgType;
 import project.Constants.ScanState;
@@ -115,27 +117,18 @@ public class Client extends Thread {
 //				}
 					
 				}*/
-				/*if (neighbor.isUpdatePieceInfo()) {
-					List<byte[]> piecesRxved = neighbor.getPiecesRxved();
-					for (byte[]  piece: piecesRxved) {
+				if (neighbor.isUpdatePieceInfo()) {
+					List<byte[]> tempList = new ArrayList<>();
+					for (byte[]  piece: neighbor.getPiecesRxved()) {
 						sendMessage(msgWithPayLoad(MsgType.HAVE, piece));
-						byte[] responseMsg = new byte[5];
-						while(in.available()<=0){}
-						in.read(responseMsg);
-						if (responseMsg[4] == MsgType.INTERESTED.value && !Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-							System.out.println("CLIENT:- received interested message from peer " + neighbor.peerId);
-							Peer.getInstance().interestedInMe.add(neighbor.peerId);
-						} else if (responseMsg[4] == MsgType.NOT_INTERESTED.value){
-							System.out.println("CLIENT:- received not interested message from peer " + neighbor.peerId);
-							if (Peer.getInstance().interestedInMe.contains(neighbor.peerId)) {
-								Peer.getInstance().interestedInMe.remove(Peer.getInstance().interestedInMe.indexOf(neighbor.peerId));
-							}
-						}
-						piecesRxved.remove(piecesRxved.indexOf(piece));
+						tempList.add(piece);
+					}
+					for (byte[] bs : tempList) {
+						neighbor.getPiecesRxved().remove(neighbor.getPiecesRxved().indexOf(bs));
 					}
 					if (neighbor.getPiecesRxved().isEmpty())
 						neighbor.setUpdatePieceInfo(false);
-				}*/
+				}
 				switch (getNeighbor().getClientState()) {
 					case START: {
 						System.out.println("CLIENT== MODE-START- sent handshake msg");
