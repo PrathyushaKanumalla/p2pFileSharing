@@ -153,6 +153,7 @@ public class peerProcess {
 			while((row = in.readLine()) != null) {
 				 String[] tokens = row.split("\\s+");
 				 Integer peerId = new Integer(tokens[0]);
+				 Peer.getInstance().downloadTime.put(peerId, (long) 0);
 			     if (peerId == currPeerId) {
 			    	 Peer.getInstance().pieces = new Receivedpieces[Peer.getInstance().noOfPieces];
 			    	 Peer.getInstance().portNum = tokens[2];
