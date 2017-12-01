@@ -189,6 +189,18 @@ public class Server extends Thread{
 									}
 //									System.out.println(reqPieceInd + "---> to update bitfield after receive");
 									//neighbor.setServerState(Constants.ScanState.UNCHOKE);
+									byte[] pieceIndex = new byte[4];
+									int genPieceindx = genPieceIndex();
+									if(genPieceindx == -1){
+										sendNotInterested();
+										break;
+									}
+									pieceIndex = createPrefix(genPieceindx);
+									if (pieceIndex != null) {
+//										System.out.println("SERVER:- pieceindex req "+ genPieceindx);
+										sendRequestMessage(pieceIndex);
+										System.out.println("SERVER:- SENT this request message of piece- " +genPieceindx +" to peer id " +neighbor.peerId );
+									}
 									
 								}
 							}

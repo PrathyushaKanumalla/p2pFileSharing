@@ -269,13 +269,13 @@ public class Client extends Thread {
 							in.read(responseMsg);
 //							System.out.println("CLIENT:- Received interested messgae- " + new String(responseMsg));
 							if (responseMsg[4] == MsgType.HAVE.value) {
-								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
+								System.out.println("CLIENT:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
 								byte[] havePieceIndex = new byte[4];
 								in.read(havePieceIndex);
-								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
+								System.out.println("CLIENT:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
 								+ " from peer id "+ neighbor.peerId);
 								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
+								System.out.println("CLIENT:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
 								BitSet myBitfield = Peer.getInstance().getBitField();
 								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
 								boolean sendInterested = false;
@@ -352,13 +352,13 @@ public class Client extends Thread {
 							byte[] responseMsg = new byte[5];
 							in.read(responseMsg);
 							if (responseMsg[4] == MsgType.HAVE.value) {
-								System.out.println("SERVER:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
+								System.out.println("CLIENT:- HAVE MESSGAGE IN UNCHOKE BLOCK-1");
 								byte[] havePieceIndex = new byte[4];
 								in.read(havePieceIndex);
-								System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
+								System.out.println("CLIENT:- Received HAVE INDEX "+ getPieceIndex(havePieceIndex) 
 								+ " from peer id "+ neighbor.peerId);
 								Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).set(getPieceIndex(havePieceIndex));
-								System.out.println("SERVER:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
+								System.out.println("CLIENT:- neighbor " + neighbor.peerId + " & bitset is - "+ Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId));
 								BitSet myBitfield = Peer.getInstance().getBitField();
 								BitSet neighborBitset = Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId);
 								boolean sendInterested = false;
@@ -509,12 +509,12 @@ public class Client extends Thread {
 	}
 	
 	private synchronized void sendInterested(){
-		System.out.println("SERVER:- SENT interested msg to peer " + neighbor.peerId);
+		System.out.println("CLIENT:- SENT interested msg to peer " + neighbor.peerId);
 		sendMessage(msgWithoutPayLoad(MsgType.INTERESTED));
 	}
 	
 	private synchronized void sendNotInterested(){
-		System.out.println("SERVER:- SENT not interested msg to peer " + neighbor.peerId);
+		System.out.println("CLIENT:- SENT not interested msg to peer " + neighbor.peerId);
 		sendMessage(msgWithoutPayLoad(MsgType.NOT_INTERESTED));
 	}
 
