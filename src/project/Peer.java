@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Peer {
 	
@@ -35,6 +36,7 @@ public class Peer {
 	public boolean hasCompletefile = false;
 	public boolean stopped= false;
 	public Map<Integer, Client> neighborThreads = Collections.synchronizedMap(new HashMap<>());
+	ConcurrentHashMap<Integer,Long> downloadTime = new ConcurrentHashMap<Integer, Long>();
 	
 	synchronized boolean validateHandShakeMsg(byte[] handShakeMsg) {
 		String message = new String(handShakeMsg);

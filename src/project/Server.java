@@ -117,6 +117,7 @@ public class Server extends Thread{
 									pieceIndex = createPrefix(genPieceindx);
 									if (pieceIndex != null) {
 //										System.out.println("SERVER:- pieceindex req "+ genPieceindx);
+										neighbor.startTime.put(genPieceindx, System.currentTimeMillis());
 										sendRequestMessage(pieceIndex);
 										System.out.println("SERVER:- SENT this request message of piece- " +genPieceindx +" to peer id " +neighbor.peerId );
 									}
@@ -161,8 +162,10 @@ public class Server extends Thread{
 									System.out.println("SERVER:- Received this piece message - " + reqPieceInd + " from peer " + neighbor.peerId);
 //									System.out.println("REQ INDEX -> "+ reqPieceInd);
 									//while(in.available()<0){}
+									int pieceSize = 0;
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
-										byte[] piece = new byte[Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"))];
+										pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
+										byte[] piece = new byte[pieceSize];
 										in.readFully(piece);
 										System.out.println("SERVER - length of " + reqPieceInd + " is " + piece.length + 
 												 " from peer " + neighbor.peerId );
@@ -170,7 +173,8 @@ public class Server extends Thread{
 //										System.out.println("Piece Len-> "+ piece.length);
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									} else {
-										byte[] piece = new byte[Peer.getInstance().excessPieceSize];
+										pieceSize = Peer.getInstance().excessPieceSize;
+										byte[] piece = new byte[pieceSize];
 										in.readFully(piece);
 										System.out.println("SERVER - length of " + reqPieceInd + " is " + piece.length + 
 												 " from peer " + neighbor.peerId );
@@ -178,6 +182,12 @@ public class Server extends Thread{
 //										System.out.println("for LAST ONE -> "+ piece.length);
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									}
+									if (neighbor.startTime.containsKey(neighbor.peerId)) {
+										Long endTime = System.currentTimeMillis();
+										Long downtime = endTime - neighbor.startTime.get(neighbor.peerId);
+										Peer.getInstance().downloadTime.put(neighbor.peerId, downtime/(pieceSize));
+									}
+									pieceSize = 0;
 									Peer.getInstance().getBitField().set(reqPieceInd);
 									//update all neighbors
 									System.out.println("SERVER:- My bit field " + Peer.getInstance().getBitField());

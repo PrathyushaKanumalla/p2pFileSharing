@@ -386,10 +386,12 @@ public class peerProcess {
 //						System.out.println(peerList.get(i));
 //					}
 					
-					Map<Integer, Double> peerVsDownrate = new HashMap<Integer, Double>();
+					Map<Integer, Long> peerVsDownrate = new HashMap<Integer, Long>();
 					for (Entry<Integer, RemotePeerInfo> neighbor : Peer.getInstance().neighbors.entrySet()) {
 						if(peerList.contains(neighbor.getKey())){
-							peerVsDownrate.put(neighbor.getKey(), neighbor.getValue().downRate);
+							Long dwnldTime = Peer.getInstance().downloadTime.get(neighbor.getKey());
+							System.out.println("The download rate of the peer is - " + dwnldTime + " for peer - " + neighbor.getKey());
+							peerVsDownrate.put(neighbor.getKey(), dwnldTime);
 						}
 					}
 					peerVsDownrate = MapSortByValue.sortByValue(peerVsDownrate);
