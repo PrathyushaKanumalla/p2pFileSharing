@@ -31,6 +31,15 @@ public class RemotePeerInfo {
 	public boolean isOptimisticallyChosen = false;
 	ConcurrentHashMap<Integer, Long> startTime = new ConcurrentHashMap<Integer, Long>();
 	public boolean alreadyChoked = true;
+	private int storedIndex=-1;
+
+	public synchronized int getStoredIndex() {
+		return storedIndex;
+	}
+
+	public synchronized void setStoredIndex(int storedIndex) {
+		this.storedIndex = storedIndex;
+	}
 
 	public RemotePeerInfo(Integer pId, String pAddress, String pPort) {
 		peerId = pId;
