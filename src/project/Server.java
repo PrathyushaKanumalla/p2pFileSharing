@@ -119,6 +119,7 @@ public class Server extends Thread{
 								} else if (msg[4] == MsgType.CHOKE.value) {
 									Log.addLog(String.format("Peer %s is choked by %s", Peer.getInstance().peerID, neighbor.peerId));
 									System.out.println("SERVER:- received choke message from " + neighbor.peerId);
+									System.out.println("stored index after choke - "+neighbor.getStoredIndex());
 									if (neighbor.getStoredIndex() != -1) {
 										Peer.getInstance().getRequestedbitField().clear(neighbor.getStoredIndex());
 										System.out.println("SERVER:- My current request bit field - " + Peer.getInstance().getRequestedbitField());
@@ -205,6 +206,7 @@ public class Server extends Thread{
 									pieceIndex = createPrefix(genPieceindx);
 									if (pieceIndex != null) {
 										sendRequestMessage(pieceIndex);
+										neighbor.setStoredIndex(genPieceindx);
 										System.out.println("SERVER:- SENT this request message of piece- " +genPieceindx +" to peer id " +neighbor.peerId );
 									}
 								}
