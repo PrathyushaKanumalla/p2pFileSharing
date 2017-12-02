@@ -169,8 +169,13 @@ public class Server extends Thread{
 										Long downtime = endTime - neighbor.startTime.get(neighbor.peerId);
 										System.out.println("downtime here **** -> "+downtime);
 										System.out.println("pieceSize here **** -> "+pieceSize);
-										System.out.println("download rate is **** -> "+ (long)(pieceSize/downtime));
-										Peer.getInstance().downloadTime.put(neighbor.peerId, (double)(pieceSize)/downtime);
+										if (downtime != 0) {
+											System.out.println("download rate is **** -> "+ (double)(pieceSize/downtime));
+											Peer.getInstance().downloadTime.put(neighbor.peerId, (double)(pieceSize)/downtime);
+										} else {
+											System.out.println("download rate is set to max value");
+											Peer.getInstance().downloadTime.put(neighbor.peerId, Double.MAX_VALUE);
+										}
 									}
 									pieceSize = 0;
 									Peer.getInstance().getBitField().set(reqPieceInd);
