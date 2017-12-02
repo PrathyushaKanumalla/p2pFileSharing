@@ -1,5 +1,7 @@
 package project;
 
+import java.io.File;
+
 public class Constants {
 
 	public static final String LOGFILEPREFIX = "log_peer_";
@@ -9,8 +11,11 @@ public class Constants {
 	public static final String COMMONCFG = "Common.cfg";
 	public static final String PEERINFO = "PeerInfo.cfg";
 
-	public static final String HANDSHAKEHEADER="P2PFILESHARINGPROJ";
-	public static final String ZERO_BITS="0000000000";
+	public static final String HANDSHAKEHEADER = "P2PFILESHARINGPROJ";
+	public static final String ZERO_BITS = "0000000000";
+	public static final String ECLIPLSE_FILE_PREFIX = System.getProperty("user.dir") + File.separator + "src" + File.separator +"project" + File.separator ;
+	public static final String FILE_PREFIX = System.getProperty("user.dir") + File.separator + "project" + File.separator ;
+	//public static final FILE_PREFIX = ECLIPLSE_FILE_PREFIX;
 
 	public static enum ScanState{
 		START("START"),

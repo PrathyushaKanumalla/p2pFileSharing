@@ -37,7 +37,8 @@ public class peerProcess {
 	/** Reading Common Configuration File to get piece information*/
 	public static void setCommonConfig() throws IOException
 	{
-		BufferedReader br = new BufferedReader(new FileReader(Constants.COMMONCFG));
+		String fileName = Constants.FILE_PREFIX + Constants.COMMONCFG;
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
 		String configLine = null;
 
 		while ((configLine = br.readLine()) != null) {
@@ -131,7 +132,7 @@ public class peerProcess {
 		Peer.getInstance().peerID = currPeerId;
 		String row = null;
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(Constants.PEERINFO));
+			BufferedReader in = new BufferedReader(new FileReader(Constants.FILE_PREFIX + Constants.PEERINFO));
 			while ((row = in.readLine()) != null) {
 				String[] tokens = row.split("\\s+");
 				Integer peerId = new Integer(tokens[0]);
@@ -143,7 +144,7 @@ public class peerProcess {
 					if (tokens[3].equals("1")) {
 						Peer.getInstance().hasCompletefile = true;
 						Peer.getInstance().getBitField().flip(0, Peer.getInstance().noOfPieces);
-						String fileName = "./peer_" + Peer.getInstance().peerID + File.separator 
+						String fileName = Constants.FILE_PREFIX + "./peer_" + Peer.getInstance().peerID + File.separator 
 								+ Peer.getInstance().configProps.get("FileName");
 
 						FileInputStream fis = new FileInputStream(new File(fileName));
@@ -207,11 +208,11 @@ public class peerProcess {
 					/**Save Files before shut down */
 					if(shutdown){
 						try {
-							String path =  "./peer_" + Peer.getInstance().peerID ;
+							String path = Constants.FILE_PREFIX + "./peer_" + Peer.getInstance().peerID ;
 							File directoryFolder = new File(path);
 							if (!directoryFolder.exists())
 								directoryFolder.mkdir();
-							String fileName = path + File.separator + Peer.getInstance().configProps.get("FileName");
+							String fileName = path + Peer.getInstance().configProps.get("FileName");
 							File dateFile = new File(fileName);
 							FileOutputStream fos = new FileOutputStream(dateFile);
 							for (Receivedpieces piece : Peer.getInstance().pieces) {
