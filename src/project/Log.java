@@ -45,7 +45,7 @@ public class Log {
 	        logger.setLevel(Level.INFO);
 	        
 	        // get current path and generate a log file
-	     	String fileName = System.getProperty("user.dir") + File.separator + 
+	     	String fileName = Constants.FILE_PREFIX + File.separator + 
 	     			Constants.LOGFILEPREFIX + peerID + Constants.LOGFILESUFFIX;
 	        fileHandler = new FileHandler(fileName);
 	        // create a TXT formatter
