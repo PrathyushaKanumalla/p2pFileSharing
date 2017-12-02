@@ -128,7 +128,7 @@ public class Server extends Thread{
 								} else if (msg[4] == MsgType.HAVE.value) {
 									System.out.println("SERVER:- HAVE MESSGAGE IN SERVER_LISTEN BLOCK");
 									byte[] pieceIndex = new byte[4];
-									in.readFully(pieceIndex);
+									in.readFully(pieceIndex, 0, 4);
 									System.out.println("SERVER:- Received HAVE INDEX "+ getPieceIndex(pieceIndex) 
 											+ " from peer id "+ neighbor.peerId);
 									int gotThisPeerIndex = getPieceIndex(pieceIndex);
@@ -158,14 +158,14 @@ public class Server extends Thread{
 									if (reqPieceInd != Peer.getInstance().noOfPieces-1) {
 										pieceSize = Integer.parseInt(Peer.getInstance().configProps.get("PieceSize"));
 										byte[] piece = new byte[pieceSize];
-										in.readFully(piece);
+										in.readFully(piece, 0, pieceSize);
 										System.out.println("SERVER - length of " + reqPieceInd + " is " + piece.length + 
 												" from peer " + neighbor.peerId );
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									} else {
 										pieceSize = Peer.getInstance().excessPieceSize;
 										byte[] piece = new byte[pieceSize];
-										in.readFully(piece);
+										in.readFully(piece, 0, pieceSize);
 										System.out.println("SERVER - length of " + reqPieceInd + " is " + piece.length + 
 												" from peer " + neighbor.peerId );
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);

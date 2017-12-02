@@ -60,7 +60,7 @@ public class Client extends Thread {
 						sendHandShake();
 						getNeighbor().setClientState(ScanState.SENT_HAND_SHAKE);
 						break;
-					}	
+					}
 					case SENT_HAND_SHAKE: {
 						byte[] handShakeMsg = new byte[32];
 						if (in.available() > 0){
