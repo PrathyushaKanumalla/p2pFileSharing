@@ -122,7 +122,8 @@ public class Server extends Thread{
 									Log.addLog(String.format("Peer %s is choked by %s", Peer.getInstance().peerID, neighbor.peerId));
 									System.out.println("SERVER:- received choke message from " + neighbor.peerId);
 									if (storedIndex != -1) {
-										Peer.getInstance().requestedbitField.clear(storedIndex);
+										Peer.getInstance().getRequestedbitField().clear(storedIndex);
+										System.out.println("SERVER:- My current request bit field - " + Peer.getInstance().getRequestedbitField());
 										storedIndex = -1;
 									}
 								} else if (msg[4] == MsgType.HAVE.value) {
@@ -264,7 +265,7 @@ public class Server extends Thread{
 			List<Integer> possibleRequests = new ArrayList<>();
 			for (int i = 0;i < Peer.getInstance().noOfPieces;i++) {
 				if (!Peer.getInstance().getBitField().get(i) && Peer.getInstance().getNeighborsBitSet().get(neighbor.peerId).get(i) 
-						&& !Peer.getInstance().requestedbitField.get(i)) {
+						&& !Peer.getInstance().getRequestedbitField().get(i)) {
 					possibleRequests.add(i);
 				}
 			}
@@ -273,7 +274,7 @@ public class Server extends Thread{
 			Random rand = new Random();
 			int randomIndex = rand.nextInt(possibleRequests.size());
 			System.out.println("SERVER:- Request index genrated random for piece - " + possibleRequests.get(randomIndex));
-			Peer.getInstance().requestedbitField.set(possibleRequests.get(randomIndex));
+			Peer.getInstance().getRequestedbitField().set(possibleRequests.get(randomIndex));
 			return possibleRequests.get(randomIndex);
 		}
 

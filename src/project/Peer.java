@@ -23,11 +23,19 @@ public class Peer {
 
 	public int peerID;
 	private BitSet bitField = new BitSet();
-	public BitSet requestedbitField = new BitSet();
+	private BitSet requestedbitField = new BitSet();
 	public BitSet fileBitfield= new BitSet();
 	public int noOfPieces;
 	public Map<String, String> configProps = Collections.synchronizedMap(new HashMap<>());
 	public Map<Integer, RemotePeerInfo> neighbors = Collections.synchronizedMap(new HashMap<Integer, RemotePeerInfo>());
+	public synchronized BitSet getRequestedbitField() {
+		return requestedbitField;
+	}
+
+	public synchronized void setRequestedbitField(BitSet requestedbitField) {
+		this.requestedbitField = requestedbitField;
+	}
+
 	public List<Integer> interestedInMe = Collections.synchronizedList(new ArrayList<>());
 	public String portNum;
 	public Receivedpieces[] pieces;
