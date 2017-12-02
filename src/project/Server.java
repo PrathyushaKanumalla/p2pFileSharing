@@ -65,6 +65,9 @@ public class Server extends Thread{
 				if (neighbor == null) {
 					System.out.println("neighbor is null");
 				}
+				
+				int storedIndex=-1;
+				
 				while (!Peer.getInstance().stopped) {
 					/** if i receive have msg
 					send interested or not interested as response; 
@@ -112,11 +115,16 @@ public class Server extends Thread{
 									if (pieceIndex != null) {
 										neighbor.startTime.put(neighbor.peerId, System.currentTimeMillis());
 										sendRequestMessage(pieceIndex);
+										storedIndex = genPieceindx;
 										System.out.println("SERVER:- SENT this request message of piece- " +genPieceindx +" to peer id " +neighbor.peerId );
 									}
 								} else if (msg[4] == MsgType.CHOKE.value) {
 									Log.addLog(String.format("Peer %s is choked by %s", Peer.getInstance().peerID, neighbor.peerId));
 									System.out.println("SERVER:- received choke message from " + neighbor.peerId);
+									if (storedIndex != -1) {
+										Peer.getInstance().requestedbitField.clear(storedIndex);
+										storedIndex = -1;
+									}
 								} else if (msg[4] == MsgType.HAVE.value) {
 									System.out.println("SERVER:- HAVE MESSGAGE IN SERVER_LISTEN BLOCK");
 									byte[] pieceIndex = new byte[4];
@@ -162,6 +170,7 @@ public class Server extends Thread{
 												" from peer " + neighbor.peerId );
 										Peer.getInstance().pieces[reqPieceInd] = new Receivedpieces(piece);
 									}
+									storedIndex = -1;
 									Log.addLog(String.format("Peer %d has downloaded the piece %d from %d", 
 											Peer.getInstance().peerID, reqPieceInd, neighbor.peerId));
 									if (neighbor.startTime.containsKey(neighbor.peerId)) {
